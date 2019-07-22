@@ -27,6 +27,7 @@ describe("JSON-LD helper simple tests", function () {
   it("Test basic indexing", function (done) {
     const crate = new ROCrate();
     assert(utils.hasType(crate.rootDataset, "Dataset"));
+    assert.equal(crate.json[["@context"]], "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
     done();
   });
 });
