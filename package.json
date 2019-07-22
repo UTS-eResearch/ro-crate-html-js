@@ -1,0 +1,23 @@
+{
+  "name": "ro-crate",
+  "version": "1.0.0",
+  "description": "Research Object Crate (RO-Crate) utilities for making and consuming crates",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "~(https://github.com/UTS-eResearch/ro-crate-js.git"
+  },
+  "keywords": [
+    "RO-Crate"
+  ],
+  "author": "UTS eResearch Team",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "assert": "^2.0.0",
+    "fs-extra": "^8.1.0",
+    "path": "^0.12.7"
+  }
+}
