@@ -24,10 +24,10 @@ const jsonUtils = require("../lib/utils");
 describe("JSON-LD helper simple tests", function () {
   var test_path;
   const utils = new jsonUtils();
-  it("Test basic indexing", function (done) {
+  it("Test basic setup", function (done) {
     const crate = new ROCrate();
     assert(utils.hasType(crate.rootDataset, "Dataset"));
-    assert.equal(crate.json[["@context"]], "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
+    assert.equal(crate.json_ld["@context"] , "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
     done();
   });
 });
