@@ -50,6 +50,7 @@ describe("Basic graph item operations", function() {
 		];
 
 		const crate = newCrate(graph);
+		crate.index();
 
 		const item = crate.getItem('https://foo/bar/oid1');
 		expect(item).to.have.property('@id', 'https://foo/bar/oid1');
