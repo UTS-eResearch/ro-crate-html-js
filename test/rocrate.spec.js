@@ -18,8 +18,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
+const expect = require("chai").expect;
 const ROCrate = require("../lib/rocrate");
 const jsonUtils = require("../lib/utils");
+const defaults = require("../lib/defaults");
+
+
+function newCrate(graph) {
+	return new ROCrate({ '@context': defaults.context, '@graph': graph});
+}
+
 
 describe("JSON-LD helper simple tests", function () {
   var test_path;
@@ -32,5 +40,22 @@ describe("JSON-LD helper simple tests", function () {
   });
 });
 
+describe("Basic graph item operations", function() {
+
+	it("Can fetch items by id", function () {
+
+		const graph = [
+	  	 	{ '@id': 'https://foo/bar/oid1', 'name': 'oid1', 'description': 'Test item 1' },
+	  		{ '@id': 'https://foo/bar/oid2', 'name': 'oid2', 'description': 'Test item 2' }
+		];
+
+		const crate = newCrate(graph);
+
+		const item = crate.getItem('https://foo/bar/oid1');
+		expect(item).to.have.property('@id', 'https://foo/bar/oid1');
+
+	});
+
+});
 
 
