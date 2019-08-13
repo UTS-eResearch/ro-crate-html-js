@@ -112,21 +112,24 @@ describe("IDs and identifiers", function() {
 		crate.index();
 
 		const myId = uuid();
-		const idId = crate.addIdentifier({
-			'identifier': myId
+		const identifierName = 'sample_identifier';
+		const success = crate.addIdentifier({
+			'identifier': myId,
+			'name': identifierName
 		});
 
-		expect(idId).to.not.be.false;
+		expect(success).to.not.be.false;
 
-		const idItem = crate.getItem(idId);
+		const idItem = crate.getItem(myId);
 		expect(idItem).to.not.be.undefined;
-		expect(idItem).to.have.property("identifier", myId);
+		expect(idItem).to.have.property("value", myId);
+		expect(idItem).to.have.property("name", identifierName);
 
 		const rootDataset = crate.getRootDataset();
 		expect(rootDataset).to.have.property("identifier");
 		const rid = rootDataset['identifier'];
 		expect(rid).to.be.an('array').and.to.not.be.empty;
-		const match = rid.filter((i) => i['@id'] === idId);
+		const match = rid.filter((i) => i['@id'] === myId);
 		expect(match).to.be.an('array').and.to.have.lengthOf(1);
 	});
 
