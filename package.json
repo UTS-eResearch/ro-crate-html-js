@@ -16,13 +16,18 @@
   "author": "UTS eResearch Team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "chai-fs": "^2.0.0",
     "fs-extra": "^8.1.0",
     "path": "^0.12.7"
   },
   "devDependencies": {
     "assert": "^2.0.0",
     "chai": "^4.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "fs-extra": "^8.1.0",
     "lodash": "^4.17.15",
-    "uuid": "^3.3.2"
+    "path": "^0.12.7",
+    "uuid": "^3.3.2",
+    "xmlhttprequest": "^1.8.0"
   }
 }
