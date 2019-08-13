@@ -2609,7 +2609,8 @@
       "name": "CC BY-NC-SA 3.0 AU"
     },
     {
-      "@id": "https://dx.doi.org/10.5281/zenodo.1009240",
+      "@id": "./",
+      "identifier": "https://dx.doi.org/10.5281/zenodo.1009240",
       "@type": "Dataset",
       "citation": {
         "@id": "http://dx.doi.org/10.1000/123456"
@@ -2620,7 +2621,7 @@
       "contentLocation": {
         "@id": "http://www.geonames.org/8152662/catalina-park.html"
       },
-      "path": "./",
+
       "creator": {
         "@id": "http://orcid.org/0000-0002-3545-944X"
       },
@@ -2666,8 +2667,7 @@
     {
       "@id": "lots_of_little_files",
       "@type": "Dataset",
-      "path": "lots_of_little_files",
-      "description": "This directory contains many small files, that we’re not going to describe in detail.",
+            "description": "This directory contains many small files, that we’re not going to describe in detail.",
       "identifier": "./lots_of_little_files",
       "name": "Too many files"
     },
@@ -2683,8 +2683,7 @@
     {
       "@id": "pics",
       "@type": "Dataset",
-      "path": "pics",
-      "description": "This directory contains the images for the research project",
+            "description": "This directory contains the images for the research project",
       "hasPart": [
         {
           "@id": "pics/2017-06-11 12.56.14.jpg"
@@ -2703,8 +2702,7 @@
       "@id": "pics/2017-06-11 12.56.14.jpg",
       "@type": "ImageObject",
       "contentSize": "5114778",
-      "path": "pics/2017-06-11 12.56.14.jpg",
-      "creator": {
+            "creator": {
         "@id": "http://orcid.org/0000-0002-3545-944X"
       },
       "description": "Depicts a fence at a disused motor racing venue with the front part of a slightly out of focus black dog in the foreground.",
@@ -3333,8 +3331,7 @@
       "@id": "pics/sepia_fence.jpg",
       "@type": "ImageObject",
       "contentSize": "4855037",
-      "path": "pics/sepia_fence.jpg",
-      "description": "Sepia tone version of my fence/dog pic",
+            "description": "Sepia tone version of my fence/dog pic",
       "encodingFormat": "JPEG File Interchange Format",
       "exifData": [
         {
@@ -3962,8 +3959,7 @@
     {
       "@id": "pics/thumbs",
       "@type": "Dataset",
-      "path": "pics/thumbs",
-      "hasPart": [
+            "hasPart": [
         {
           "@id": "pics/thumbs/2017-06-11 12.56.14.png"
         },
@@ -3978,8 +3974,7 @@
       "@id": "pics/thumbs/2017-06-11 12.56.14.png",
       "@type": "File",
       "contentSize": "20594",
-      "path": "pics/thumbs/2017-06-11 12.56.14.png",
-      "encodingFormat": "Portable Network Graphics",
+            "encodingFormat": "Portable Network Graphics",
       "fileFormat": "http://www.nationalarchives.gov.uk/PRONOM/fmt/11",
       "name": "pics/thumbs/2017-06-11 12.56.14.png"
     },
@@ -3987,8 +3982,7 @@
       "@id": "pics/thumbs/sepia_fence.png",
       "@type": "File",
       "contentSize": "20524",
-      "path": "pics/thumbs/sepia_fence.png",
-      "encodingFormat": "Portable Network Graphics",
+            "encodingFormat": "Portable Network Graphics",
       "fileFormat": "http://www.nationalarchives.gov.uk/PRONOM/fmt/11",
       "name": "pics/thumbs/sepia_fence.png"
     }

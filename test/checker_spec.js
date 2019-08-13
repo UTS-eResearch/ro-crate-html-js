@@ -36,7 +36,7 @@ describe('Incremental checking', function () {
       assert(checker.hasContext(),"Has a @context");
       // Don't have a dataset tho yet
       assert(!checker.hasRootDataset().status, "Does not have a root dataset");
-      var dataset = {"@type": "Dataset", "path":  "./"}
+      var dataset = {"@type": "Dataset", "@id":  "./"}
       json["@graph"] = [dataset];
       var checker = new Checker(new ROCrate(json));
       assert(checker.hasRootDataset().status, "Does have a root dataset");

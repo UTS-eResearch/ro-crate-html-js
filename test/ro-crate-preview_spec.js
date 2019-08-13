@@ -31,8 +31,7 @@ describe('single item rendering', function () {
       const crate = new ROCrate(json);
       const preview = new Preview(crate);
       const table = await preview.renderMetadataForItem(preview.rootId);
-      assert.equal(table.find("tr").length, 15, "Has the right number of rows");
-    
+      assert.equal(table.find("tr").length, 14, "Has the right number of rows");
     });
 });
 
