@@ -18,7 +18,10 @@
   "dependencies": {
     "assert": "^2.0.0",
     "chai": "^4.2.0",
+    "chai-fs": "^2.0.0",
+    "cheerio": "^1.0.0-rc.3",
     "fs-extra": "^8.1.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "xmlhttprequest": "^1.8.0"
   }
 }
