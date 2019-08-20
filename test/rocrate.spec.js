@@ -26,8 +26,8 @@ const defaults = require("../lib/defaults");
 const uuid = require('uuid').v4;
 
 function newCrate(graph) {
-	if (!graph) {graph = []};
-	graph.push(defaults.metadataFileDescriptorTemplate);
+	if (!graph) {graph = [defaults.datasetTemplate, defaults.metadataFileDescriptorTemplate]};
+
 	return new ROCrate({ '@context': defaults.context, '@graph': graph});
 }
 
@@ -35,7 +35,16 @@ function newCrate(graph) {
 describe("JSON-LD helper simple tests", function () {
   var test_path;
   const utils = new jsonUtils();
+
   it("Test basic setup", function (done) {
+	// No Datadet
+	const dudCrate = newCrate();
+	
+	try {
+		dudCrate.index();
+      } catch (e) {
+        assert.strictEqual(e.message, 'There is no root dataset');
+      }
 	const crate = new ROCrate();
 	crate.index();
 	const rootDataset = crate.getRootDataset();
@@ -47,6 +56,8 @@ describe("JSON-LD helper simple tests", function () {
 
 describe("Basic graph item operations", function() {
 	const graph = [
+		defaults.metadataFileDescriptorTemplate,
+		defaults.datasetTemplate,
   	 	{ '@id': 'https://foo/bar/oid1', 'name': 'oid1', 'description': 'Test item 1' },
   		{ '@id': 'https://foo/bar/oid2', 'name': 'oid2', 'description': 'Test item 2' }
 	];
@@ -100,17 +111,12 @@ describe("IDs and identifiers", function() {
 			expect(success).to.be.true;
 		});
 
-		expect(crate.graph).to.have.lengthOf(N + 1) //+1 Cos of metdata file descriptor;
+		expect(crate.graph).to.have.lengthOf(N + 2) //+1 Cos of root metdata file descriptor;
 	});
 
 
 	it("can add an identifier to the root dataset", function() {
-		const crate = newCrate([ { 
-			'@id': './',
-			'path': './',          
-			'@type': 'Dataset',
-			'name': "Root dataset"
-		}]);
+		const crate = newCrate();
 
 		crate.index();
 
