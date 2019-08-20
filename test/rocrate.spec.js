@@ -26,6 +26,8 @@ const defaults = require("../lib/defaults");
 const uuid = require('uuid').v4;
 
 function newCrate(graph) {
+	if (!graph) {graph = []};
+	graph.push(defaults.metadataFileDescriptorTemplate);
 	return new ROCrate({ '@context': defaults.context, '@graph': graph});
 }
 
@@ -34,8 +36,10 @@ describe("JSON-LD helper simple tests", function () {
   var test_path;
   const utils = new jsonUtils();
   it("Test basic setup", function (done) {
-    const crate = new ROCrate();
-    assert(utils.hasType(crate.rootDataset, "Dataset"));
+	const crate = new ROCrate();
+	crate.index();
+	const rootDataset = crate.getRootDataset();
+    assert(utils.hasType(rootDataset, "Dataset"));
     assert.equal(crate.json_ld["@context"] , "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
     done();
   });
@@ -50,7 +54,6 @@ describe("Basic graph item operations", function() {
 	it("can fetch items by id", function () {
 		const crate = newCrate(_.clone(graph));
 		crate.index();
-
 		const item = crate.getItem('https://foo/bar/oid1');
 		expect(item).to.have.property('@id', 'https://foo/bar/oid1');
 
@@ -97,19 +100,20 @@ describe("IDs and identifiers", function() {
 			expect(success).to.be.true;
 		});
 
-		expect(crate.graph).to.have.lengthOf(N);
+		expect(crate.graph).to.have.lengthOf(N + 1) //+1 Cos of metdata file descriptor;
 	});
 
 
 	it("can add an identifier to the root dataset", function() {
 		const crate = newCrate([ { 
 			'@id': './',
-			'path': './',            // FIXME
+			'path': './',          
 			'@type': 'Dataset',
 			'name': "Root dataset"
 		}]);
 
 		crate.index();
+
 
 		const myId = uuid();
 		const idId = crate.addIdentifier({
