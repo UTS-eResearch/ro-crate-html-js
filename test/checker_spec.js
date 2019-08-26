@@ -25,23 +25,24 @@ const ROCrate = require("../lib/rocrate");
 
 
 describe('Incremental checking', function () {
-    it('should have trigger all the right reporting', async function () {
+    it('shouldtrigger all the right reporting', async function () {
       //json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
-      json = {}
-      var checker = new Checker(new ROCrate(json));
+      var crate = new ROCrate();
+      var checker = new Checker(crate);
+      var json = crate.json_ld; // should be a minimal viable datacrate
+      delete json["@context"];
       assert(!checker.hasContext().status, "Does not have a @context");
       // Now with context
       json["@context"] = defaults.context;
       var checker = new Checker(new ROCrate(json));
       assert(checker.hasContext(),"Has a @context");
       // Don't have a dataset tho yet
-      assert(!checker.hasRootDataset().status, "Does not have a root dataset");
-      var dataset = {"@type": "Dataset", "@id":  "./"}
-      json["@graph"] = [dataset];
+
       var checker = new Checker(new ROCrate(json));
       assert(checker.hasRootDataset().status, "Does have a root dataset");
       // No name yet 
       assert(!checker.hasName().status, "Does not have a name");
+      var dataset = crate.getRootDataset();
       dataset.name = "";
       var checker = new Checker(new ROCrate(json));
       assert(!checker.hasName().status, "Does not have a name");
@@ -49,27 +50,27 @@ describe('Incremental checking', function () {
 
       var checker = new Checker(new ROCrate(json));
       assert(checker.hasName().status, "Does have a name");
-      assert(!checker.hasCreator().status, "Does not have creator");
+      assert(!checker.hasAuthor().status, "Does not have author");
 
-      // Creator
-      var creator1 = {"@id": "http://orcid.org/some-orcid", "name": "Some Person"}
-      dataset.creator =  [{"@id": "http://orcid.org/some-orcid"}];
-      json["@graph"].push(creator1);
+      // Author
+      var author1 = {"@id": "http://orcid.org/some-orcid", "name": "Some Person"}
+      dataset.author =  [{"@id": "http://orcid.org/some-orcid"}];
+      json["@graph"].push(author1);
       var checker = new Checker(new ROCrate(json));
-      assert(!checker.hasCreator().status, "Does not have one or more creators with @type Person or Organization");
+      assert(!checker.hasAuthor().status, "Does not have one or more authors with @type Person or Organization");
 
-      // One good creator and one dodgy one
-      var creator2 = {"@id": "http://orcid.org/some-other-orcid", "name": "Some Person", "@type": "Person"}
-      dataset.creator.push({"@id": "http://orcid.org/some-other-orcid"});
+      // One good author and one dodgy one
+      var author2 = {"@id": "http://orcid.org/some-other-orcid", "name": "Some Person", "@type": "Person"}
+      dataset.author.push({"@id": "http://orcid.org/some-other-orcid"});
       var checker = new Checker(new ROCrate(json));
-      json["@graph"].push(creator1);
-      assert(!checker.hasCreator().status, "Does not have one or more creators with @type Person or Organization");
+      json["@graph"].push(author1);
+      assert(!checker.hasAuthor().status, "Does not have one or more authors with @type Person or Organization");
 
-      // One good creator
-      dataset.creator = [creator2];
-      json["@graph"] = [dataset, creator2];
+      // One good author
+      dataset.author = [author2];
+      json["@graph"] = [defaults.metadataFileDescriptorTemplate, dataset, author2];
       var checker = new Checker(new ROCrate(json));
-      assert(checker.hasCreator().status, "Does have a creator with @type Person or Organization");
+      assert(checker.hasAuthor().status, "Does have a author with @type Person or Organization");
 
       // License
       // No name, description

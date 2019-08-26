@@ -2609,6 +2609,12 @@
       "name": "CC BY-NC-SA 3.0 AU"
     },
     {
+      "@type": "CreativeWork",
+      "@id": "ro-crate-metadata.jsonld",
+      "identifier": "ro-crate-metadata.jsonld",
+      "about": {"@id": "./"}
+  },
+    {
       "@id": "./",
       "identifier": "https://dx.doi.org/10.5281/zenodo.1009240",
       "@type": "Dataset",
