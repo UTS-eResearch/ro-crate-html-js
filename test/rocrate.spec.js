@@ -38,8 +38,7 @@ describe("JSON-LD helper simple tests", function () {
 
   it("Test basic setup", function (done) {
 	// No Datadet
-	const dudCrate = newCrate();
-	
+	const dudCrate = newCrate();	
 	try {
 		dudCrate.index();
       } catch (e) {
@@ -117,30 +116,41 @@ describe("IDs and identifiers", function() {
 
 	it("can add an identifier to the root dataset", function() {
 		const crate = newCrate();
-
 		crate.index();
 
-
 		const myId = uuid();
-		const identifierName = 'sample_identifier';
-		const success = crate.addIdentifier({
+		const idCreated= crate.addIdentifier({
 			'identifier': myId,
-			'name': identifierName
+			"name": "local-id"
 		});
-
-		expect(success).to.not.be.false;
-
+		expect(idCreated).to.not.be.false;
 		const idItem = crate.getItem(myId);
 		expect(idItem).to.not.be.undefined;
 		expect(idItem).to.have.property("value", myId);
-		expect(idItem).to.have.property("name", identifierName);
-
 		const rootDataset = crate.getRootDataset();
 		expect(rootDataset).to.have.property("identifier");
 		const rid = rootDataset['identifier'];
 		expect(rid).to.be.an('array').and.to.not.be.empty;
 		const match = rid.filter((i) => i['@id'] === myId);
 		expect(match).to.be.an('array').and.to.have.lengthOf(1);
+		expect(crate.identifiers["local-id"]).to.equal(myId);
+	});
+	
+	it("can update IDs on Data Entities", function () {
+	  json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+	  const crate = new ROCrate(json);
+	  crate.index();
+	  var r = crate.getRootDataset();
+
+	  expect(r["@id"]).to.be.equal("./");
+	  expect(crate.getItem("pics")["@id"]).to.equal("pics");
+	  crate.changeDataEntityIDs(function (id) {
+		return path.join("data", id);
+	  });
+	  r = crate.getRootDataset();
+	  expect(r["@id"]).to.be.equal("data/");
+	  expect(crate.getItem("data/pics")["@id"]).to.equal("data/pics");
+	  
 	});
 
 
