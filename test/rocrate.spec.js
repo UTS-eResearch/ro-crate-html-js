@@ -117,7 +117,6 @@ describe("IDs and identifiers", function() {
 	it("can add an identifier to the root dataset", function() {
 		const crate = newCrate();
 		crate.index();
-
 		const myId = uuid();
 		const idCreated= crate.addIdentifier({
 			'identifier': myId,
@@ -133,25 +132,10 @@ describe("IDs and identifiers", function() {
 		expect(rid).to.be.an('array').and.to.not.be.empty;
 		const match = rid.filter((i) => i['@id'] === myId);
 		expect(match).to.be.an('array').and.to.have.lengthOf(1);
-		expect(crate.identifiers["local-id"]).to.equal(myId);
+		expect(crate.getNamedIdentifier("local-id")).to.equal(myId);
 	});
 	
-	it("can update IDs on Data Entities", function () {
-	  json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
-	  const crate = new ROCrate(json);
-	  crate.index();
-	  var r = crate.getRootDataset();
-
-	  expect(r["@id"]).to.be.equal("./");
-	  expect(crate.getItem("pics")["@id"]).to.equal("pics");
-	  crate.changeDataEntityIDs(function (id) {
-		return path.join("data", id);
-	  });
-	  r = crate.getRootDataset();
-	  expect(r["@id"]).to.be.equal("data/");
-	  expect(crate.getItem("data/pics")["@id"]).to.equal("data/pics");
-	  
-	});
+	
 
 
 });
