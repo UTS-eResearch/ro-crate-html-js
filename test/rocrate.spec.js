@@ -123,14 +123,14 @@ describe("IDs and identifiers", function() {
 			"name": "local-id"
 		});
 		expect(idCreated).to.not.be.false;
-		const idItem = crate.getItem(myId);
+		const idItem = crate.getItem(idCreated);
 		expect(idItem).to.not.be.undefined;
 		expect(idItem).to.have.property("value", myId);
 		const rootDataset = crate.getRootDataset();
 		expect(rootDataset).to.have.property("identifier");
 		const rid = rootDataset['identifier'];
 		expect(rid).to.be.an('array').and.to.not.be.empty;
-		const match = rid.filter((i) => i['@id'] === myId);
+		const match = rid.filter((i) => i['@id'] === idCreated);
 		expect(match).to.be.an('array').and.to.have.lengthOf(1);
 		expect(crate.getNamedIdentifier("local-id")).to.equal(myId);
 	});
