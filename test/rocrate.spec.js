@@ -135,6 +135,27 @@ describe("IDs and identifiers", function() {
 		expect(crate.getNamedIdentifier("local-id")).to.equal(myId);
 	});
 	
+
+	it("can add an identifier when the existing identifier is a scalar", function() {
+		const crate = newCrate();
+		crate.index();
+		const root = crate.getRootDataset();
+		root['identifier'] = 'a_scalar_identifier';
+		const myId = uuid();
+		const idCreated= crate.addIdentifier({
+			'identifier': myId,
+			"name": "local-id"
+		});
+		expect(idCreated).to.not.be.false;
+		const idItem = crate.getItem(idCreated);
+		expect(idItem).to.not.be.undefined;
+		expect(idItem).to.have.property("value", myId);
+		const rootDataset = crate.getRootDataset();
+		expect(rootDataset).to.have.property("identifier");
+		const rid = rootDataset['identifier'];
+		expect(rid).to.be.an('array').and.to.not.be.empty;
+	});
+
 	
 
 
