@@ -1,5 +1,5 @@
 {
-  "@context": "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json",
+  "@context": "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.3-DRAFT/context.json",
   "@graph": [
     {
       "@id": "540e26ba-35b7-40a0-abd8-6ea0b2feda3c",
