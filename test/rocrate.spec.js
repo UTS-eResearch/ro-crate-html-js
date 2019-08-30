@@ -156,6 +156,24 @@ describe("IDs and identifiers", function() {
 		expect(rid).to.be.an('array').and.to.not.be.empty;
 	});
 
+	it("can read an identifier from the root dataset", function() {
+		const crate = newCrate();
+		crate.index();
+		const myId = uuid();
+		const namespace = "local-id";
+		const idCreated= crate.addIdentifier({
+			'identifier': myId,
+			"name": namespace
+		});
+
+		const jsonld = crate.getJson();
+
+		const crate2 = new ROCrate(jsonld);
+
+		crate2.index();
+		const myId2 = crate2.getNamedIdentifier(namespace);
+		expect(myId2).to.equal(myId);
+	});
 	
 
 

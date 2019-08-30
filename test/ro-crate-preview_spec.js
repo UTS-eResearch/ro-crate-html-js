@@ -23,7 +23,6 @@ const ROCrate = require('../lib/rocrate');
 
 const chai = require('chai');
 chai.use(require('chai-fs'));
-console.log(Preview);
 
 describe('single item rendering', function () {
     it('should create a simple table', async function () {
