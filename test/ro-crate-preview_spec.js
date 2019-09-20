@@ -21,6 +21,7 @@ const fs = require ('fs-extra');
 const Preview = require('../lib/ro-crate-preview-wrapper');
 const ROCrate = require('../lib/rocrate');
 
+
 const chai = require('chai');
 chai.use(require('chai-fs'));
 
@@ -44,6 +45,16 @@ describe('metadata summary', function () {
     });
 });
 
+describe('actual file', function () {
+  it('should create an html file', async function () {
+    json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+    const preview = new Preview(new ROCrate(json));
+    const html = await preview.render();
+    // Worst test ever
+    console.log(html);
+    assert.equal(html.search(/^\s+<html>/), 0);
+  });
+});
 
 describe('datacite', function () {
   it('should create a datacite-compatible file', async function () {

@@ -16,9 +16,10 @@
   "author": "UTS eResearch Team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "ejs": "^2.7.1",
     "fs-extra": "^8.1.0",
     "path": "^0.12.7",
-    "cheerio": "^1.0.0-rc.3",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
