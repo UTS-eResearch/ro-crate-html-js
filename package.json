@@ -1,6 +1,7 @@
 {
   "name": "ro-crate",
-  "version": "1.2.8",
+
+  "version": "1.2.10",
   "description": "Research Object Crate (RO-Crate) utilities for making and consuming crates",
   "main": "index.js",
   "scripts": {
