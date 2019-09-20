@@ -48,7 +48,7 @@ describe("JSON-LD helper simple tests", function () {
 	crate.index();
 	const rootDataset = crate.getRootDataset();
     assert(utils.hasType(rootDataset, "Dataset"));
-    assert.equal(crate.json_ld["@context"] , "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
+    assert.equal(crate.json_ld["@context"] , "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.3-DRAFT/context.json", "Has standard context (defined in ./lib/defaults.js)")
     done();
   });
 });
