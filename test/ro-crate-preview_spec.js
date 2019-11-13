@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const assert = require('assert');
 const fs = require ('fs-extra');
 const Preview = require('../lib/ro-crate-preview-wrapper');
+const HtmlFile = require('../lib/ro-crate-preview-file');
 const ROCrate = require('../lib/rocrate');
 
 
@@ -49,7 +50,8 @@ describe('actual file', function () {
   it('should create an html file', async function () {
     json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
     const preview = new Preview(new ROCrate(json));
-    const html = await preview.render();
+    const f = new HtmlFile(preview);
+    const html = await f.render();
     // Worst test ever
     console.log(html);
     assert.equal(html.search(/^\s+<html>/), 0);
@@ -67,6 +69,18 @@ describe('datacite', function () {
 
   });
 });
+
+
+describe('render a file', function () {
+  it('should create a file', async function () {
+    json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+    const preview = new Preview(new ROCrate(json));
+    const f = new HtmlFile(preview);
+    fs.writeFileSync("test.html", await f.render());
+  });
+});
+
+
 
 
 after(function () {
