@@ -32,7 +32,7 @@ describe('single item rendering', function () {
       const crate = new ROCrate(json);
       const preview = new Preview(crate);
       const table = await preview.renderMetadataForItem(preview.rootId);
-      assert.equal(table.find("tr").length, 16, "Has the right number of rows");
+      assert.equal(table.find("tr").length, 15, "Has the right number of rows");
     });
 });
 
@@ -53,7 +53,6 @@ describe('actual file', function () {
     const f = new HtmlFile(preview);
     const html = await f.render();
     // Worst test ever
-    console.log(html);
     assert.equal(html.search(/^\s+<html>/), 0);
   });
 });
