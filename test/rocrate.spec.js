@@ -174,8 +174,28 @@ describe("IDs and identifiers", function() {
 		const myId2 = crate2.getNamedIdentifier(namespace);
 		expect(myId2).to.equal(myId);
 	});
+
+	it ("can turn a flattened graph into a nested object", async function() {
+	  json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+	  const crate = new ROCrate(json);
+	  await crate.objectify();
+	  console.log(crate.objectified);
+	  
+	});
 	
 
+	it ("it doesn't die if you feed it circular references", async function() {
+		json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+		const crate = new ROCrate(json);
+		crate.index();
+		const root = crate.getRootDataset();
+		const creator = crate.getItem(root.creator["@id"]);
+		creator.partOf = [{"@id": "./"}];
+		await crate.objectify();
+		console.log(crate.objectified);
+		console.log(crate.objectified.creator.name)
+		console.log(crate.objectified.creator.partOf)
+	  });
 
 });
 
