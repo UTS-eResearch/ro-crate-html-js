@@ -192,7 +192,7 @@ describe("IDs and identifiers", function() {
 		const creator = crate.getItem(root.creator["@id"]);
 		creator.partOf = [{"@id": "./"}];
 		await crate.objectify();
-		console.log(crate.objectified);
+		console.log(JSON.stringify(crate.objectified,null,2));
 		console.log(crate.objectified.creator.name)
 		console.log(crate.objectified.creator.partOf)
 	  });
