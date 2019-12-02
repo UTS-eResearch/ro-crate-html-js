@@ -16,7 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 const fs = require("fs");
-const path = require("path");
 const assert = require("assert");
 const _ = require('lodash');
 const expect = require("chai").expect;
@@ -24,6 +23,7 @@ const ROCrate = require("../lib/rocrate");
 const jsonUtils = require("../lib/utils");
 const defaults = require("../lib/defaults");
 const uuid = require('uuid').v4;
+
 
 function newCrate(graph) {
 	if (!graph) {graph = [defaults.datasetTemplate, defaults.metadataFileDescriptorTemplate]};
@@ -174,8 +174,29 @@ describe("IDs and identifiers", function() {
 		const myId2 = crate2.getNamedIdentifier(namespace);
 		expect(myId2).to.equal(myId);
 	});
+
+	it ("can turn a flattened graph into a nested object", async function() {
+	  json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+	  const crate = new ROCrate(json);
+	  crate.objectify();
+	  assert(Array.isArray(crate.objectified.name))
+	  assert.equal(crate.objectified.name.length, 1)
+	  //console.log(crate.objectified);
+	  
+	});
 	
 
+	it ("it doesn't die if you feed it circular references", async function() {
+		json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
+		const crate = new ROCrate(json);
+		crate.index();
+		const root = crate.getRootDataset();
+		const creator = crate.getItem(root.creator["@id"]);
+		creator.partOf = [{"@id": "./"}];
+		crate.objectify();
+		//console.log(JSON.stringify(crate.objectified,null,2));
+		assert.equal(crate.objectified.creator[0].name[0], "Peter Sefton")
+	  });
 
 });
 
