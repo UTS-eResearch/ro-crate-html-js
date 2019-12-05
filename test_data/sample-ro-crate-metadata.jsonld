@@ -1,6 +1,12 @@
 {
-  "@context": "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.3-DRAFT/context.json",
+  "@context": "https://raw.githubusercontent.com/ResearchObject/ro-crate/master/docs/0.2-DRAFT/context.json",
   "@graph": [
+     {
+      "@type": "CreativeWork",
+      "@id": "ro-crate-metadata.jsonld",
+      "identifier": "ro-crate-metadata.jsonld",
+      "about": {"@id": "./"}
+    },
     {
       "@id": "540e26ba-35b7-40a0-abd8-6ea0b2feda3c",
       "@type": "GeoCoordinates",
@@ -2609,14 +2615,8 @@
       "name": "CC BY-NC-SA 3.0 AU"
     },
     {
-      "@type": "CreativeWork",
-      "@id": "ro-crate-metadata.jsonld",
-      "identifier": "ro-crate-metadata.jsonld",
-      "about": {"@id": "./"}
-  },
-    {
-      "@id": "./",
       "identifier": "https://dx.doi.org/10.5281/zenodo.1009240",
+      "@id": "./",
       "@type": "Dataset",
       "citation": {
         "@id": "http://dx.doi.org/10.1000/123456"
@@ -2627,7 +2627,7 @@
       "contentLocation": {
         "@id": "http://www.geonames.org/8152662/catalina-park.html"
       },
-
+      "path": "./",
       "creator": {
         "@id": "http://orcid.org/0000-0002-3545-944X"
       },
@@ -2673,7 +2673,8 @@
     {
       "@id": "lots_of_little_files",
       "@type": "Dataset",
-            "description": "This directory contains many small files, that we’re not going to describe in detail.",
+      "path": "lots_of_little_files",
+      "description": "This directory contains many small files, that we’re not going to describe in detail.",
       "identifier": "./lots_of_little_files",
       "name": "Too many files"
     },
@@ -2689,7 +2690,8 @@
     {
       "@id": "pics",
       "@type": "Dataset",
-            "description": "This directory contains the images for the research project",
+      "path": "pics",
+      "description": "This directory contains the images for the research project",
       "hasPart": [
         {
           "@id": "pics/2017-06-11 12.56.14.jpg"
@@ -2708,7 +2710,8 @@
       "@id": "pics/2017-06-11 12.56.14.jpg",
       "@type": "ImageObject",
       "contentSize": "5114778",
-            "creator": {
+      "path": "pics/2017-06-11 12.56.14.jpg",
+      "creator": {
         "@id": "http://orcid.org/0000-0002-3545-944X"
       },
       "description": "Depicts a fence at a disused motor racing venue with the front part of a slightly out of focus black dog in the foreground.",
@@ -3337,7 +3340,8 @@
       "@id": "pics/sepia_fence.jpg",
       "@type": "ImageObject",
       "contentSize": "4855037",
-            "description": "Sepia tone version of my fence/dog pic",
+      "path": "pics/sepia_fence.jpg",
+      "description": "Sepia tone version of my fence/dog pic",
       "encodingFormat": "JPEG File Interchange Format",
       "exifData": [
         {
@@ -3965,7 +3969,8 @@
     {
       "@id": "pics/thumbs",
       "@type": "Dataset",
-            "hasPart": [
+      "path": "pics/thumbs",
+      "hasPart": [
         {
           "@id": "pics/thumbs/2017-06-11 12.56.14.png"
         },
@@ -3980,7 +3985,8 @@
       "@id": "pics/thumbs/2017-06-11 12.56.14.png",
       "@type": "File",
       "contentSize": "20594",
-            "encodingFormat": "Portable Network Graphics",
+      "path": "pics/thumbs/2017-06-11 12.56.14.png",
+      "encodingFormat": "Portable Network Graphics",
       "fileFormat": "http://www.nationalarchives.gov.uk/PRONOM/fmt/11",
       "name": "pics/thumbs/2017-06-11 12.56.14.png"
     },
@@ -3988,7 +3994,8 @@
       "@id": "pics/thumbs/sepia_fence.png",
       "@type": "File",
       "contentSize": "20524",
-            "encodingFormat": "Portable Network Graphics",
+      "path": "pics/thumbs/sepia_fence.png",
+      "encodingFormat": "Portable Network Graphics",
       "fileFormat": "http://www.nationalarchives.gov.uk/PRONOM/fmt/11",
       "name": "pics/thumbs/sepia_fence.png"
     }
