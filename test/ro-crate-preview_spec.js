@@ -80,6 +80,15 @@ describe('render a file', function () {
 });
 
 
+describe('val.match bug with integer ContentSize', function () {
+  it('should create a file from an ro-crate with an integer value', async function () {
+    json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata-integer.jsonld"));
+    const preview = new Preview(new ROCrate(json));
+    const f = new HtmlFile(preview);
+    fs.writeFileSync("test.html", await f.render());
+  });
+});
+
 
 
 after(function () {
