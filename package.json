@@ -19,6 +19,7 @@
   "author": "UTS eResearch Team",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "commander": "^4.0.1",
     "ejs": "^2.7.1",

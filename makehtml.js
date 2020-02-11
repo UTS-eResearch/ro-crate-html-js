@@ -50,22 +50,14 @@ program
   .action(function(files) {
     paths = files;
   })
-  .option("-b,  --bag [bag-dir]", "Create Bagit Bag(s) under [bag-dir])")
-  .option("-n,  --no", "No Citation - only applies ith --bag")
-  .option(
-    "-z,  --zip",
-    "URL of zipped version")
+ 
   .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory")
-  .option(
-    "-u, --url [distro]",
-    "Distribution URL"
-  );
-var depth = 0;
+  
 program.parse(process.argv);
 
 
 if (!program.rawArgs.length || !paths) program.help();
 
 for (let p of paths) {
-  render(p, program.zip, program.cratescript);
+  render(p, program.cratescript);
 }
