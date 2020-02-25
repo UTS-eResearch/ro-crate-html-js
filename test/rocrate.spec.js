@@ -32,12 +32,12 @@ function newCrate(graph) {
 }
 
 
-describe("JSON-LD helper simple tests", function () {
+describe("Simple tests", function () {
   var test_path;
   const utils = new jsonUtils();
 
   it("Test basic setup", function (done) {
-	// No Datadet
+	// No Dataset
 	const dudCrate = newCrate();	
 	try {
 		dudCrate.index();
@@ -48,10 +48,26 @@ describe("JSON-LD helper simple tests", function () {
 	crate.index();
 	const rootDataset = crate.getRootDataset();
     assert(utils.hasType(rootDataset, "Dataset"));
-    assert.equal(crate.json_ld["@context"] , "https://researchobject.github.io/ro-crate/1.0/context.jsonld", "Has standard context (defined in ./lib/defaults.js)")
-    done();
+    assert.equal(crate.utils.asArray(crate.json_ld["@context"])[0] , "https://researchobject.github.io/ro-crate/1.0/context.jsonld", "Has standard context (defined in ./lib/defaults.js)")
+	
+	done();
   });
 });
+
+describe("Context", function() {
+	it("Test basic setup", async function () {
+	  this.timeout(5000); 
+	  // No Dataset
+	  const crate = new ROCrate();
+	  crate.index();
+	  await crate.resolveContext();
+	  assert.equal(crate.resolveTerm("name"), "http://schema.org/name")
+	  assert.equal(crate.resolveTerm("@vocab"), "http://schema.org/")
+	  crate.json_ld["@context"][1]["new_term"] = "http://example.com/new_term"
+	  await crate.resolveContext();
+	  assert.equal(crate.resolveTerm("new_term"), "http://example.com/new_term")
+	});
+  });
 
 describe("Basic graph item operations", function() {
 	const graph = [
@@ -100,7 +116,7 @@ describe("Basic graph item operations", function() {
 describe("IDs and identifiers", function() {
 
 	it("can generate unique ids", function() {
-		const crate = newCrate();
+		const crate = newCrate();	
 		crate.index();
 		const N = 20;
 
