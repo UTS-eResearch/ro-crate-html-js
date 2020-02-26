@@ -66,6 +66,23 @@ describe("Context", function() {
 	  crate.json_ld["@context"][1]["new_term"] = "http://example.com/new_term"
 	  await crate.resolveContext();
 	  assert.equal(crate.resolveTerm("new_term"), "http://example.com/new_term")
+
+
+	});
+  });
+
+  describe("schema.org Context", function() {
+	it("Can undersdand indirection", async function () {
+	  this.timeout(15000); 
+	  // No Dataset
+	  const crate = new ROCrate();
+	  crate.index();
+	  crate.json_ld["@context"] = "http://schema.org/"
+	  await crate.resolveContext();
+	  assert.equal(crate.resolveTerm("name"), "http://schema.org/name")
+	  assert.equal(crate.resolveTerm("@vocab"), "http://schema.org/")
+
+
 	});
   });
 

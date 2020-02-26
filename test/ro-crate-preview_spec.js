@@ -28,6 +28,7 @@ chai.use(require('chai-fs'));
 
 describe('single item rendering', function () {
     it('should create a simple table', async function () {
+      this.timeout(5000); 
       json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
       const crate = new ROCrate(json);
       const preview = new Preview(crate);
@@ -37,6 +38,8 @@ describe('single item rendering', function () {
 });
 
 describe('metadata summary', function () {
+  this.timeout(5000); 
+
     it('should create multipe metadata tables', async function () {
       json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld"));
       const preview = new Preview(new ROCrate(json));
