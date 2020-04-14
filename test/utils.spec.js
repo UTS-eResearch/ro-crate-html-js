@@ -21,16 +21,12 @@ const assert = require("assert");
 const jsonUtils = require("../lib/utils");
 
 describe("JSON-LD utils simple tests", function () {
-  const utils = new jsonUtils();
-  it("Test basic indexing", function (done) {
-    const testItem = {"@type": "Person"}
-    assert(!utils.hasType(testItem, "Dataset"), "No false positive");
-    utils.addType(testItem, "Dataset")
-    assert(utils.hasType(testItem, "Dataset"), "Has type Dataset");
-    done();
-  });
- 
+    const utils = new jsonUtils();
+    it("Test basic indexing", function (done) {
+        const testItem = { "@type": "Person" };
+        assert(!utils.hasType(testItem, "Dataset"), "No false positive");
+        utils.addType(testItem, "Dataset");
+        assert(utils.hasType(testItem, "Dataset"), "Has type Dataset");
+        done();
+    });
 });
-
-
-

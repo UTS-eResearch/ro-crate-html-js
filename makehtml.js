@@ -19,45 +19,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var paths = undefined;
 const path = require("path");
-const ejs  = require("ejs");
+const ejs = require("ejs");
 
-const Preview = require('./lib/ro-crate-preview-wrapper');
-const HtmlFile = require('./lib/ro-crate-preview-file');
-const ROCrate = require('./lib/rocrate');
+const Preview = require("./lib/ro-crate-preview-wrapper");
+const HtmlFile = require("./lib/ro-crate-preview-file");
+const { ROCrate } = require("ro-crate");
 
 const program = require("commander");
 const defaults = require("./lib/defaults.js");
 const htmlFileName = defaults.html_file_name;
 const metadata_file_name = defaults.metadata_json_file_name;
-const fs = require("fs-extra")
+const fs = require("fs-extra");
 var dirs = undefined;
 
 async function render(metadataPath, zip, script) {
-  json = JSON.parse(fs.readFileSync(metadataPath));
-  const crate = new ROCrate(json);
-  const preview = new Preview(crate);
-  const f = new HtmlFile(preview);
-  newPath = path.join(path.dirname(metadataPath), defaults.roCratePreviewFileName);
-  fs.writeFileSync(newPath, await f.render(zip, script));
+    json = JSON.parse(fs.readFileSync(metadataPath));
+    const crate = new ROCrate(json);
+    const preview = new Preview(crate);
+    const f = new HtmlFile(preview);
+    newPath = path.join(
+        path.dirname(metadataPath),
+        defaults.roCratePreviewFileName
+    );
+    fs.writeFileSync(newPath, await f.render(zip, script));
 }
 
 program
-  .version("0.1.0")
-  .description(
-    "Generates an HTML preview file for a Research-Object crate"
-  )
-  .arguments("<files...>")
-  .action(function(files) {
-    paths = files;
-  })
- 
-  .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory")
-  
-program.parse(process.argv);
+    .version("0.1.0")
+    .description("Generates an HTML preview file for a Research-Object crate")
+    .arguments("<files...>")
+    .action(function (files) {
+        paths = files;
+    })
 
+    .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory");
+
+program.parse(process.argv);
 
 if (!program.rawArgs.length || !paths) program.help();
 
 for (let p of paths) {
-  render(p, program.cratescript);
+    render(p, program.cratescript);
 }
