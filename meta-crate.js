@@ -15,13 +15,14 @@ const ROCrate = require("ro-crate").ROCrate;
 program
   .version("0.1.0")
   .description(
-    "Creates a meta-crate that wraps upo other crates"
+    "Creates a meta-crate that wraps up other crates"
   )
   .arguments("<d>")
   .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory")
   .option("-d, --directory [dir]", "Data directory which should contain crates as sub directories")
   .option("-n, --name [name]", "Name for this crate", "Untitled")
   .option("-t, --description [description]", "Description for this crate", "No description provided")
+  .option("-u, --url [url]", "URL to prepend to crate IDs", "https://data.research.uts.edu.au/examples/ro-crate/examples/src/")
 
   .action((d) => {crateDir = d})
 
@@ -44,7 +45,7 @@ async function main(program) {
     for (let d of  await fs.readdir(program.directory)) {
         console.log(d);
         var p = path.join(program.directory, d, metadataFilename)
-        const id = `${d}/`;
+        const id = `${program.url}${d}/`;
         console.log(p)
         if  (!await fs.exists(p)) {
             p = `${p}ld`;
