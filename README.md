@@ -16,10 +16,20 @@ To compile the rendering script for an RO-Crate HTML file (ro-crate-preview.html
 
 ```browserify lib/entry.js -o lib/crate.js```
 
+### Make crates that contain other crates w/ an HTML page
+
+To make a crate that 'wraps' a series of crates in sub directories:
+
+```
+metacrate  -d directory_with_crates_in -n "Sample RO-Crates" -t "This RO-Crate links to other crates"
+````
+
 
 ### Create a static site
 
 TODO - coming soon
+
+
 
 
 
