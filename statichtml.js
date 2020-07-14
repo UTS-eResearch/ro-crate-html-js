@@ -6,8 +6,8 @@ const HtmlFile = require("ro-crate").HtmlFile;
 const ROCrate = require("ro-crate").ROCrate;
 const _ = require("lodash");
 const {segmentPath, display, makeHtml} = require("./lib/rendering");
-const Config = require("./lib/static-html-config");
-const config = new Config();
+const pruneCrate = require('./lib/prune-crate');
+
 
 program
   .version("0.1.0")
@@ -15,24 +15,22 @@ program
     "Extracts data from a spreadsheet to make an RO crate"
   )
   .arguments("<d>")
-  .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory")
-  .option("-d, --data [data]", "Data directory from which to copy image files")
-  .option("-r, --repoPath [repoPath]", "Data directory from which to copy image files")
+  .option("-c, --config [conf]", "configuration file")
+  .option("-r, --output-path [rep]", "Directory into which to write output", null)
   .action((d) => {crateDir = d})
 
 
 program.parse(process.argv);
-const crateScript = program.cratescript;
-const repoPath = program.repoPath;
+const outPath = program.outputPath ?  program.outputPath : crateDir;
 
-async function makeRepo(repoPath) {
-    await fs.mkdirp(repoPath);
+async function makeRepo(outPath) {
+    await fs.mkdirp(outPath);
   }
 
 
   
 
-function indexByType(crate) {
+function indexByType(crate, config) {
     const types = {}
     for (let item of crate.getGraph()) {
         if (!(item["@id"] === "./" || item["@id"].match(/^ro-crate-metadata.json$/))){
@@ -50,57 +48,10 @@ function indexByType(crate) {
     return types;
 }
 
-function getLinkedItems(item, sourceCrate, targetCrate, isExtraContext) {
-    // Fetch everything linked from this item that is NOT going to become its own item
-    // Also, change links
-    if (item["@reverse"] && !isExtraContext) {
-        extractProps(item["@reverse"] , sourceCrate, item["@reverse"], targetCrate, isExtraContext); 
-    }
-    extractProps(item, sourceCrate, item, targetCrate, isExtraContext);
-}
 
-
-
-function extractProps(vals, sourceCrate, item, targetCrate, isExtraContext){
-    // Follow links and save the result
-
-    // What do we keep?
-    // Anything that's needed for context that is:
-    // * Not going to get its own page - OR
-    // * A special bit of context (isExtraContext) we do want but we don't want all the things it happens to link to
-
-    for (let prop of Object.keys(vals)) {
-
-        for (let val of sourceCrate.utils.asArray(item[prop])) {
-            if (val["@id"]) {
-                const potentialItem = sourceCrate.getItem(val["@id"]);
-                if (potentialItem) {
-                    
-                    if (config.followProperty[prop]) { // Always follow this kind of property
-                        if (!targetCrate.getItem(val["@id"])) {
-                            var     newItem = _.cloneDeep(potentialItem);
-                            getLinkedItems(potentialItem, sourceCrate, targetCrate, true);// config.collectionTypes.filter(value =>sourceCrate.utils.asArray(potentialItem["@type"]).includes(value)).length);
-                            newItem["@reverse"] = {};
-                            targetCrate.addItem(newItem);
-
-                        } 
-                    }
-                    else if (config.hasOwnPage(potentialItem)) {
-                    // TODO -  munge link to point to the _other_ object
-                    }
-                    else if (!targetCrate.getItem(val["@id"])) {
-                        targetCrate.addItem(potentialItem);
-                        getLinkedItems(potentialItem, sourceCrate, targetCrate, false);
-                    }
-                }
-            }
-        }
-    
-}
-}
-
-async function main(file, crateScript) {
-    repo = await makeRepo(repoPath);
+async function main(file) {
+    repo = await makeRepo(outPath);
+    const config = JSON.parse(await fs.readFile(program.config));
     // load the crate
     const crate = new ROCrate(JSON.parse(await fs.readFile(path.join(crateDir, "ro-crate-metadata.json"))));
     crate.index();
@@ -109,7 +60,7 @@ async function main(file, crateScript) {
     repoCrate.index();
     repoRoot = repoCrate.getRootDataset();
     repoRoot.hasPart = [];
-    const types = indexByType(crate);
+    const types = indexByType(crate, config);
     for (let type of Object.keys(types)) {
         const collection = 
                 {"@id": `#type:${type}`,
@@ -122,19 +73,16 @@ async function main(file, crateScript) {
         repoRoot.hasPart.push({"@id": collection["@id"]});
 
         for (let item of types[type]) {
-            const itemCrate = new ROCrate();
-            itemCrate.index();
-            itemCrate.addItem(item);
+            const itemCrate = pruneCrate(item, crate, config);
             const itemCrateRoot = itemCrate.getRootDataset();
             itemCrateRoot.name = item.name;
             itemCrateRoot.about = {"@id": item.id};
             itemCrate._relPath = segmentPath(item["@id"]);
-            itemCrate._dirPath = path.join(repoPath, itemCrate._relPath)
+            itemCrate._dirPath = path.join(outPath, itemCrate._relPath)
             await fs.mkdirp(itemCrate._dirPath);
             itemCrate._htmlpath = path.join(itemCrate._dirPath, "ro-crate-preview.html");
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
             // TODO build the crate - follow all things that are not gonna get their own page && Link to the 
-            getLinkedItems(item, crate, itemCrate);
             // TODO Make nice HTML - link to the items HTML page - page per type?
             var html = makeHtml(item, itemCrate);
             collection.hasMember.push({"@id": item["@id"]});
@@ -162,11 +110,11 @@ async function main(file, crateScript) {
             }
         }
     }
-    await fs.writeFile(path.join(repoPath, "ro-crate-metadata.json"), JSON.stringify(repoCrate.json_ld, null, 2));
-    fs.writeFileSync(path.join(repoPath, "ro-crate-preview.html"), makeHtml(repoRoot, repoCrate));
+    // await fs.writeFile(path.join(outPath, "ro-crate-metadata.json"), JSON.stringify(repoCrate.json_ld, null, 2));
+    await fs.writeFile(path.join(outPath, "ro-crate-preview.html"), makeHtml(repoRoot, repoCrate));
 }
 
-main(crateDir, crateScript);
+main(crateDir);
 
 
 
