@@ -1,0 +1,23 @@
+{
+    "collectionTypes": ["Person", "Place"],
+    "datasetProperty": {"Person": "about"},
+    "types": {"Person" : {
+                            "props" :  {"birthPlace": null},
+                            "reverseProps": {"object": 
+                                {"types" :  
+                                    {"Action" : {
+                                            "props" :  {"location":
+                                            {"types": {"Place": {"props": {"geo": null}}}}}
+                                            }
+                                }
+    
+                            }
+                            }
+                },
+                "Place":   {"reverseProps": {"location": {"types": {"Action" : {
+                    "props" :  {"object": null}
+                    
+                    }
+        }}}      
+        }
+}}
