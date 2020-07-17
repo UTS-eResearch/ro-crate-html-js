@@ -6,7 +6,7 @@ const HtmlFile = require("ro-crate").HtmlFile;
 const ROCrate = require("ro-crate").ROCrate;
 const _ = require("lodash");
 const {segmentPath, display, makeHtml} = require("./lib/rendering");
-const pruneCrate = require('./lib/prune-crate');
+const CratePruner = require('./lib/prune-crate');
 
 
 program
@@ -73,7 +73,8 @@ async function main(file) {
         repoRoot.hasPart.push({"@id": collection["@id"]});
 
         for (let item of types[type]) {
-            const itemCrate = pruneCrate(item, crate, config);
+            const Pruner = new CratePruner( crate, config)
+            const itemCrate = Pruner.prune(item);
             const itemCrateRoot = itemCrate.getRootDataset();
             itemCrateRoot.name = item.name;
             itemCrateRoot.about = {"@id": item.id};

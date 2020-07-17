@@ -2,12 +2,12 @@
     "collectionTypes": ["Person", "Place"],
     "datasetProperty": {"Person": "about"},
     "types": {"Person" : {
-                            "props" :  {"birthPlace": null},
+                            "props" :  {"birthPlace": {}},
                             "reverseProps": {"object": 
                                 {"types" :  
                                     {"Action" : {
                                             "props" :  {"location":
-                                            {"types": {"Place": {"props": {"geo": null}}}}}
+                                            {"types": {"Place": {"props": {"geo": {}}}}}}
                                             }
                                 }
     
@@ -15,7 +15,7 @@
                             }
                 },
                 "Place":   {"reverseProps": {"location": {"types": {"Action" : {
-                    "props" :  {"object": null}
+                    "props" :  {"object": {}}
                     
                     }
         }}}      

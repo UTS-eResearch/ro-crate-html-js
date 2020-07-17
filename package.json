@@ -8,8 +8,9 @@
         "test:watch": "./node_modules/.bin/mocha --watch"
     },
     "bin": {
-        "makehtml": "makehtml.js",
-        "metacrate": "meta-crate.js"
+        "rochtml": "roc-html.js",
+        "metacrate": "meta-crate.js",
+        "rocstatic": "roc-static-html.js"
     },
     "repository": {
         "type": "git",
