@@ -83,8 +83,7 @@ async function main(file) {
             await fs.mkdirp(itemCrate._dirPath);
             itemCrate._htmlpath = path.join(itemCrate._dirPath, "ro-crate-preview.html");
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
-            // TODO build the crate - follow all things that are not gonna get their own page && Link to the 
-            // TODO Make nice HTML - link to the items HTML page - page per type?
+         
             var html = makeHtml(item, itemCrate);
             collection.hasMember.push({"@id": item["@id"]});
             //const newItem = _.clone(item);
@@ -111,8 +110,12 @@ async function main(file) {
             }
         }
     }
-    // await fs.writeFile(path.join(outPath, "ro-crate-metadata.json"), JSON.stringify(repoCrate.json_ld, null, 2));
     await fs.writeFile(path.join(outPath, "ro-crate-preview.html"), makeHtml(repoRoot, repoCrate));
+    await fs.mkdirp(path.join(outPath, "ro-crate-preview_files/assets"));
+    await fs.copyFile(path.join(__dirname, "assets","tailwind",  "tailwind.css"), path.join(outPath, "ro-crate-preview_files/assets/tailwind.css"));
+    await fs.copyFile(path.join(__dirname, "assets", "tailwind", "site.css"), path.join(outPath, "ro-crate-preview_files/assets/site.css"));
+
+
 }
 
 main(crateDir);
