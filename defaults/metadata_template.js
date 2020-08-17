@@ -1,89 +1,48 @@
 
-function render(data) {
+function render(di, config) {
+const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem} = require('../lib/display');
 
 return `
-
 <html>
 <head>
 
+<link rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"/>
+
 
 <script type="application/ld+json"> 
-  ${data.json}
+  ${JSON.stringify(di.graph.json_ld, null, 2)}
 </script>
+
 <title>
-${data.title}
+${di.displayableProps.name}
 </title>
 
-<!--
-<link rel="stylesheet"
-      href="${data.getRootLink("/ro-crate-preview_files/assets/tailwind.css",data.crate)}"/>
-<link rel="stylesheet"
-      href="${data.getRootLink("/ro-crate-preview_files/assets/site.css",data.crate)}"/>
--->
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <meta charset='utf-8'/>
-<style>
 
-table.table {
-  padding-bottom: 300px;
-}
-</style>
 </head>
 
 
 <body>
 
-<div class="flex bg-gray-200">
-  <div class="flex-initial text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">
-    Short
-  </div>
-  <div class="flex-initial text-gray-700 text-center bg-gray-400 px-4 py-2 m-2">
-    Medium length
-  </div>
-</div>
+
 
 <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6">
  
   <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
     <div class="text-sm lg:flex-grow">
-
-    <a href="${data.getLinkToPath("/",data.crate)}" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"><span class="glyphicon glyphicon-home dataset_name">&nbsp; Home</a></span></a>
-      
-    </div>
-    <div class="text-sm lg:flex-grow">
-
-    <a href="${data.getLinkToMetadata("/", data.crate)}">⬇️🏷️ Download metadata</a>
-      
-    </div>
-
+    
    
   </div>
 </nav>
 
+<h1>
+${displayDisplayableProp(di.displayableProps.name, false)}
+</h1>
 
-
-
-<h1>${data.heading}</h1>
-
-<div class="container">
-<div class="jumbotron">
-
-<h1 class="item_name"></h4>
-
-
-<div class="check"></div>
-</div>
-
-
-
-<div id="summary">
-${data.content}
-
-</div>
-
-
+${displayDisplayableItem(di)}
 
 
 </body>
