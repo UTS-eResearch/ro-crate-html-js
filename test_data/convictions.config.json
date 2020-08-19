@@ -1,8 +1,13 @@
 {
     "collectionTypes": ["Person", "Place"],
     "datasetProperty": {"Person": "about"},
-    "types": {"Person" : {
-                            "props" :  {"birthPlace": {}},
+    "pageSize": 5,
+    "types": {
+        "Dataset": {
+            "props": {}
+        },
+         "Person" : {
+                            
                             "reverseProps": {"object": 
                                 {"types" :  
                                     {"Action" : {
@@ -15,9 +20,13 @@
                             }
                 },
                 "Place":   {"reverseProps": {"location": {"types": {"Action" : {
-                    "props" :  {"object": {}}
+                    "props" :  {
+                            "object": {},
+                            "location": {}
+                        }
+                        }
                     
                     }
         }}}      
         }
-}}
+}

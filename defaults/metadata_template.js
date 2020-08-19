@@ -1,16 +1,19 @@
 
 function render(di, config) {
+
 const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem} = require('../lib/display');
+
+// TODO some template selection in here...
+
 
 return `
 <html>
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<link rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous"/>
-
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 <script type="application/ld+json"> 
   ${JSON.stringify(di.graph.json_ld, null, 2)}
@@ -22,27 +25,62 @@ ${di.displayableProps.name}
 
 <meta charset='utf-8'/>
 
+<style> 
+dl {
+  padding: 0;
+  margin: 0
+}
+dt {
+  /* adjust the width; make sure the total of both is 100% */
+  background: #green;
+  padding: 0;
+  margin: 0
+}
+dd {
+  /* adjust the width; make sure the total of both is 100% */
+  background: #dd0
+  padding: 0;
+  margin: 20
+}
+details {
+  border-left-style: solid;
+  border-left-color: red;
+  margin: 20;
+  padding: 10;
+}
+
+summary {
+  font-weight: bold;
+  font-size: larger;
+
+}
+
+</style>
+
 </head>
 
 
 <body>
 
 
+<nav class="navbar">
 
-<nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6">
- 
-  <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-    <div class="text-sm lg:flex-grow">
-    
-   
-  </div>
-</nav>
+    <ul class="nav navbar-nav" >
+        <li ><a href="${di.getHomeLink()}"><span class="glyphicon glyphicon-home dataset_name">HOME</span></a></li>
+    </ul>
 
-<h1>
-${displayDisplayableProp(di.displayableProps.name, false)}
-</h1>
+  </nav>
+<div class="container">
+<div class="jumbotron">
+
+<h3 class="item_name">${displayDisplayableProp(di.displayableProps["@type"], false)}: ${displayDisplayableProp(di.displayableProps.name, false)}</h3>
+</div>
+
 
 ${displayDisplayableItem(di)}
+
+
+<a href="./ro-crate-metadata.jsonld">⬇️🏷️ Download all the metadata for <span class='name'>${displayDisplayableProp(di.displayableProps.name, false)}</span> in JSON-LD format</a>
 
 
 </body>
