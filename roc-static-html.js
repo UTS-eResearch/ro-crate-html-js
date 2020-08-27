@@ -61,9 +61,12 @@ async function main(file) {
     crate.index();
     crate.addBackLinks();
     repoRoot = crate.getRootDataset();
+    // Need to have context loaded
+    await crate.resolveContext();
 
     const Pruner = new CratePruner(crate, config);
     const repoCrate = Pruner.prune(repoRoot, config);
+    repoCrate.context = crate.context;
     repoCrate.index();
     repoRoot = repoCrate.getRootDataset();    
     repoRoot.hasPart = [];
@@ -85,6 +88,7 @@ async function main(file) {
         
         for (let item of types[type]) {
             const itemCrate = Pruner.prune(item);
+            itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
             //itemCrateRoot["@reverse"] = []; // 
             itemCrateRoot.name = item.name;
@@ -98,9 +102,16 @@ async function main(file) {
             itemCrate._htmlpath = path.join(itemCrate._dirPath, "ro-crate-preview.html");
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
 
+
+
+           
+            
             // Make  displayable Item
             const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
             dispItem.relPath = getLink(item, repoCrate);
+
+           
+
             const html = renderPage(dispItem);
 
 

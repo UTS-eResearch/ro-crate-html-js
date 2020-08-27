@@ -1,7 +1,7 @@
 {
     "collectionTypes": ["Person", "Place"],
     "datasetProperty": {"Person": "about"},
-    "pageSize": 5,
+    "pageSize": 50,
     "types": {
         "Dataset": {
             "props": {}
