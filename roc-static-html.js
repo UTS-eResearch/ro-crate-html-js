@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-
+const process = require('process');
 const program = require('commander');
 const fs = require('fs-extra');
 const path = require('path');
@@ -101,18 +101,18 @@ async function main(file) {
             await fs.mkdirp(itemCrate._dirPath);
             itemCrate._htmlpath = path.join(itemCrate._dirPath, "ro-crate-preview.html");
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
-
-
-
-           
             
             // Make  displayable Item
             const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
             dispItem.relPath = getLink(item, repoCrate);
-
-           
-
-            const html = renderPage(dispItem);
+            var template;
+            if (config.types[type].template){
+                const p = path.join(process.cwd(), path.dirname(program.config), config.types[type].template);
+                template = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].template));
+            } else {
+                template = renderPage;
+            }
+            const html = template(dispItem, template, __dirname);
 
 
 
