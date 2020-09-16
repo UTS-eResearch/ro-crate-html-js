@@ -10,7 +10,8 @@
     "bin": {
         "rochtml": "roc-html.js",
         "metacrate": "meta-crate.js",
-        "rocstatic": "node roc-static-html.js"
+        "rocstatic": "roc-static-html.js",
+        "rocschema": "roc-schema.js"
     },
     "repository": {
         "type": "git",
