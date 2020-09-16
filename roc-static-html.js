@@ -87,7 +87,10 @@ async function main(file) {
         repoRoot.hasPart.push({"@id": collection["@id"]});
         
         for (let item of types[type]) {
-            const itemCrate = Pruner.prune(item);
+            const Pruner1 = new CratePruner(crate, config);
+            
+            const itemCrate = Pruner1.prune(item);
+       
             itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
             //itemCrateRoot["@reverse"] = []; // 
@@ -103,10 +106,12 @@ async function main(file) {
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
             
             // Make  displayable Item
+            
             const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
+        
             dispItem.relPath = getLink(item, repoCrate);
             var template;
-            if (config.types[type].template){
+            if (config.types[type] && config.types[type].template){
                 const p = path.join(process.cwd(), path.dirname(program.config), config.types[type].template);
                 template = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].template));
             } else {

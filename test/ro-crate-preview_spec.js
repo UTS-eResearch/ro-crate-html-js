@@ -28,7 +28,7 @@ describe("single item rendering", function () {
     it("should create a simple table", async function () {
         this.timeout(5000);
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const crate = new ROCrate(json);
         const preview = new Preview(crate);
@@ -46,7 +46,7 @@ describe("metadata summary", function () {
 
     it("should create multipe metadata tables", async function () {
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const preview = new Preview(new ROCrate(json));
         const div = await preview.summarizeDataset();
@@ -61,7 +61,7 @@ describe("metadata summary", function () {
 describe("actual file", function () {
     it("should create an html file", async function () {
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const preview = new Preview(new ROCrate(json));
         const f = new HtmlFile(preview);
@@ -74,7 +74,7 @@ describe("actual file", function () {
 describe("datacite", function () {
     it("should create a datacite-compatible file", async function () {
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const preview = new Preview(new ROCrate(json));
         const cite = preview.makeDataCite();
@@ -99,7 +99,7 @@ describe("datacite", function () {
 describe("render a file", function () {
     it("should create a file", async function () {
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const preview = new Preview(new ROCrate(json));
         const f = new HtmlFile(preview);
@@ -110,7 +110,7 @@ describe("render a file", function () {
 describe("val.match bug with integer ContentSize", function () {
     it("should create a file from an ro-crate with an integer value", async function () {
         json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata-integer.jsonld")
+            fs.readFileSync("test_data/sample-ro-crate-metadata-integer.json")
         );
         const preview = new Preview(new ROCrate(json));
         const f = new HtmlFile(preview);

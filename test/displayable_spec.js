@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 const assert = require('assert');
-const {DisplayableItem, DisplayableProp, DisplayableValue} = require('./displayable');
+const {DisplayableItem, DisplayableProp, DisplayableValue} = require('../lib/displayable');
 const chai = require('chai');
 chai.use(require('chai-fs'));
 const ROCrate = require("ro-crate").ROCrate;

@@ -17,20 +17,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 const assert = require('assert');
-const Pruner = require('./prune-crate');
+const {DisplayableItem, DisplayableProp, DisplayableValue} = require('../lib/displayable');
+const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem, renderPage} = require('../lib/display');
+const Pruner = require('../lib/prune-crate');
+
 const chai = require('chai');
 chai.use(require('chai-fs'));
 const ROCrate = require("ro-crate").ROCrate;
 const fs = require("fs");
 
 
-describe('Pruning', function () {
-    it('Does basic pruning', function () {
+
+describe('Value', function () {
+    it('Works out how to display values', async function () {
         crate = new ROCrate();
         crate.index();
+
+        const config1 = {}
+
+        const dispVal = new DisplayableValue(crate, "Text", config1);
+        assert.equal(displayDisplayableValue(dispVal), "Text");
+
+        crate = new ROCrate();
+        crate.index();
+        await crate.resolveContext();
+
         const root = crate.getRootDataset();
         const loc1 = {"@id": "#Location1", "name": "Location 1", "@type": "geo"};
-        const place1 = {"@id": "#Place1", "name": "Place 1", "@type": "Place", "location": {"@id": loc1["@id"]}};
+        const place1 = {"@id": "#Place1", "name": "Place 1", "@type": "Place", "location": {"@id": loc1["@id"]}, "about": {"@id": "./"}};
         const item1 = {"@id": "#Person1", "name": "Person 1", "@type": "Person", "birthPlace": {"@id": place1["@id"]}};
         const doc1 = {"@id": "#doc1", "name": "Doc 1", "@type": "CreativeWork", "about": {"@id": item1["@id"]}}
 
@@ -39,48 +53,26 @@ describe('Pruning', function () {
         crate.addItem(item1);
         crate.addItem(place1);
         crate.addItem(doc1);
-        //crate.addBacklinks();
 
-        root.about = [item1["@id"]];
+        const dispVal1 = new DisplayableValue(crate, {"@id": place1["@id"]}, config1);
 
-        const config1 = {
-            "types": 
-               {"Person" : {
-                 "props" :  {"birthPlace": {}}
-               }
-            }
-        }   
-        const Pruner1 = new Pruner(crate, config1);
-        const pruned1 = Pruner1.prune(item1);
-        console.log(pruned1.json_ld["@graph"])
-        assert.equal(pruned1.getItem("#Place1").name, "Place 1");
-        assert.equal(pruned1.getGraph().length, 4);
-
-        config1.types.Person.props = {"birthPlace": {"types":  {"Place": {"props": {"location" : {}}}}}};
-        const Pruner2 = new Pruner(crate, config1);
-        const pruned2 = Pruner2.prune(item1);
-        assert.equal(pruned2.getItem("#Location1").name, "Location 1");
-        assert.equal(pruned2.getGraph().length, 5);
-     
-
-        config1.types["Person"].reverseProps =  {"about": {}};
-        item1["@reverse"] = {"about": {"@id": doc1["@id"]}}
-        const Pruner3 = new Pruner(crate, config1);
-        const pruned3 = Pruner3.prune(item1);
-        assert.equal(pruned3.getItem("#doc1").name, "Doc 1");
-        assert.equal(pruned3.getGraph().length, 6);
+        assert(displayDisplayableValue(dispVal1).startsWith(`<div id="#Place1">`));
+        root.name = "Test Crate"
+        const dispItem = new DisplayableItem(crate, "./", config1);
+    
+       
     });
 
-    it('Works on a big real crate', function () {
+     
+    it('Works on a big real crate', async function () {
         const json = JSON.parse(fs.readFileSync("test_data/convictions-metadata.json"));
         crate = new ROCrate(json);
         crate.index();
         crate.addBackLinks();
-
-        const root = crate.getRootDataset();
+        await crate.resolveContext();
         
 
-        /*
+
         const config1 = {
                 "types": {"Person" : {
                                 "props" :  {"birthPlace": {}},
@@ -100,29 +92,38 @@ describe('Pruning', function () {
         const item1 = crate.getItem("#person__VICFP_18551934_6_249");
         const Pruner1 = new Pruner(crate, config1)
         const pruned1 = Pruner1.prune(item1);
-        console.log(pruned1.getGraph());
-        assert.equal(pruned1.getItem("#person__VICFP_18551934_6_249").name, "ANDERSON, FANNY");
-        assert.equal(pruned1.getGraph().length, 7);
-        */
-        const config2 = {
-            "types": {"Dataset" : {
-                          props: {
-                            "name" :  {},
-                            "description" :  {},
-                            "reverseProps": {}    
-                         }
-                    }
-                }
-            }
-        
-        const Pruner2 = new Pruner(crate, config2)
+        pruned1.addBackLinks();
+        await pruned1.resolveContext();
+        const dispItem = new DisplayableItem(pruned1, "#person__VICFP_18551934_6_249", config1);
+        dispItem.displayFunction = displayDisplayableItem;
+        const html = renderPage(dispItem);
+        fs.writeFileSync("test.html", html);
 
-        const pruned2 = Pruner2.prune(root, config2);
-        console.log(pruned2.getGraph());
-
-
-        
+       
     });
-    
+
+
+    it('Works on a the sample crate', async function () {
+        const json = JSON.parse(fs.readFileSync("test_data/sample-ro-crate-metadata.json"));
+        crate = new ROCrate(json);
+        crate.index();
+        crate.addBackLinks();
+        await crate.resolveContext();
+        const root = crate.getRootDataset();
+        
+
+
+        const dispItem = new DisplayableItem(crate, "./", {});
+        dispItem.displayFunction = displayDisplayableItem;
+        const html = renderPage(dispItem);
+
+        fs.writeFileSync("test.html", html);
+
+       
+    });
 });
+
+  
+    
+
 

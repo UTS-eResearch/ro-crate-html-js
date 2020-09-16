@@ -5,6 +5,7 @@ const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem} 
 
 // TODO some template selection in here...
 
+di.doNotDisplayReverseProps["about"] = true;
 
 return `
 <html>
@@ -29,19 +30,20 @@ ${di.displayableProps.name}
 
 dl {
   padding: 0;
-  margin: 0
+  margin: 0;
+
 }
 dt {
   /* adjust the width; make sure the total of both is 100% */
   background: #green;
   padding: 0;
-  margin: 0
+  margin: 0;
 }
 dd {
   /* adjust the width; make sure the total of both is 100% */
   background: #dd0
   padding: 0;
-  margin: 20
+  margin-left: 20;
 }
 details {
   border-left-style: solid;
@@ -81,7 +83,7 @@ summary {
 ${displayDisplayableItem(di)}
 
 
-<a href="./ro-crate-metadata.jsonld">⬇️🏷️ Download all the metadata for <span class='name'>${displayDisplayableProp(di.displayableProps.name, false)}</span> in JSON-LD format</a>
+<a href="./ro-crate-metadata.json">⬇️🏷️ Download all the metadata for <span class='name'>${displayDisplayableProp(di.displayableProps.name, false)}</span> in JSON-LD format</a>
 
 
 </body>
