@@ -1,0 +1,61 @@
+.slider {
+    background-color: rgba(40,65,80,.85);
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+    height: 120px;
+}
+
+#leaflet-slider {
+    width: 300px;
+}
+
+#slider-timestamp {
+    width:300px;
+    margin-top:20px;
+    margin-bottom:4px;
+    background-color:#FFFFFF;
+    text-align:center;
+    border-radius:5px;
+}
+
+.float-right {
+    float: right;
+}
+
+#undefined-div {
+    margin-top: 34px;
+}
+
+#showundefined {
+    vertical-align:middle;
+    margin-top: 0;
+    margin-bottom: 2px;
+}
+
+label[for=showundefined] {
+    margin:0
+}
+
+#markerCountDiv {
+    color: pink;
+    font-weight: bold;
+}
+
+.ui-slider-range {
+    background-color: #31708f;
+}
+
+/* Left slider handle */
+.ui-slider-handle:nth-child(1) { 
+    background-color: #f4cce9 !important;
+}
+/* Right slider handle */
+.ui-slider-handle:nth-child(4) {
+    background-color: #d2e3fc !important;
+}
+
+#mapid {
+    height: 100%;
+    width: 100%;
+}
