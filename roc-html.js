@@ -27,10 +27,8 @@ const { ROCrate } = require("ro-crate");
 
 const program = require("commander");
 const defaults = require("./lib/defaults.js");
-const htmlFileName = defaults.html_file_name;
-const metadata_file_name = defaults.metadata_json_file_name;
+
 const fs = require("fs-extra");
-var dirs = undefined;
 
 async function render(metadataPath, zip, script) {
     json = JSON.parse(fs.readFileSync(metadataPath));
