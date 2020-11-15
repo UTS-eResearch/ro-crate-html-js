@@ -1,0 +1,24 @@
+theme-bg-primary{background-color:#eff0f3}theme-bg-secondary{background-color:#fffffe}theme-text-headline{color:#0d0d0d}theme-text-paragraph{color:#2a2a2a}
+/*# sourceMappingURL=/site.css.map */
+
+
+ul {
+    list-style-type: disc;
+    padding-left: theme('padding.4');
+  }
+  
+  ol {
+    list-style-type: decimal;
+    padding-left: theme('padding.4');
+  } 
+
+  h1 {
+      font-size: large;
+      font-weight: bold;
+  }
+
+
+  a {
+    color: theme('colors.blue');
+    text-decoration: underline;
+  }

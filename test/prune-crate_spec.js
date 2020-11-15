@@ -52,7 +52,7 @@ describe('Pruning', function () {
         }   
         const Pruner1 = new Pruner(crate, config1);
         const pruned1 = Pruner1.prune(item1);
-        console.log(pruned1.json_ld["@graph"])
+        //console.log(pruned1.json_ld["@graph"])
         assert.equal(pruned1.getItem("#Place1").name, "Place 1");
         assert.equal(pruned1.getGraph().length, 4);
 
@@ -102,7 +102,7 @@ describe('Pruning', function () {
         const pruned1 = Pruner1.prune(item1);
         console.log(pruned1.getGraph());
         assert.equal(pruned1.getItem("#person__VICFP_18551934_6_249").name, "ANDERSON, FANNY");
-        assert.equal(pruned1.getGraph().length, 7);
+        assert.equal(pruned1.getGraph().length, 5);
         
         const config2 = {
             "types": {"Dataset" : {
@@ -121,20 +121,74 @@ describe('Pruning', function () {
         // TODO test here
 
         const config3 = {
-            "types": {"Offence" : {
-                        "reverseProps" : {
-                            "offence": {}
-                            
+            "types": {
+        
+                "Person" : {
+                        "findPlaces": "person-geo.js",
+                        "props" :  {
+                            "birthPlace": {},
+                            "conviction": {
+                                "types" : {
+        
+                                    "Sentence" : {
+                                             "props" : {
+                                                  "offence" : {},
+                                                 "location" : {
+                                                     "types": {
+                                                         "Place" : {}
+                                                     }
+                                                 }
+                                                }
+                                            }
+                                        }
+                            } 
+                        }
+                        },
+                "Place":   {
+                    "findPlaces": "place-geo.js",
+                    "props":  {"geo" : {}},
+                    "reverseProps" : {
+                        "location": {
+                            "types": {
+                                "Sentence" : {
+                                    "props": {
+                                        "offence": {}
+                                    }
+                                }
+                            }
                         }
                     }
+        
+                },
+                "Offence" : {
+                    "findPlaces": "offence-geo.js",
+                    "reverseProps" : {
+                        "offence": {
+                            "types": 
+                            {
+                                "Sentence" : {
+                                 "props" : {"object" : {
+                                    "types": {"Person": {}}
+                                }}
+                            }
+                        }
+                        
+                    }
+                }     
                 }
             }
         
-        const Pruner3 = new Pruner(crate, config3)
-        offence = crate.getItem("#offence_VAGRANCY");
-        const pruned3 = Pruner3.prune(offence, config3);
+        }
 
-        console.log("______________", pruned3.getGraph());
+           
+        
+        const Pruner3 = new Pruner(crate, config3)
+        offence = crate.getItem("#offence_ILLEGALLY_SELLING_LIQUOR");
+        const pruned3 = Pruner3.prune(offence, config3);
+        assert.strictEqual(pruned3.getItem("#person__VICFP_18551934_8_151").name, "CROKER, BELINDA")
+        console.log(pruned3.getGraph());
+
+
 
 
         

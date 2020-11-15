@@ -9,6 +9,7 @@ const _ = require("lodash");
 const {segmentPath, getLink} = require("./lib/rendering");
 const {renderPage} = require('./lib/display');
 const {DisplayableItem} = require('./lib/displayable');
+const GeoJSON = require("geojson");
 
 const CratePruner = require('./lib/prune-crate');
 
@@ -64,8 +65,8 @@ async function main(file) {
     // Need to have context loaded
     await crate.resolveContext();
 
-    const Pruner = new CratePruner(crate, config);
-    const repoCrate = Pruner.prune(repoRoot, config);
+    const Pruner = new CratePruner(_.clone(crate), _.clone(config));
+    const repoCrate = Pruner.prune(repoRoot, _.clone(config));
     repoCrate.context = crate.context;
     repoCrate.index();
     repoRoot = repoCrate.getRootDataset();    
@@ -85,18 +86,15 @@ async function main(file) {
             }
         repoCrate.addItem(collection);
         repoRoot.hasPart.push({"@id": collection["@id"]});
-        
+
         for (let item of types[type]) {
-            const Pruner1 = new CratePruner(crate, config);
-            
+            const Pruner1 = new CratePruner(_.clone(crate), _.clone(config));
             const itemCrate = Pruner1.prune(item);
-       
+            
             itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
             //itemCrateRoot["@reverse"] = []; // 
             itemCrateRoot.name = item.name;
-
-         
             itemCrate._relPath = segmentPath(item["@id"]);
             itemCrate._dirPath = path.join(outPath, itemCrate._relPath)
 
@@ -106,28 +104,46 @@ async function main(file) {
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
             
             // Make  displayable Item
-            
             const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
-        
             dispItem.relPath = getLink(item, repoCrate);
             var template;
             if (config.types[type] && config.types[type].template){
-                const p = path.join(process.cwd(), path.dirname(program.config), config.types[type].template);
                 template = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].template));
             } else {
                 template = renderPage;
             }
-            const html = template(dispItem, template, __dirname);
-
-
+            if (config.types[type] && config.types[type].findPlaces){
+                findPlaces = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].findPlaces));
+                places = findPlaces(dispItem);
+            } else {
+                places = [];
+            }
+            if (places.length > 0) {
+                const placeDir = path.join(outPath, "_GeoJSON", type);
+                await fs.mkdirp(placeDir);
+                const jsonFile = GeoJSON.parse(places, {Point: ['latitude', 'longitude']})
+                const jsonString = JSON.stringify(jsonFile,null,2)
+                const placesFile = path.join(placeDir, item["@id"].replace(/\W/g,"_")+".geo.json");
+                await fs.writeFile(placesFile, jsonString);
+                itemCrate.addItem({
+                    "@id": placesFile,
+                    "@type": "File",
+                    "name": `GeoJSON for ${item["@id"]}`,
+                    "encodingFormat": "geoJSON-TODO"
+                })
+                const i = itemCrate.getItem(item["@id"]);
+                const part = itemCrate.utils.asArray(i.hasFile)
+                part.push({"@id": placesFile});
+                i.hasFile = part;
+               
+            }
+            // TODO - have to make a second DI here cos places uses DI instead of a crate & item - probably should change that
+            const dispItem1 = new DisplayableItem(itemCrate, item["@id"], config);
+            dispItem1.relPath = getLink(item, repoCrate);
+            const html = template(dispItem1, config, __dirname, places);
 
             await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)
-            // Fetch the files - TODO - need much smarter type matching
-            for (let item of itemCrate.getGraph().filter(i => i["@type"].includes("File"))) {
-                // TODO LINK TO FILES CORRECTLY
-                
-            }
 
             // Add item to relevant collection
             collection.hasMember.push({"@id": item["@id"]});
@@ -136,7 +152,7 @@ async function main(file) {
         }
     }
     const dispItem = new DisplayableItem(repoCrate, "./", config);
-    const html = renderPage(dispItem);
+    const html = renderPage(dispItem, config);
     await fs.writeFile(path.join(outPath, "ro-crate-preview.html"), html);
     await fs.mkdirp(path.join(outPath, "ro-crate-preview_files/assets"));
     //await fs.copyFile(path.join(__dirname, "assets","tailwind",  "tailwind.css"), path.join(outPath, "ro-crate-preview_files/assets/tailwind.css"));

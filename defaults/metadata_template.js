@@ -1,12 +1,11 @@
 
-function render(di, config) {
+function render(di, config, libPath, places) {
 
-const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem} = require('../lib/display');
+  const {displayDisplayableValue, displayDisplayableProp, displayDisplayableItem, displayPlaces} = require('../lib/display');
 
 // TODO some template selection in here...
 
-di.doNotDisplayReverseProps["about"] = true;
-
+  
 return `
 <html>
 <head>
@@ -20,9 +19,7 @@ return `
   ${JSON.stringify(di.graph.json_ld, null, 2)}
 </script>
 
-<title>
-${di.displayableProps.name}
-</title>
+<title>${displayDisplayableProp(di.displayableProps.name, false)}</title>
 
 <meta charset='utf-8'/>
 
@@ -65,7 +62,6 @@ summary {
 
 <body>
 
-
 <nav class="navbar">
 
     <ul class="nav navbar-nav" >
@@ -77,8 +73,12 @@ summary {
 <div class="jumbotron">
 
 <h3 class="item_name">${displayDisplayableProp(di.displayableProps["@type"], false)}: ${displayDisplayableProp(di.displayableProps.name, false)}</h3>
-</div>
+</div>  
 
+
+
+
+${displayPlaces(places, config)}
 
 ${displayDisplayableItem(di)}
 
