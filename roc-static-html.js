@@ -10,6 +10,10 @@ const {segmentPath, getLink} = require("./lib/rendering");
 const {renderPage} = require('./lib/display');
 const {DisplayableItem} = require('./lib/displayable');
 const GeoJSON = require("geojson");
+const Preview = require("./lib/ro-crate-preview");
+const HtmlFile = require("./lib/ro-crate-preview-file");
+
+
 
 const CratePruner = require('./lib/prune-crate');
 
@@ -93,10 +97,14 @@ async function main(file) {
             
             itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
-            //itemCrateRoot["@reverse"] = []; // 
+            //itemCrateRoot["@reverse"] = []; 
             itemCrateRoot.name = item.name;
             itemCrate._relPath = segmentPath(item["@id"]);
             itemCrate._dirPath = path.join(outPath, itemCrate._relPath)
+            itemCrate.addBackLinks();
+            if (item.name === "VICTORIA") {
+                console.log(item);
+            }
 
             // Paths and directory setup
             await fs.mkdirp(itemCrate._dirPath);
@@ -138,10 +146,18 @@ async function main(file) {
                
             }
             // TODO - have to make a second DI here cos places uses DI instead of a crate & item - probably should change that
+            
             const dispItem1 = new DisplayableItem(itemCrate, item["@id"], config);
             dispItem1.relPath = getLink(item, repoCrate);
             const html = template(dispItem1, config, __dirname, places);
-
+            
+            /*
+            Just testing ...
+           const preview = new Preview(crate);
+           const f = new HtmlFile(preview);
+            const html = await f.render("http://localhost:8082/lib/crate.js");
+            */
+           
             await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)
 
