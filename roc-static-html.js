@@ -8,6 +8,8 @@ const ROCrate = require("ro-crate").ROCrate;
 const _ = require("lodash");
 const {segmentPath, getLink} = require("./lib/rendering");
 const {renderPage} = require('./lib/display');
+const renderNew = require('./defaults/static_template.js');
+const StaticUtils = require('./lib/static_utils');
 const {DisplayableItem} = require('./lib/displayable');
 const GeoJSON = require("geojson");
 const Preview = require("./lib/ro-crate-preview");
@@ -61,6 +63,7 @@ function indexByType(crate, config) {
 async function main(file) {
     repo = await makeRepo(outPath);
     const config = JSON.parse(await fs.readFile(program.config));
+    config.utils = new StaticUtils(); // Functions for paths etc
     // load the crate
     const crate = new ROCrate(JSON.parse(await fs.readFile(path.join(crateDir, "ro-crate-metadata.json"))));
     crate.index();
@@ -71,6 +74,7 @@ async function main(file) {
 
     const Pruner = new CratePruner(_.clone(crate), _.clone(config));
     const repoCrate = Pruner.prune(repoRoot, _.clone(config));
+
     repoCrate.context = crate.context;
     repoCrate.index();
     repoRoot = repoCrate.getRootDataset();    
@@ -86,7 +90,6 @@ async function main(file) {
                 "@type": "RepositoryCollection",
                 "name" : `${type} Collection`,
                 "hasMember": []
-
             }
         repoCrate.addItem(collection);
         repoRoot.hasPart.push({"@id": collection["@id"]});
@@ -102,9 +105,7 @@ async function main(file) {
             itemCrate._relPath = segmentPath(item["@id"]);
             itemCrate._dirPath = path.join(outPath, itemCrate._relPath)
             itemCrate.addBackLinks();
-            if (item.name === "VICTORIA") {
-                console.log(item);
-            }
+        
 
             // Paths and directory setup
             await fs.mkdirp(itemCrate._dirPath);
@@ -146,18 +147,9 @@ async function main(file) {
                
             }
             // TODO - have to make a second DI here cos places uses DI instead of a crate & item - probably should change that
-            
-            const dispItem1 = new DisplayableItem(itemCrate, item["@id"], config);
-            dispItem1.relPath = getLink(item, repoCrate);
-            const html = template(dispItem1, config, __dirname, places);
-            
-            /*
-            Just testing ...
-           const preview = new Preview(crate);
-           const f = new HtmlFile(preview);
-            const html = await f.render("http://localhost:8082/lib/crate.js");
-            */
            
+            const preview = new Preview(itemCrate, config);
+            const html = await renderNew(item["@id"], preview, false);
             await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)
 
@@ -167,10 +159,12 @@ async function main(file) {
 
         }
     }
-    const dispItem = new DisplayableItem(repoCrate, "./", config);
-    const html = renderPage(dispItem, config);
+
+    const previewAll = new Preview(repoCrate, config);
+    const html = await renderNew("./", previewAll);
+
     await fs.writeFile(path.join(outPath, "ro-crate-preview.html"), html);
-    await fs.mkdirp(path.join(outPath, "ro-crate-preview_files/assets"));
+    //await fs.mkdirp(path.join(outPath, "ro-crate-preview_files/assets"));
     //await fs.copyFile(path.join(__dirname, "assets","tailwind",  "tailwind.css"), path.join(outPath, "ro-crate-preview_files/assets/tailwind.css"));
     //await fs.copyFile(path.join(__dirname, "assets", "tailwind", "site.css"), path.join(outPath, "ro-crate-preview_files/assets/site.css"));
 

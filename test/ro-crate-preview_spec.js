@@ -20,6 +20,7 @@ const fs = require("fs-extra");
 const Preview = require("../lib/ro-crate-preview-wrapper");
 const HtmlFile = require("../lib/ro-crate-preview-file");
 const { ROCrate } = require("ro-crate");
+const StaticPathUtils = require("../lib/static_utils");
 
 const chai = require("chai");
 chai.use(require("chai-fs"));
@@ -31,13 +32,36 @@ describe("single item rendering", function () {
             fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const crate = new ROCrate(json);
-        const preview = new Preview(crate);
+        const preview = new Preview(crate, {utils: new StaticPathUtils()});
         const table = await preview.renderMetadataForItem(preview.rootId);
         assert.equal(
-            table.find("tr").length,
+            table.match(/tr/g).length,
             16,
             "Has the right number of rows"
         );
+    });
+});
+
+
+describe("Single static page", function () {
+    it("should create a static page uisng the default template", async function () {
+        this.timeout(5000);
+        json = JSON.parse(
+            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
+        );
+        const crate = new ROCrate(json);
+        crate.index();
+        const preview = new Preview(crate, {utils: new StaticPathUtils()});
+        const renderPage = require('../defaults/static_template.js')
+        
+        const page = await renderPage("./", preview);
+        await fs.writeFile("test.html", page);
+        assert.equal(
+            page.match(/<table/g).length,
+            22,
+            "Has the right number of tables for what's in the crate"
+        );
+        
     });
 });
 
@@ -51,7 +75,7 @@ describe("metadata summary", function () {
         const preview = new Preview(new ROCrate(json));
         const div = await preview.summarizeDataset();
         assert.equal(
-            div.find("table").length,
+            div.match(/table/g).length,
             8,
             "Has the right number of summary tables"
         );
