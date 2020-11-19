@@ -1,5 +1,5 @@
 
-function render(id, preview, libPath, places) {
+function render(id, preview) {
 
 
 // TODO some template selection in here...
@@ -14,6 +14,7 @@ return `
 
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 
 <script type="application/ld+json"> 
   ${JSON.stringify(preview.crate.json_ld, null, 2)}
@@ -57,6 +58,20 @@ summary {
 
 </style>
 
+
+
+<script>
+const config = ${JSON.stringify(preview.config)};
+const entryId = "${id}";
+const places = ${JSON.stringify(preview.places)}
+</script>
+
+<script src="http://localhost:8084/lib/crateNew.js"> </script>
+
+
+
+
+
 </head>
 
 
@@ -75,12 +90,14 @@ summary {
 <h3 class="item_name">${item.name}</h3>
 </div>  
 
+${preview.displayPlaces()}
+<div id="summary">
 
 
 
 ${preview.completeDataset(item["@id"])}
 
-
+</div>
 
 
 <a href="./ro-crate-metadata.json">⬇️🏷️ Download all the metadata for <span class='name'>${item.name}</span> in JSON-LD format</a>

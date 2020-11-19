@@ -27,6 +27,7 @@ program
   )
   .arguments("<d>")
   .option("-c, --config [conf]", "configuration file")
+  .option("-s,  --cratescript [cratescript]", "URL of Crate-script")
   .option("-r, --output-path [rep]", "Directory into which to write output", null)
   .action((d) => {crateDir = d})
 
@@ -63,6 +64,9 @@ function indexByType(crate, config) {
 async function main(file) {
     repo = await makeRepo(outPath);
     const config = JSON.parse(await fs.readFile(program.config));
+    if (program.cratescript) {
+        config.renderScript = program.cratescript;
+    }
     config.utils = new StaticUtils(); // Functions for paths etc
     // load the crate
     const crate = new ROCrate(JSON.parse(await fs.readFile(path.join(crateDir, "ro-crate-metadata.json"))));
@@ -106,13 +110,12 @@ async function main(file) {
             itemCrate._dirPath = path.join(outPath, itemCrate._relPath)
             itemCrate.addBackLinks();
         
-
             // Paths and directory setup
             await fs.mkdirp(itemCrate._dirPath);
             itemCrate._htmlpath = path.join(itemCrate._dirPath, "ro-crate-preview.html");
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
             
-            // Make  displayable Item
+            // TODO - remove this displayable item stuff and make the place finding stuff work with crates 
             const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
             dispItem.relPath = getLink(item, repoCrate);
             var template;
@@ -146,10 +149,12 @@ async function main(file) {
                 i.hasFile = part;
                
             }
-            // TODO - have to make a second DI here cos places uses DI instead of a crate & item - probably should change that
            
             const preview = new Preview(itemCrate, config);
-            const html = await renderNew(item["@id"], preview, false);
+            // ATM the only thing we're relying on config for is config.types to tell it what types get their own pages
+            preview.places = places; // TODO make this work with GeoJSON
+
+            const html = await renderNew(item["@id"], preview);
             await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)
 
@@ -164,10 +169,7 @@ async function main(file) {
     const html = await renderNew("./", previewAll);
 
     await fs.writeFile(path.join(outPath, "ro-crate-preview.html"), html);
-    //await fs.mkdirp(path.join(outPath, "ro-crate-preview_files/assets"));
-    //await fs.copyFile(path.join(__dirname, "assets","tailwind",  "tailwind.css"), path.join(outPath, "ro-crate-preview_files/assets/tailwind.css"));
-    //await fs.copyFile(path.join(__dirname, "assets", "tailwind", "site.css"), path.join(outPath, "ro-crate-preview_files/assets/site.css"));
-
+   
 
 }
 

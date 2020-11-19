@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 var paths = undefined;
 const path = require("path");
-const ejs = require("ejs");
 
 const Preview = require("./lib/ro-crate-preview-wrapper");
 const HtmlFile = require("./lib/ro-crate-preview-file");
@@ -48,9 +47,7 @@ program
     .arguments("<files...>")
     .action(function (files) {
         paths = files;
-    })
-
-    .option("-c,  --cratescript [cratesript]", "URL of Crate-script directory");
+    }).option("-c,  --cratescript [cratesript]", "URL of Crate-script");
 
 program.parse(process.argv);
 
