@@ -71,7 +71,9 @@ L.Control.SliderControl = L.Control.extend({
             var max = options.unique_time_values[options.unique_time_values.length-1]
             $(sliderContainer).prepend('<div><span><label>' + min + '</label></span>' + '<span class="float-right"><label>' + max + '</label></span></div>') //min max label
 
-            //Create tick box to hide/show items with no date
+            // Create tick box to hide/show items with no date
+   
+            
             var undefinedCheckbox = document.createElement("INPUT")
             undefinedCheckbox.setAttribute("type","checkbox")
             undefinedCheckbox.setAttribute("id","showundefined")
@@ -83,10 +85,11 @@ L.Control.SliderControl = L.Control.extend({
             //pop the checkbox into the div, and the div into the sliderContainer
             $(undefinedDiv).append(undefinedCheckbox,'<label for="showundefined"> Show items that have no dates</label></div>')
             $(sliderContainer).append(undefinedDiv)
+            
 
             //push the undefined values onto the control options as a unique variable
             options.zero_values = L.featureGroup(zero_values);
-
+            
             //Add a counter div for the markers
             var markerCountDiv = document.createElement("DIV")
             markerCountDiv.setAttribute("id","markerCountDiv")
@@ -232,7 +235,8 @@ L.Control.SliderControl = L.Control.extend({
     
     extractTimestamp: function(time) { //TODO: convert time from field to an appropriate date format, 'time' variable should be set when instantiating this object
         //time could be in many different forms, for our simplified purpose we will start with just using 4 digit years
-        var t = new Date(time)
+       
+        var t = new Date(time);
         return t;
     },
 
@@ -272,7 +276,9 @@ L.Control.SliderControl = L.Control.extend({
                             _options.clusters.addLayer(item)
                         }
                         else map.addLayer(item)   
-                    }       
+                    }  else {
+                         map.addLayer(item) 
+                    }     
                 })
             }
         }

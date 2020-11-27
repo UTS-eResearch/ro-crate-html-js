@@ -46,29 +46,27 @@ describe('Pruning', function () {
         const config1 = {
             "types": 
                {"Person" : {
-                 "props" :  {"birthPlace": {}}
+                 "resolveAll" :  [[{"property": "birthPlace"}]]
                }
             }
         }   
         const Pruner1 = new Pruner(crate, config1);
         const pruned1 = Pruner1.prune(item1);
-        //console.log(pruned1.json_ld["@graph"])
         assert.equal(pruned1.getItem("#Place1").name, "Place 1");
         assert.equal(pruned1.getGraph().length, 4);
-
-        config1.types.Person.props = {"birthPlace": {"types":  {"Place": {"props": {"location" : {}}}}}};
+        console.log("CONFIG NOW", JSON.stringify(config1))
+        config1.types.Person.resolveAll.push([{"property": "birthPlace"}, {"property": "location"} ]);
         const Pruner2 = new Pruner(crate, config1);
         const pruned2 = Pruner2.prune(item1);
         assert.equal(pruned2.getItem("#Location1").name, "Location 1");
         assert.equal(pruned2.getGraph().length, 5);
-     
 
-        config1.types["Person"].reverseProps =  {"about": {}};
-        item1["@reverse"] = {"about": {"@id": doc1["@id"]}}
+        config1.types.Person.resolveAll.push([{"property": "about", "@reverse": true}]);
         const Pruner3 = new Pruner(crate, config1);
         const pruned3 = Pruner3.prune(item1);
+        console.log("PRUNED3", pruned3.getGraph())
         assert.equal(pruned3.getItem("#doc1").name, "Doc 1");
-        assert.equal(pruned3.getGraph().length, 6);
+        assert.equal(pruned3.getGraph().length, 4);
     });
 
     it('Works on a big real crate', function () {
@@ -82,18 +80,12 @@ describe('Pruning', function () {
 
         
         const config1 = {
-                "types": {"Person" : {
-                                "props" :  {"birthPlace": {}},
-                                "reverseProps": {"object": 
-                                      {"types" :  
-                                         {"Action" : {
-                                                "props" :  {"location":
-                                                   {"types": {"Place": {"props": {"geo": {}}}}}},
-                                                }
-                                     }
-                            
-                             }
-                        }
+                "types":  {"Person" : {
+                                "resolveAll": [
+                                    [{"property": "birthPlace"}],
+                                    [{"property": "object", "@reverse": true}, {"property": "location"}, {"property": "geo"}]
+                                ]
+                                
                     }
                 }
             }
@@ -104,84 +96,37 @@ describe('Pruning', function () {
         assert.equal(pruned1.getItem("#person__VICFP_18551934_6_249").name, "ANDERSON, FANNY");
         assert.equal(pruned1.getGraph().length, 5);
         
-        const config2 = {
-            "types": {"Dataset" : {
-                          props: {
-                            "name" :  {},
-                            "description" :  {},
-                            "reverseProps": {}    
-                         }
-                    }
-                }
-            }
         
-        const Pruner2 = new Pruner(crate, config2)
-
-        const pruned2 = Pruner2.prune(root, config2);
-        // TODO test here
-
         const config3 = {
             "types": {
-        
                 "Person" : {
                         "findPlaces": "person-geo.js",
-                        "props" :  {
-                            "birthPlace": {},
-                            "conviction": {
-                                "types" : {
-        
-                                    "Sentence" : {
-                                             "props" : {
-                                                  "offence" : {},
-                                                 "location" : {
-                                                     "types": {
-                                                         "Place" : {}
-                                                     }
-                                                 }
-                                                }
-                                            }
-                                        }
-                            } 
-                        }
-                        },
+                        resolveAll: [
+                            [{"property": "birthPlace"}],
+                            [{"property": "conviction"}, {"property": "offence"}],
+                            [{"property": "conviction"}, {"property": "location"}, {"property": "location"}]
+                        ],
                 "Place":   {
                     "findPlaces": "place-geo.js",
-                    "props":  {"geo" : {}},
-                    "reverseProps" : {
-                        "location": {
-                            "types": {
-                                "Sentence" : {
-                                    "props": {
-                                        "offence": {}
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    resolveAll: [
+                        [{"property": "location"}],
+                        [{"property": "birthplace", "@reverse": true}, [{"property": "offence"}]]
+                    ]
         
                 },
                 "Offence" : {
                     "findPlaces": "offence-geo.js",
-                    "reverseProps" : {
-                        "offence": {
-                            "types": 
-                            {
-                                "Sentence" : {
-                                 "props" : {"object" : {
-                                    "types": {"Person": {}}
-                                }}
-                            }
-                        }
+                    resolveAll: [
+                        [{"property": "offence", "@reverse": true}, [{"property": "object"}]]
+
+                    ]
                         
                     }
                 }     
                 }
             }
         
-        }
 
-           
-        
         const Pruner3 = new Pruner(crate, config3)
         offence = crate.getItem("#offence_ILLEGALLY_SELLING_LIQUOR");
         const pruned3 = Pruner3.prune(offence, config3);

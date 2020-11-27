@@ -11,8 +11,7 @@
     Function takes an ARRAY of JSON objects of the form { name, geo: {latitude, longitude} }
  */
 function mapinit(places, options=null) {
-
-    if (places) {
+    if (places.type && places.type==="FeatureCollection") {
         //setup map
         var mymap = L.map('mapdiv');
         L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -23,25 +22,27 @@ function mapinit(places, options=null) {
             zoomOffset: -1,
             accessToken: 'pk.eyJ1IjoiYmVub3oxMSIsImEiOiJjazNpMmsyeGIwM3ZnM2JwaW9mdG9sdWl1In0.RrwSfVxBLJhqSK3aTsEaNw'
         }).addTo(mymap);
-
-        var startlat = (places[0].latitude) ? places[0].latitude : 0
-        var startlng = (places[0].longitude) ? places[0].longitude : 0
+        const coords = places.features[0].geometry.coordinates;
+        var startlng = (coords[0]) ? coords[0] : 0
+        var startlat = (coords[1]) ? coords[1] : 1
 
         mymap.setView([startlat, startlng], 6); //manually setting initial view to the first geopoint on map
-
+       
         //marker layer group
         var markerLayer = L.layerGroup()
 
         //pin markers
-        for (place of places) {
-            var startDate = (place.startDate === undefined) ? undefined : place.startDate.toString() //setting time variable to the startDate if exists, set undefined to 0000 to aid in sorting
-            var endDate = (place.endDate === undefined) ? undefined : place.endDate.toString()
-            var lat = (place.latitude) ? place.latitude : 0
-            var lng = (place.longitude) ? place.longitude : 0
+        for (place of places.features) {
+            var startDate = place.properties.startDate ? place.properties.startDate.toString() : "";
+            var name = place.properties.name ? place.properties.name : "";
+            var endDate = place.properties.endDate ? place.properties.endDate.toString() : "";
+            var url = place.properties.url ? place.properties.url : "";
+            var lng = place.geometry.coordinates[0] ? place.geometry.coordinates[0] : 0
+            var lat = place.geometry.coordinates[1] ? place.geometry.coordinates[1] : 0
             var marker = L.marker([lat, lng], {color: 'red', startDate: startDate, timeStrLength: 4, alwaysShowDate: true, endDate: endDate})
-            marker.bindPopup(place.name + "<br><br>latitude: " + lat + "<br>longitude: " + lng
-                + "<br>startDate: " + place.startDate + "<br>endDate: " + place.endDate + "<br>"
-                + "<br><a href='" + place.url + "'>go to item</a>")
+            marker.bindPopup(name + "<br><br>latitude: " + lat + "<br>longitude: " + lng
+                + "<br>startDate: " + startDate + "<br>endDate: " +endDate + "<br>"
+                + "<br><a href='#" + url + "'>go to item</a>")
             marker.addTo(markerLayer)
         }
 

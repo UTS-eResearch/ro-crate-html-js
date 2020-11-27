@@ -10,7 +10,6 @@ const {segmentPath, getLink} = require("./lib/rendering");
 const {renderPage} = require('./lib/display');
 const renderNew = require('./defaults/static_template.js');
 const StaticUtils = require('./lib/static_utils');
-const {DisplayableItem} = require('./lib/displayable');
 const GeoJSON = require("geojson");
 const Preview = require("./lib/ro-crate-preview");
 const HtmlFile = require("./lib/ro-crate-preview-file");
@@ -85,7 +84,6 @@ async function main(file) {
     repoRoot.hasPart = [];
     repoCrate._relPath = "./";
 
-
     const types = indexByType(crate, config);
     
     for (let type of Object.keys(types)) {
@@ -99,8 +97,11 @@ async function main(file) {
         repoRoot.hasPart.push({"@id": collection["@id"]});
 
         for (let item of types[type]) {
+            var itemCrate
+            
             const Pruner1 = new CratePruner(_.clone(crate), _.clone(config));
-            const itemCrate = Pruner1.prune(item);
+            itemCrate = Pruner1.prune(item);
+            
             
             itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
@@ -116,8 +117,6 @@ async function main(file) {
             itemCrate._relHtmlpath = path.join(itemCrate._relPath, "ro-crate-preview.html");
             
             // TODO - remove this displayable item stuff and make the place finding stuff work with crates 
-            const dispItem = new DisplayableItem(itemCrate, item["@id"], config);
-            dispItem.relPath = getLink(item, repoCrate);
             var template;
             if (config.types[type] && config.types[type].template){
                 template = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].template));
@@ -126,34 +125,13 @@ async function main(file) {
             }
             if (config.types[type] && config.types[type].findPlaces){
                 findPlaces = require( path.join(process.cwd(), path.dirname(program.config), config.types[type].findPlaces));
-                places = findPlaces(dispItem);
+                places = findPlaces(item, itemCrate);
             } else {
-                places = [];
+                places = {};
             }
-            if (places.length > 0) {
-                const placeDir = path.join(outPath, "_GeoJSON", type);
-                await fs.mkdirp(placeDir);
-                const jsonFile = GeoJSON.parse(places, {Point: ['latitude', 'longitude']})
-                const jsonString = JSON.stringify(jsonFile,null,2)
-                const placesFile = path.join(placeDir, item["@id"].replace(/\W/g,"_")+".geo.json");
-                await fs.writeFile(placesFile, jsonString);
-                itemCrate.addItem({
-                    "@id": placesFile,
-                    "@type": "File",
-                    "name": `GeoJSON for ${item["@id"]}`,
-                    "encodingFormat": "geoJSON-TODO"
-                })
-                const i = itemCrate.getItem(item["@id"]);
-                const part = itemCrate.utils.asArray(i.hasFile)
-                part.push({"@id": placesFile});
-                i.hasFile = part;
-               
-            }
-           
             const preview = new Preview(itemCrate, config);
             // ATM the only thing we're relying on config for is config.types to tell it what types get their own pages
             preview.places = places; // TODO make this work with GeoJSON
-
             const html = await renderNew(item["@id"], preview);
             await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)

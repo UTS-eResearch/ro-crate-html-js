@@ -50,8 +50,9 @@ makeSlider()
  */
 function addPlaces(places) {
     for (place of places) {
-        var startDate = (place.startDate === undefined) ? undefined : place.startDate.toString() //setting time variable to the startDate if exists, set undefined to 0000 to aid in sorting
-        var endDate = (place.endDate === undefined) ? undefined : place.endDate.toString()
+        var startDate =  place.startDate.toString() //setting time variable to the startDate if exists, set undefined to 0000 to aid in sorting
+        var endDate = place.endDate.toString()
+        console.log(startDate, endDate)
         var marker = L.marker([place.geo.latitude, place.geo.longitude], {color: 'red', startDate: startDate, timeStrLength: 4, alwaysShowDate: true, endDate: endDate})
         marker.bindPopup(place.name + "<br><br>latitude: " + place.geo.latitude + "<br>longitude: " + place.geo.longitude 
             + "<br>startDate: " + place.startDate + "<br>endDate: " + place.endDate + "<br>")

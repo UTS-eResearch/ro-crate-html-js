@@ -3,7 +3,6 @@ function render(id, preview) {
 
 
 // TODO some template selection in here...
-console.log(id, preview.crate.name)
 const item = preview.crate.getItem(id);
 
 return `
@@ -87,7 +86,7 @@ const places = ${JSON.stringify(preview.places)}
 <div class="container">
 <div class="jumbotron">
 
-<h3 class="item_name">${item.name}</h3>
+<h3 class="item_name">${preview.displayValuesAsString(item["@type"])} <a href="#${id}">${preview.displayValuesAsString(item.name)}</a></h3>
 </div>  
 
 ${preview.displayPlaces()}
