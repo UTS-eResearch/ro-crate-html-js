@@ -74,7 +74,7 @@ async function main(file) {
     repoRoot = crate.getRootDataset();
     // Need to have context loaded
     await crate.resolveContext();
-
+    
     const Pruner = new CratePruner(_.clone(crate), _.clone(config));
     const repoCrate = Pruner.prune(repoRoot, _.clone(config));
 
@@ -97,12 +97,11 @@ async function main(file) {
         repoRoot.hasPart.push({"@id": collection["@id"]});
 
         for (let item of types[type]) {
+            console.log("Processing", item.name)
             var itemCrate
             
             const Pruner1 = new CratePruner(_.clone(crate), _.clone(config));
             itemCrate = Pruner1.prune(item);
-            
-            
             itemCrate.context = crate.context;
             const itemCrateRoot = itemCrate.getRootDataset();
             //itemCrateRoot["@reverse"] = []; 
