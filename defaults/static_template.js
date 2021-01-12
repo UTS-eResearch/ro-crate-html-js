@@ -4,7 +4,6 @@ function render(id, preview) {
 
 // TODO some template selection in here...
 const item = preview.crate.getItem(id);
-
 return `
 <html>
 <head>

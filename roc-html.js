@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 var paths = undefined;
 const path = require("path");
 
@@ -26,7 +25,7 @@ const { ROCrate } = require("ro-crate");
 
 const program = require("commander");
 const defaults = require("./lib/defaults.js");
-
+const cratescript = program.cratescript || defaults.render_script;
 const fs = require("fs-extra");
 
 async function render(metadataPath, zip, script) {
@@ -54,5 +53,5 @@ program.parse(process.argv);
 if (!program.rawArgs.length || !paths) program.help();
 
 for (let p of paths) {
-    render(p, program.cratescript);
+    render(p, cratescript);
 }

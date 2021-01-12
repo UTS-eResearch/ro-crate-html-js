@@ -5,7 +5,7 @@ function render(di, config, libPath, places) {
 
 // TODO some template selection in here...
 
-  
+
 return `
 <html>
 <head>

@@ -1,6 +1,5 @@
 
 function render(data) {
-
 return `
 
 <html>
