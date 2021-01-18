@@ -51,12 +51,11 @@ async function main(program) {
             p = `${p}ld`;
         }
         if (await fs.exists(p)) {
-            console.log("FINDED", p)
+            console.log("Found:", p)
             const json = JSON.parse(await fs.readFile(p, "utf-8") );
             const c = new ROCrate(json);
             c.index();
             r = c.getRootDataset();
-
             part = {
                 "@type": "Dataset",
                 "name": r.name,

@@ -4,32 +4,41 @@ This nodejs repository has code for generating HTML previews for Research Object
 
 ## Install
 
-Download this repository:
+To install this from npm type:
 
-```
-git clone https://github.com/UTS-eResearch/ro-crate-html-js
-cd ro-crate-htmljs
-```
+npm install ro-crate-html-js
 
-Install it and link the commandline commands:
+## Develop
 
-```
-npm install .
-npm link --local
+To make changes to this code:
 
-```
+-  Download this repository:
+
+  ```
+  git clone https://github.com/UTS-eResearch/ro-crate-html-js
+  cd ro-crate-htmljs
+  ```
+
+-  Install it and link the commandline commands:
+
+  ```
+  npm install .
+  npm link --local
+  ```
+
+  
 ## Commandline HTML rendering
 
 ### Dynamic, generic HTML for ANY crate
 
-To render HTML for an RO-Crate, use makehtml, with a URL to the compilef ro-crate.js rendering script (See below for how to compile). Eg:
+To render HTML for an RO-Crate, use rochtml:
 
-```makehtml  test_data/sample-ro-crate-metadata.jsonld  -c https://data.research.uts.edu.au/examples/ro-crate/examples/src/crate.js```
+```rochtml  test_data/sample-ro-crate-metadata.jsonld```
 
 
 To compile the rendering script for an RO-Crate HTML file (ro-crate-preview.html):
 
-```browserify lib/entry.js -o lib/crate.js```
+```browserify lib/entry.js -o dist/ro-crate-dynamic.js```
 
 ### Make crates that contain other crates w/ an HTML page
 
