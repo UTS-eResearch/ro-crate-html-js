@@ -35,7 +35,7 @@ describe("single item rendering", function () {
         const preview = new Preview(crate, {utils: new StaticPathUtils()});
         const table = await preview.renderMetadataForItem(preview.rootId);
         assert.equal(
-            table.match(/tr/g).length,
+            table.match(/<\/tr>/g).length,
             16,
             "Has the right number of rows"
         );
@@ -76,7 +76,7 @@ describe("metadata summary", function () {
         const div = await preview.summarizeDataset();
         assert.equal(
             div.match(/table/g).length,
-            8,
+            32,
             "Has the right number of summary tables"
         );
     });
@@ -95,30 +95,6 @@ describe("actual file", function () {
     });
 });
 
-describe("datacite", function () {
-    it("should create a datacite-compatible file", async function () {
-        json = JSON.parse(
-            fs.readFileSync("test_data/sample-ro-crate-metadata.json")
-        );
-        const preview = new Preview(new ROCrate(json));
-        const cite = preview.makeDataCite();
-        assert.equal(
-            cite["@type"],
-            "Dataset",
-            "Has the right number of summary tables"
-        );
-        assert.equal(
-            cite.creator.name,
-            "Peter Sefton",
-            "Name is correctly nested"
-        );
-        assert.equal(
-            cite.publisher.contactPoint["@id"],
-            "peter.sefton@uts.edu.au",
-            "Name is correctly nested"
-        );
-    });
-});
 
 describe("render a file", function () {
     it("should create a file", async function () {

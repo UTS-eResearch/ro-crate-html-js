@@ -55,7 +55,7 @@ describe('Paginating', function () {
         crate = new ROCrate(json);
         crate.index();
         const root = crate.getRootDataset();
-        const page = new Page({values: root.hasPart, pageSize: 30});
+        const page = new Page({values: root.hasMember, pageSize: 30});
         console.log("pages", page.pages);
         console.log(page.pages[0].pages[0]);
 
