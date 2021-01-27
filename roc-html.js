@@ -25,7 +25,6 @@ const { ROCrate } = require("ro-crate");
 
 const program = require("commander");
 const defaults = require("./lib/defaults.js");
-const cratescript = program.cratescript || defaults.render_script;
 const fs = require("fs-extra");
 
 async function render(metadataPath, zip, script) {
@@ -49,6 +48,7 @@ program
     }).option("-c,  --cratescript [cratesript]", "URL of Crate-script");
 
 program.parse(process.argv);
+const cratescript = program.cratescript || defaults.render_script;
 
 if (!program.rawArgs.length || !paths) program.help();
 

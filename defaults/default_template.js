@@ -59,11 +59,8 @@ table.table {
 
 <div class="container">
 <div class="jumbotron">
-
 <h1 class="item_name"></h4>
-
-
-<div class="check"></div>
+<div id="check"></div>
 </div>
 
 
