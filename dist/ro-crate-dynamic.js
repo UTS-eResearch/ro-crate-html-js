@@ -93,6 +93,19 @@ class Checker {
         return checkItem;
     }
 
+    hasDescription() {
+        var checkItem = new CheckItem(
+            {
+                name: "Has description",
+                message: "The root Dataset has a description (http://schema.org/description)"
+            }
+
+        )
+        if (this.crate.getRootDataset() && this.crate.getRootDataset().description && this.crate.getRootDataset().description.length > 0) {
+           checkItem.status = true;
+        } 
+        return checkItem;
+    }
 
     hasAuthor() {
         var checkItem = new CheckItem(
@@ -204,6 +217,8 @@ class Checker {
         this.checklist.push(datasetID);
         var name = this.hasName()
         this.checklist.push(name);
+        var description = this.hasDescription()
+        this.checklist.push(description);
         //var author = this.hasAuthor();
         //this.checklist.push(author);
         var license = this.hasLicense();
@@ -217,7 +232,7 @@ class Checker {
         */
 
 
-        this.isROCrate = context.status && dataset.status && name.status && author.status && license.status && date.status;
+        this.isROCrate = context.status && dataset.status && name.status && description.status && license.status && date.status;
 
         // TODO: 
         // this.isDistributable
