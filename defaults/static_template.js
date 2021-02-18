@@ -57,14 +57,13 @@ summary {
 </style>
 
 
-
 <script>
 const config = ${JSON.stringify(preview.config)};
 const entryId = "${id}";
 const places = ${JSON.stringify(preview.places)}
 </script>
 
-<script src="http://localhost:8084/lib/crateNew.js"> </script>
+<script src="${preview.defaults.multi_page_render_script}"> </script>
 
 
 
@@ -80,10 +79,11 @@ const places = ${JSON.stringify(preview.places)}
     <ul class="nav navbar-nav" >
         <li ><a href="${preview.config.utils.getHomeLink(id)}"><span class="glyphicon glyphicon-home dataset_name">HOME</span></a></li>
     </ul>
-
+    
   </nav>
 <div class="container">
 <div class="jumbotron">
+<div id="check"> </div>
 
 <h3 class="item_name">${preview.displayValuesAsString(item["@type"])} <a href="#${id}">${preview.displayValuesAsString(item.name)}</a></h3>
 </div>  

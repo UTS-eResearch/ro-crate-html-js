@@ -68,9 +68,13 @@ metacrate  -d directory_with_crates_in -n "Sample RO-Crates" -t "This RO-Crate l
 ```
 
 
-### Create a static site
+### Create a multi-page site
 
-To create a RO-Crate static HTML website for a crate, use `rocsatic` - this requires some fairly complicated configuration which is not yet documented, but you can look at an example in the Heurist2ro-crate project: https://github.com/UTS-eResearch/heurist2ro-crate 
+To create a RO-Crate multi-page HTML website for a crate, use `rocsatic` - this requires some fairly complicated configuration which is not yet documented, but you can look at an example in the Heurist2ro-crate project: https://github.com/UTS-eResearch/heurist2ro-crate 
+
+To compile the rendering script for the entry point to a multi-page HTML site RO-Crate HTML file (ro-crate-preview.html):
+
+```watchify lib/standAloneEntry.js -o dist/ro-crate-dynamic-multipage.js  ```
 
 See the `MAKEFILE`  for a commands that reference an configuration file.
 
