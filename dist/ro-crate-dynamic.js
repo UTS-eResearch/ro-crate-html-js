@@ -1,4 +1,27 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+/* 
+
+This is part of ro-crate-html-js a tool for generating HTMl 
+previews of HTML files.
+
+Copyright (C) 2021  University of Technology Sydney
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
 const defaults = require("./defaults");
 const axios = require("axios");
 
@@ -15,7 +38,7 @@ class Checker {
         var checkItem = new CheckItem(
             {
                 name: "Has @context",
-                message: "Has an appropriate context"
+                message: "Has an appropriate context with a name and version"
 
             }
 
@@ -24,7 +47,7 @@ class Checker {
         // See if there is a URL in the context which has an appropriate name
         if (this.crate.getJson()["@context"]) {
 
-            for (let contextUrl of  this.crate.getJson()["@context"]) {
+            for (let contextUrl of  this.crate.utils.asArray(this.crate.getJson()["@context"])) {
                 if (typeof contextUrl === 'string' || contextUrl instanceof String) {
                     try {
 
@@ -32,7 +55,6 @@ class Checker {
                             'accept': "application/ld+json, application/ld+json, text/text" 
                             } });
                         const cont = response.data;
-                        checkItem.message = cont.name;
                         if (this.crate.utils.asArray(cont.name).includes("RO-Crate JSON-LD Context"))
                          {
                             checkItem.status = true;
@@ -273,8 +295,12 @@ class CheckItem {
 module.exports = Checker;
 
 },{"./defaults":2,"axios":7}],2:[function(require,module,exports){
-/* This is part of Calcyte a tool for implementing the RO-Crate data packaging
-spec.  Copyright (C) 2018  University of Technology Sydney
+/* 
+
+This is part of ro-crate-html-js a tool for generating HTMl 
+previews of HTML files.
+
+Copyright (C) 2021  University of Technology Sydney
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -290,7 +316,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* Defaults for Calcyte such as names of key files */
 
 
 const back_links = {
@@ -320,7 +345,8 @@ const defaults = {
     ro_crate_name: "ro-crate-metadata",
     roCrateMetadataID: "ro-crate-metadata.jsonld",
     context: ["https://researchobject.github.io/ro-crate/1.0/context.jsonld", {"@vocab": "http://schema.org/"}],
-    render_script: "https://unpkg.com/ro-crate-html-js/dist/ro-crate-dynamic.js",
+    render_script:            "https://unpkg.com/ro-crate-html-js/dist/ro-crate-dynamic.js",
+    multi_page_render_script: "https://unpkg.com/ro-crate-html-js/dist/ro-crate-dynamic-multipage.js",
     back_links: back_links,
     back_back_links: back_back_links,
     datasetTemplate: DATASET_TEMPLATE,
@@ -334,7 +360,26 @@ const defaults = {
 module.exports = defaults;
 
 },{}],3:[function(require,module,exports){
+/* 
 
+This is part of ro-crate-html-js a tool for generating HTMl 
+previews of HTML files.
+
+Copyright (C) 2021  University of Technology Sydney
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 const Preview = require("./ro-crate-preview");
 const Checker = require("./checker");
 const ROCrate = require("ro-crate").ROCrate;
@@ -358,7 +403,7 @@ async function load() {
         meta.resolveContext().then(function () {updatePage()}); // This is async
     }
     document.getElementById("check").innerHTML = "<button><a href='#___check____'>Check this crate</a></button>";
-    console.log("CHECK", document.getElementById("check").innerHTML)
+    //console.log("CHECK", document.getElementById("check").innerHTML)
     updatePage();
 }
 
@@ -385,7 +430,26 @@ async function updatePage() {
 }
 
 },{"./checker":1,"./ro-crate-preview":5,"chai":35,"ro-crate":368}],4:[function(require,module,exports){
+/* 
 
+This is part of ro-crate-html-js a tool for generating HTMl 
+previews of HTML files.
+
+Copyright (C) 2021  University of Technology Sydney
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 class Page {
     constructor(args) {
         this.pageSize = args.pageSize || 20;
@@ -421,8 +485,11 @@ module.exports = Page;
 
 },{}],5:[function(require,module,exports){
 /* 
-This is part of Calcyte a tool for implementing the DataCrate data packaging
-spec.  Copyright (C) 2018-2019  University of Technology Sydney
+
+This is part of ro-crate-html-js a tool for generating HTMl 
+previews of HTML files.
+
+Copyright (C) 2021  University of Technology Sydney
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -441,6 +508,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const defaults = require("./defaults");
 const _ = require("lodash");
 const Page = require("./paginate");
+const { times } = require("lodash");
 
 const display_keys = [
     "@id",
@@ -472,6 +540,7 @@ const displayTypeTemplates = {
 
 class Preview  {
     constructor(crate, config, id) {
+        this.defaults = defaults;
         this.crate = crate;
         this.config = _.clone(config) || {}; //TODO - add some defaults here;
         this.crate.index();
@@ -500,7 +569,6 @@ class Preview  {
             if (item["@id"] != entryID &&
                !this.displayTypeAsString(item) && 
                !this.crate.defaults.roCrateMetadataIDs.includes(item["@id"]) && !(dontShowRootDataset && item["@id"] === this.crate.getRootID())){
-
                 html += this.metaTable(item, true);
             }
         }
@@ -579,7 +647,7 @@ class Preview  {
 
             var jsonString = JSON.stringify(places,null,2)
      
-            const dir = config.geoURL || "http://localhost:8081";
+            const dir = config.geoURL;
             return `
             <link rel='stylesheet' href='${dir}/css/leaflet.css'/>
             <script src='${dir}/js/jquery-3.5.1.min.js'></script>
@@ -608,7 +676,7 @@ class Preview  {
     }
 
     header(item) {
-        // Display the name of the thing with apropriate downlaod links etc
+        // Display the name of the thing with apropriate download links etc
         var name = item.name ? item.name : item["@id"];
         var types = this.crate.utils.asArray(item["@type"]);
         var view;
@@ -635,7 +703,7 @@ class Preview  {
                 }
             }
             }   
-        } else if ( types.includes("File") || types.includes("ImageObject") || types.includes("MediaObject")){
+        } else if ( types.includes("File") || types.includes("ImageObject") || types.includes("MediaObject") || path === "ro-crate-metadata.jsonld"){
             view = "⬇️ Download: ";
         } 
         if (view){
@@ -1768,7 +1836,7 @@ module.exports = function transformData(data, headers, fns) {
 };
 
 },{"./../utils":33}],22:[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 'use strict';
 
 var utils = require('./utils');
@@ -1868,8 +1936,8 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-}).call(this,require('_process'))
-},{"./adapters/http":8,"./adapters/xhr":8,"./helpers/normalizeHeaderName":30,"./utils":33,"_process":418}],23:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'))
+},{"./adapters/http":8,"./adapters/xhr":8,"./helpers/normalizeHeaderName":30,"./utils":33,"_process":404}],23:[function(require,module,exports){
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -10580,7 +10648,7 @@ module.exports = function expectTypes(obj, types) {
   }
 };
 
-},{"./flag":49,"assertion-error":6,"type-detect":402}],49:[function(require,module,exports){
+},{"./flag":49,"assertion-error":6,"type-detect":376}],49:[function(require,module,exports){
 /*!
  * Chai - flag utility
  * Copyright(c) 2012-2014 Jake Luer <jake@alogicalparadox.com>
@@ -10989,7 +11057,7 @@ exports.isProxyEnabled = require('./isProxyEnabled');
 
 exports.isNaN = require('./isNaN');
 
-},{"./addChainableMethod":43,"./addLengthGuard":44,"./addMethod":45,"./addProperty":46,"./compareByInspect":47,"./expectTypes":48,"./flag":49,"./getActual":50,"./getMessage":52,"./getOwnEnumerableProperties":53,"./getOwnEnumerablePropertySymbols":54,"./inspect":57,"./isNaN":58,"./isProxyEnabled":59,"./objDisplay":60,"./overwriteChainableMethod":61,"./overwriteMethod":62,"./overwriteProperty":63,"./proxify":64,"./test":65,"./transferFlags":66,"check-error":67,"deep-eql":88,"get-func-name":112,"pathval":367,"type-detect":402}],57:[function(require,module,exports){
+},{"./addChainableMethod":43,"./addLengthGuard":44,"./addMethod":45,"./addProperty":46,"./compareByInspect":47,"./expectTypes":48,"./flag":49,"./getActual":50,"./getMessage":52,"./getOwnEnumerableProperties":53,"./getOwnEnumerablePropertySymbols":54,"./inspect":57,"./isNaN":58,"./isProxyEnabled":59,"./objDisplay":60,"./overwriteChainableMethod":61,"./overwriteMethod":62,"./overwriteProperty":63,"./proxify":64,"./test":65,"./transferFlags":66,"check-error":67,"deep-eql":88,"get-func-name":112,"pathval":367,"type-detect":376}],57:[function(require,module,exports){
 // This is (almost) directly from Node.js utils
 // https://github.com/joyent/node/blob/f8c335d0caf47f16d31413f89aa28eda3878e3aa/lib/util.js
 
@@ -13863,7 +13931,7 @@ exports.flatten = function(options) {
   return options && options.xml ? assign({xmlMode: true}, options.xml) : options;
 };
 },{"lodash/assign":293}],76:[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 /*
   Module Dependencies
 */
@@ -13965,8 +14033,8 @@ exports.update = function(arr, parent) {
 
 // module.exports = $.extend(exports);
 
-}).call(this,{"isBuffer":require("../../../../../../../usr/local/lib/node_modules/watchify/node_modules/is-buffer/index.js")})
-},{"../../../../../../../usr/local/lib/node_modules/watchify/node_modules/is-buffer/index.js":414,"htmlparser2":120,"parse5":349}],77:[function(require,module,exports){
+}).call(this)}).call(this,{"isBuffer":require("../../../../../../../usr/local/lib/node_modules/watchify/node_modules/is-buffer/index.js")})
+},{"../../../../../../../usr/local/lib/node_modules/watchify/node_modules/is-buffer/index.js":400,"htmlparser2":120,"parse5":349}],77:[function(require,module,exports){
 /**
  * Module dependencies
  */
@@ -14295,7 +14363,7 @@ module.exports={
   "_args": [
     [
       "cheerio@1.0.0-rc.3",
-      "/Users/124411/working/ro-crate-html-js"
+      "/Users/pt/working/ro-crate-html-js"
     ]
   ],
   "_from": "cheerio@1.0.0-rc.3",
@@ -14320,7 +14388,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/cheerio/-/cheerio-1.0.0-rc.3.tgz",
   "_spec": "1.0.0-rc.3",
-  "_where": "/Users/124411/working/ro-crate-html-js",
+  "_where": "/Users/pt/working/ro-crate-html-js",
   "author": {
     "name": "Matt Mueller",
     "email": "mattmuelle@gmail.com",
@@ -16129,7 +16197,7 @@ function isPrimitive(value) {
   return value === null || typeof value !== 'object';
 }
 
-},{"type-detect":402}],89:[function(require,module,exports){
+},{"type-detect":376}],89:[function(require,module,exports){
 /*
   Module dependencies
 */
@@ -18012,7 +18080,7 @@ if (typeof window != 'undefined') {
   window.ejs = exports;
 }
 
-},{"../package.json":103,"./utils":102,"fs":406,"path":416}],102:[function(require,module,exports){
+},{"../package.json":103,"./utils":102,"fs":382,"path":403}],102:[function(require,module,exports){
 /*
  * EJS Embedded JavaScript templates
  * Copyright 2112 Matthew Eernisse (mde@fleegix.org)
@@ -18186,7 +18254,7 @@ module.exports={
   "_args": [
     [
       "ejs@2.7.1",
-      "/Users/124411/working/ro-crate-html-js"
+      "/Users/pt/working/ro-crate-html-js"
     ]
   ],
   "_from": "ejs@2.7.1",
@@ -18211,7 +18279,7 @@ module.exports={
   ],
   "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.7.1.tgz",
   "_spec": "2.7.1",
-  "_where": "/Users/124411/working/ro-crate-html-js",
+  "_where": "/Users/pt/working/ro-crate-html-js",
   "author": {
     "name": "Matthew Eernisse",
     "email": "mde@fleegix.org",
@@ -19091,7 +19159,7 @@ Parser.prototype.done = Parser.prototype.end;
 
 module.exports = Parser;
 
-},{"./Tokenizer.js":118,"events":410,"inherits":121}],116:[function(require,module,exports){
+},{"./Tokenizer.js":118,"events":388,"inherits":121}],116:[function(require,module,exports){
 module.exports = ProxyHandler;
 
 function ProxyHandler(cbs) {
@@ -20156,7 +20224,7 @@ Stream.prototype._write = function(chunk, encoding, cb) {
     cb();
 };
 
-},{"./Parser.js":115,"buffer":407,"inherits":121,"readable-stream":405,"string_decoder":443}],120:[function(require,module,exports){
+},{"./Parser.js":115,"buffer":383,"inherits":121,"readable-stream":381,"string_decoder":444}],120:[function(require,module,exports){
 var Parser = require("./Parser.js");
 var DomHandler = require("domhandler");
 
@@ -23299,13 +23367,13 @@ function flatRest(func) {
 module.exports = flatRest;
 
 },{"./_overRest":269,"./_setToString":279,"./flatten":300}],217:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
 module.exports = freeGlobal;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],218:[function(require,module,exports){
 var baseGetAllKeys = require('./_baseGetAllKeys'),
     getSymbols = require('./_getSymbols'),
@@ -26160,7 +26228,7 @@ function keysIn(object) {
 module.exports = keysIn;
 
 },{"./_arrayLikeKeys":140,"./_baseKeysIn":170,"./isArrayLike":307}],319:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 /**
  * @license
  * Lodash <https://lodash.com/>
@@ -43323,7 +43391,7 @@ module.exports = keysIn;
   }
 }.call(this));
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],320:[function(require,module,exports){
 var arrayMap = require('./_arrayMap'),
     baseIteratee = require('./_baseIteratee'),
@@ -45051,7 +45119,7 @@ LocationInfoOpenElementStackMixin.prototype._getOverriddenMethods = function (mx
 };
 
 
-},{"../../utils/mixin":366,"util":452}],346:[function(require,module,exports){
+},{"../../utils/mixin":366,"util":450}],346:[function(require,module,exports){
 'use strict';
 
 var Mixin = require('../../utils/mixin'),
@@ -45266,7 +45334,7 @@ LocationInfoParserMixin.prototype._getOverriddenMethods = function (mxn, orig) {
 };
 
 
-},{"../../common/html":343,"../../tokenizer":360,"../../utils/mixin":366,"../position_tracking/preprocessor_mixin":348,"./open_element_stack_mixin":345,"./tokenizer_mixin":347,"util":452}],347:[function(require,module,exports){
+},{"../../common/html":343,"../../tokenizer":360,"../../utils/mixin":366,"../position_tracking/preprocessor_mixin":348,"./open_element_stack_mixin":345,"./tokenizer_mixin":347,"util":450}],347:[function(require,module,exports){
 'use strict';
 
 var Mixin = require('../../utils/mixin'),
@@ -45385,7 +45453,7 @@ LocationInfoTokenizerMixin.prototype._getOverriddenMethods = function (mxn, orig
 };
 
 
-},{"../../tokenizer":360,"../../utils/mixin":366,"../position_tracking/preprocessor_mixin":348,"util":452}],348:[function(require,module,exports){
+},{"../../tokenizer":360,"../../utils/mixin":366,"../position_tracking/preprocessor_mixin":348,"util":450}],348:[function(require,module,exports){
 'use strict';
 
 var Mixin = require('../../utils/mixin'),
@@ -45459,7 +45527,7 @@ PositionTrackingPreprocessorMixin.prototype._getOverriddenMethods = function (mx
     };
 };
 
-},{"../../common/unicode":344,"../../utils/mixin":366,"util":452}],349:[function(require,module,exports){
+},{"../../common/unicode":344,"../../utils/mixin":366,"util":450}],349:[function(require,module,exports){
 'use strict';
 
 var Parser = require('./parser'),
@@ -48970,7 +49038,7 @@ ParserStream.prototype._scriptHandler = function (scriptElement) {
 };
 
 
-},{"./index":351,"stream":438,"util":452}],354:[function(require,module,exports){
+},{"./index":351,"stream":410,"util":450}],354:[function(require,module,exports){
 'use strict';
 
 var ParserStream = require('./parser_stream'),
@@ -48992,7 +49060,7 @@ var PlainTextConversionStream = module.exports = function (options) {
 
 inherits(PlainTextConversionStream, ParserStream);
 
-},{"../common/html":343,"./parser_stream":353,"util":452}],355:[function(require,module,exports){
+},{"../common/html":343,"./parser_stream":353,"util":450}],355:[function(require,module,exports){
 'use strict';
 
 var WritableStream = require('stream').Writable,
@@ -49008,7 +49076,7 @@ DevNullStream.prototype._write = function (chunk, encoding, cb) {
     cb();
 };
 
-},{"stream":438,"util":452}],356:[function(require,module,exports){
+},{"stream":410,"util":450}],356:[function(require,module,exports){
 'use strict';
 
 var TransformStream = require('stream').Transform,
@@ -49128,7 +49196,7 @@ SAXParser.prototype._emitPendingText = function () {
     }
 };
 
-},{"../extensions/location_info/tokenizer_mixin":347,"../tokenizer":360,"../utils/merge_options":365,"./dev_null_stream":355,"./parser_feedback_simulator":357,"stream":438,"util":452}],357:[function(require,module,exports){
+},{"../extensions/location_info/tokenizer_mixin":347,"../tokenizer":360,"../utils/merge_options":365,"./dev_null_stream":355,"./parser_feedback_simulator":357,"stream":410,"util":450}],357:[function(require,module,exports){
 'use strict';
 
 var Tokenizer = require('../tokenizer'),
@@ -49477,7 +49545,7 @@ SerializerStream.prototype._read = function () {
     this.push(null);
 };
 
-},{"./index":358,"stream":438,"util":452}],360:[function(require,module,exports){
+},{"./index":358,"stream":410,"util":450}],360:[function(require,module,exports){
 'use strict';
 
 var Preprocessor = require('./preprocessor'),
@@ -52922,11 +52990,2677 @@ const METADATA_FILE_DESCRIPTOR = {
 
 const back_back_links = new Set(Object.values(back_links));
 
+const standardContexts = {
+    "https://w3id.org/ro/crate/1.1/context" : 
+    {
+        "@id": "https://w3id.org/ro/crate/1.1/context",
+        "name": [
+             "RO-Crate JSON-LD Context"
+        ],
+        "version": "1.1.1",
+        "url": {
+             "@id": "https://w3id.org/ro/crate/1.1"
+        },
+        "schemaVersion": {
+             "@id": "http://schema.org/version/10.0/"
+        },
+        "isBasedOn": [
+             {
+                  "@id": "http://schema.org/version/10.0/"
+             },
+             {
+                  "@id": "https://pcdm.org/2016/04/18/models"
+             },
+             {
+                  "@id": "https://bioschemas.org/profiles/ComputationalWorkflow/0.5-DRAFT-2020_07_21"
+             },
+             {
+                  "@id": "https://bioschemas.org/profiles/FormalParameter/0.1-DRAFT-2020_07_21"
+             }
+        ],
+        "license": {
+             "@id": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        "@context": {
+             "3DModel": "http://schema.org/3DModel",
+             "AMRadioChannel": "http://schema.org/AMRadioChannel",
+             "APIReference": "http://schema.org/APIReference",
+             "Abdomen": "http://schema.org/Abdomen",
+             "AboutPage": "http://schema.org/AboutPage",
+             "AcceptAction": "http://schema.org/AcceptAction",
+             "Accommodation": "http://schema.org/Accommodation",
+             "AccountingService": "http://schema.org/AccountingService",
+             "AchieveAction": "http://schema.org/AchieveAction",
+             "Action": "http://schema.org/Action",
+             "ActionAccessSpecification": "http://schema.org/ActionAccessSpecification",
+             "ActionStatusType": "http://schema.org/ActionStatusType",
+             "ActivateAction": "http://schema.org/ActivateAction",
+             "ActiveActionStatus": "http://schema.org/ActiveActionStatus",
+             "ActiveNotRecruiting": "http://schema.org/ActiveNotRecruiting",
+             "AddAction": "http://schema.org/AddAction",
+             "AdministrativeArea": "http://schema.org/AdministrativeArea",
+             "AdultEntertainment": "http://schema.org/AdultEntertainment",
+             "AdvertiserContentArticle": "http://schema.org/AdvertiserContentArticle",
+             "AerobicActivity": "http://schema.org/AerobicActivity",
+             "AggregateOffer": "http://schema.org/AggregateOffer",
+             "AggregateRating": "http://schema.org/AggregateRating",
+             "AgreeAction": "http://schema.org/AgreeAction",
+             "Airline": "http://schema.org/Airline",
+             "Airport": "http://schema.org/Airport",
+             "AlbumRelease": "http://schema.org/AlbumRelease",
+             "AlignmentObject": "http://schema.org/AlignmentObject",
+             "AllWheelDriveConfiguration": "http://schema.org/AllWheelDriveConfiguration",
+             "AllocateAction": "http://schema.org/AllocateAction",
+             "AmusementPark": "http://schema.org/AmusementPark",
+             "AnaerobicActivity": "http://schema.org/AnaerobicActivity",
+             "AnalysisNewsArticle": "http://schema.org/AnalysisNewsArticle",
+             "AnatomicalStructure": "http://schema.org/AnatomicalStructure",
+             "AnatomicalSystem": "http://schema.org/AnatomicalSystem",
+             "Anesthesia": "http://schema.org/Anesthesia",
+             "AnimalShelter": "http://schema.org/AnimalShelter",
+             "Answer": "http://schema.org/Answer",
+             "Apartment": "http://schema.org/Apartment",
+             "ApartmentComplex": "http://schema.org/ApartmentComplex",
+             "Appearance": "http://schema.org/Appearance",
+             "AppendAction": "http://schema.org/AppendAction",
+             "ApplyAction": "http://schema.org/ApplyAction",
+             "ApprovedIndication": "http://schema.org/ApprovedIndication",
+             "Aquarium": "http://schema.org/Aquarium",
+             "ArchiveComponent": "http://schema.org/ArchiveComponent",
+             "ArchiveOrganization": "http://schema.org/ArchiveOrganization",
+             "ArriveAction": "http://schema.org/ArriveAction",
+             "ArtGallery": "http://schema.org/ArtGallery",
+             "Artery": "http://schema.org/Artery",
+             "Article": "http://schema.org/Article",
+             "AskAction": "http://schema.org/AskAction",
+             "AskPublicNewsArticle": "http://schema.org/AskPublicNewsArticle",
+             "AssessAction": "http://schema.org/AssessAction",
+             "AssignAction": "http://schema.org/AssignAction",
+             "Atlas": "http://schema.org/Atlas",
+             "Attorney": "http://schema.org/Attorney",
+             "Audience": "http://schema.org/Audience",
+             "AudioObject": "http://schema.org/AudioObject",
+             "Audiobook": "http://schema.org/Audiobook",
+             "AudiobookFormat": "http://schema.org/AudiobookFormat",
+             "AuthenticContent": "http://schema.org/AuthenticContent",
+             "AuthoritativeLegalValue": "http://schema.org/AuthoritativeLegalValue",
+             "AuthorizeAction": "http://schema.org/AuthorizeAction",
+             "AutoBodyShop": "http://schema.org/AutoBodyShop",
+             "AutoDealer": "http://schema.org/AutoDealer",
+             "AutoPartsStore": "http://schema.org/AutoPartsStore",
+             "AutoRental": "http://schema.org/AutoRental",
+             "AutoRepair": "http://schema.org/AutoRepair",
+             "AutoWash": "http://schema.org/AutoWash",
+             "AutomatedTeller": "http://schema.org/AutomatedTeller",
+             "AutomotiveBusiness": "http://schema.org/AutomotiveBusiness",
+             "Ayurvedic": "http://schema.org/Ayurvedic",
+             "BackgroundNewsArticle": "http://schema.org/BackgroundNewsArticle",
+             "Bacteria": "http://schema.org/Bacteria",
+             "Bakery": "http://schema.org/Bakery",
+             "Balance": "http://schema.org/Balance",
+             "BankAccount": "http://schema.org/BankAccount",
+             "BankOrCreditUnion": "http://schema.org/BankOrCreditUnion",
+             "BarOrPub": "http://schema.org/BarOrPub",
+             "Barcode": "http://schema.org/Barcode",
+             "BasicIncome": "http://schema.org/BasicIncome",
+             "Beach": "http://schema.org/Beach",
+             "BeautySalon": "http://schema.org/BeautySalon",
+             "BedAndBreakfast": "http://schema.org/BedAndBreakfast",
+             "BedDetails": "http://schema.org/BedDetails",
+             "BedType": "http://schema.org/BedType",
+             "BefriendAction": "http://schema.org/BefriendAction",
+             "BenefitsHealthAspect": "http://schema.org/BenefitsHealthAspect",
+             "BikeStore": "http://schema.org/BikeStore",
+             "Blog": "http://schema.org/Blog",
+             "BlogPosting": "http://schema.org/BlogPosting",
+             "BloodTest": "http://schema.org/BloodTest",
+             "BoardingPolicyType": "http://schema.org/BoardingPolicyType",
+             "BoatReservation": "http://schema.org/BoatReservation",
+             "BoatTerminal": "http://schema.org/BoatTerminal",
+             "BoatTrip": "http://schema.org/BoatTrip",
+             "BodyOfWater": "http://schema.org/BodyOfWater",
+             "Bone": "http://schema.org/Bone",
+             "Book": "http://schema.org/Book",
+             "BookFormatType": "http://schema.org/BookFormatType",
+             "BookSeries": "http://schema.org/BookSeries",
+             "BookStore": "http://schema.org/BookStore",
+             "BookmarkAction": "http://schema.org/BookmarkAction",
+             "Boolean": "http://schema.org/Boolean",
+             "BorrowAction": "http://schema.org/BorrowAction",
+             "BowlingAlley": "http://schema.org/BowlingAlley",
+             "BrainStructure": "http://schema.org/BrainStructure",
+             "Brand": "http://schema.org/Brand",
+             "BreadcrumbList": "http://schema.org/BreadcrumbList",
+             "Brewery": "http://schema.org/Brewery",
+             "Bridge": "http://schema.org/Bridge",
+             "BroadcastChannel": "http://schema.org/BroadcastChannel",
+             "BroadcastEvent": "http://schema.org/BroadcastEvent",
+             "BroadcastFrequencySpecification": "http://schema.org/BroadcastFrequencySpecification",
+             "BroadcastRelease": "http://schema.org/BroadcastRelease",
+             "BroadcastService": "http://schema.org/BroadcastService",
+             "BrokerageAccount": "http://schema.org/BrokerageAccount",
+             "BuddhistTemple": "http://schema.org/BuddhistTemple",
+             "BusOrCoach": "http://schema.org/BusOrCoach",
+             "BusReservation": "http://schema.org/BusReservation",
+             "BusStation": "http://schema.org/BusStation",
+             "BusStop": "http://schema.org/BusStop",
+             "BusTrip": "http://schema.org/BusTrip",
+             "BusinessAudience": "http://schema.org/BusinessAudience",
+             "BusinessEntityType": "http://schema.org/BusinessEntityType",
+             "BusinessEvent": "http://schema.org/BusinessEvent",
+             "BusinessFunction": "http://schema.org/BusinessFunction",
+             "BusinessSupport": "http://schema.org/BusinessSupport",
+             "BuyAction": "http://schema.org/BuyAction",
+             "CDCPMDRecord": "http://schema.org/CDCPMDRecord",
+             "CDFormat": "http://schema.org/CDFormat",
+             "CT": "http://schema.org/CT",
+             "CableOrSatelliteService": "http://schema.org/CableOrSatelliteService",
+             "CafeOrCoffeeShop": "http://schema.org/CafeOrCoffeeShop",
+             "Campground": "http://schema.org/Campground",
+             "CampingPitch": "http://schema.org/CampingPitch",
+             "Canal": "http://schema.org/Canal",
+             "CancelAction": "http://schema.org/CancelAction",
+             "Car": "http://schema.org/Car",
+             "CarUsageType": "http://schema.org/CarUsageType",
+             "Cardiovascular": "http://schema.org/Cardiovascular",
+             "CardiovascularExam": "http://schema.org/CardiovascularExam",
+             "CaseSeries": "http://schema.org/CaseSeries",
+             "Casino": "http://schema.org/Casino",
+             "CassetteFormat": "http://schema.org/CassetteFormat",
+             "CategoryCode": "http://schema.org/CategoryCode",
+             "CategoryCodeSet": "http://schema.org/CategoryCodeSet",
+             "CatholicChurch": "http://schema.org/CatholicChurch",
+             "CausesHealthAspect": "http://schema.org/CausesHealthAspect",
+             "Cemetery": "http://schema.org/Cemetery",
+             "Chapter": "http://schema.org/Chapter",
+             "CharitableIncorporatedOrganization": "http://schema.org/CharitableIncorporatedOrganization",
+             "CheckAction": "http://schema.org/CheckAction",
+             "CheckInAction": "http://schema.org/CheckInAction",
+             "CheckOutAction": "http://schema.org/CheckOutAction",
+             "CheckoutPage": "http://schema.org/CheckoutPage",
+             "ChildCare": "http://schema.org/ChildCare",
+             "ChildrensEvent": "http://schema.org/ChildrensEvent",
+             "Chiropractic": "http://schema.org/Chiropractic",
+             "ChooseAction": "http://schema.org/ChooseAction",
+             "Church": "http://schema.org/Church",
+             "City": "http://schema.org/City",
+             "CityHall": "http://schema.org/CityHall",
+             "CivicStructure": "http://schema.org/CivicStructure",
+             "Claim": "http://schema.org/Claim",
+             "ClaimReview": "http://schema.org/ClaimReview",
+             "Class": "http://schema.org/Class",
+             "Clinician": "http://schema.org/Clinician",
+             "Clip": "http://schema.org/Clip",
+             "ClothingStore": "http://schema.org/ClothingStore",
+             "CoOp": "http://schema.org/CoOp",
+             "Code": "http://schema.org/Code",
+             "CohortStudy": "http://schema.org/CohortStudy",
+             "Collection": "http://schema.org/Collection",
+             "CollectionPage": "http://schema.org/CollectionPage",
+             "CollegeOrUniversity": "http://schema.org/CollegeOrUniversity",
+             "ComedyClub": "http://schema.org/ComedyClub",
+             "ComedyEvent": "http://schema.org/ComedyEvent",
+             "ComicCoverArt": "http://schema.org/ComicCoverArt",
+             "ComicIssue": "http://schema.org/ComicIssue",
+             "ComicSeries": "http://schema.org/ComicSeries",
+             "ComicStory": "http://schema.org/ComicStory",
+             "Comment": "http://schema.org/Comment",
+             "CommentAction": "http://schema.org/CommentAction",
+             "CommentPermission": "http://schema.org/CommentPermission",
+             "CommunicateAction": "http://schema.org/CommunicateAction",
+             "CommunityHealth": "http://schema.org/CommunityHealth",
+             "CompilationAlbum": "http://schema.org/CompilationAlbum",
+             "CompleteDataFeed": "http://schema.org/CompleteDataFeed",
+             "Completed": "http://schema.org/Completed",
+             "CompletedActionStatus": "http://schema.org/CompletedActionStatus",
+             "CompoundPriceSpecification": "http://schema.org/CompoundPriceSpecification",
+             "ComputerLanguage": "http://schema.org/ComputerLanguage",
+             "ComputerStore": "http://schema.org/ComputerStore",
+             "ConfirmAction": "http://schema.org/ConfirmAction",
+             "Consortium": "http://schema.org/Consortium",
+             "ConsumeAction": "http://schema.org/ConsumeAction",
+             "ContactPage": "http://schema.org/ContactPage",
+             "ContactPoint": "http://schema.org/ContactPoint",
+             "ContactPointOption": "http://schema.org/ContactPointOption",
+             "ContagiousnessHealthAspect": "http://schema.org/ContagiousnessHealthAspect",
+             "Continent": "http://schema.org/Continent",
+             "ControlAction": "http://schema.org/ControlAction",
+             "ConvenienceStore": "http://schema.org/ConvenienceStore",
+             "Conversation": "http://schema.org/Conversation",
+             "CookAction": "http://schema.org/CookAction",
+             "Corporation": "http://schema.org/Corporation",
+             "CorrectionComment": "http://schema.org/CorrectionComment",
+             "Country": "http://schema.org/Country",
+             "Course": "http://schema.org/Course",
+             "CourseInstance": "http://schema.org/CourseInstance",
+             "Courthouse": "http://schema.org/Courthouse",
+             "CoverArt": "http://schema.org/CoverArt",
+             "CovidTestingFacility": "http://schema.org/CovidTestingFacility",
+             "CreateAction": "http://schema.org/CreateAction",
+             "CreativeWork": "http://schema.org/CreativeWork",
+             "CreativeWorkSeason": "http://schema.org/CreativeWorkSeason",
+             "CreativeWorkSeries": "http://schema.org/CreativeWorkSeries",
+             "CreditCard": "http://schema.org/CreditCard",
+             "Crematorium": "http://schema.org/Crematorium",
+             "CriticReview": "http://schema.org/CriticReview",
+             "CrossSectional": "http://schema.org/CrossSectional",
+             "CssSelectorType": "http://schema.org/CssSelectorType",
+             "CurrencyConversionService": "http://schema.org/CurrencyConversionService",
+             "DDxElement": "http://schema.org/DDxElement",
+             "DJMixAlbum": "http://schema.org/DJMixAlbum",
+             "DVDFormat": "http://schema.org/DVDFormat",
+             "DamagedCondition": "http://schema.org/DamagedCondition",
+             "DanceEvent": "http://schema.org/DanceEvent",
+             "DanceGroup": "http://schema.org/DanceGroup",
+             "DataCatalog": "http://schema.org/DataCatalog",
+             "DataDownload": "http://schema.org/DataDownload",
+             "DataFeed": "http://schema.org/DataFeed",
+             "DataFeedItem": "http://schema.org/DataFeedItem",
+             "DataType": "http://schema.org/DataType",
+             "Dataset": "http://schema.org/Dataset",
+             "Date": "http://schema.org/Date",
+             "DateTime": "http://schema.org/DateTime",
+             "DatedMoneySpecification": "http://schema.org/DatedMoneySpecification",
+             "DayOfWeek": "http://schema.org/DayOfWeek",
+             "DaySpa": "http://schema.org/DaySpa",
+             "DeactivateAction": "http://schema.org/DeactivateAction",
+             "DefenceEstablishment": "http://schema.org/DefenceEstablishment",
+             "DefinedRegion": "http://schema.org/DefinedRegion",
+             "DefinedTerm": "http://schema.org/DefinedTerm",
+             "DefinedTermSet": "http://schema.org/DefinedTermSet",
+             "DefinitiveLegalValue": "http://schema.org/DefinitiveLegalValue",
+             "DeleteAction": "http://schema.org/DeleteAction",
+             "DeliveryChargeSpecification": "http://schema.org/DeliveryChargeSpecification",
+             "DeliveryEvent": "http://schema.org/DeliveryEvent",
+             "DeliveryMethod": "http://schema.org/DeliveryMethod",
+             "DeliveryTimeSettings": "http://schema.org/DeliveryTimeSettings",
+             "Demand": "http://schema.org/Demand",
+             "DemoAlbum": "http://schema.org/DemoAlbum",
+             "Dentist": "http://schema.org/Dentist",
+             "Dentistry": "http://schema.org/Dentistry",
+             "DepartAction": "http://schema.org/DepartAction",
+             "DepartmentStore": "http://schema.org/DepartmentStore",
+             "DepositAccount": "http://schema.org/DepositAccount",
+             "Dermatologic": "http://schema.org/Dermatologic",
+             "Dermatology": "http://schema.org/Dermatology",
+             "DiabeticDiet": "http://schema.org/DiabeticDiet",
+             "Diagnostic": "http://schema.org/Diagnostic",
+             "DiagnosticLab": "http://schema.org/DiagnosticLab",
+             "DiagnosticProcedure": "http://schema.org/DiagnosticProcedure",
+             "Diet": "http://schema.org/Diet",
+             "DietNutrition": "http://schema.org/DietNutrition",
+             "DietarySupplement": "http://schema.org/DietarySupplement",
+             "DigitalAudioTapeFormat": "http://schema.org/DigitalAudioTapeFormat",
+             "DigitalDocument": "http://schema.org/DigitalDocument",
+             "DigitalDocumentPermission": "http://schema.org/DigitalDocumentPermission",
+             "DigitalDocumentPermissionType": "http://schema.org/DigitalDocumentPermissionType",
+             "DigitalFormat": "http://schema.org/DigitalFormat",
+             "DisabilitySupport": "http://schema.org/DisabilitySupport",
+             "DisagreeAction": "http://schema.org/DisagreeAction",
+             "Discontinued": "http://schema.org/Discontinued",
+             "DiscoverAction": "http://schema.org/DiscoverAction",
+             "DiscussionForumPosting": "http://schema.org/DiscussionForumPosting",
+             "DislikeAction": "http://schema.org/DislikeAction",
+             "Distance": "http://schema.org/Distance",
+             "Distillery": "http://schema.org/Distillery",
+             "DonateAction": "http://schema.org/DonateAction",
+             "DoseSchedule": "http://schema.org/DoseSchedule",
+             "DoubleBlindedTrial": "http://schema.org/DoubleBlindedTrial",
+             "DownloadAction": "http://schema.org/DownloadAction",
+             "DrawAction": "http://schema.org/DrawAction",
+             "Drawing": "http://schema.org/Drawing",
+             "DrinkAction": "http://schema.org/DrinkAction",
+             "DriveWheelConfigurationValue": "http://schema.org/DriveWheelConfigurationValue",
+             "DrivingSchoolVehicleUsage": "http://schema.org/DrivingSchoolVehicleUsage",
+             "Drug": "http://schema.org/Drug",
+             "DrugClass": "http://schema.org/DrugClass",
+             "DrugCost": "http://schema.org/DrugCost",
+             "DrugCostCategory": "http://schema.org/DrugCostCategory",
+             "DrugLegalStatus": "http://schema.org/DrugLegalStatus",
+             "DrugPregnancyCategory": "http://schema.org/DrugPregnancyCategory",
+             "DrugPrescriptionStatus": "http://schema.org/DrugPrescriptionStatus",
+             "DrugStrength": "http://schema.org/DrugStrength",
+             "DryCleaningOrLaundry": "http://schema.org/DryCleaningOrLaundry",
+             "Duration": "http://schema.org/Duration",
+             "EBook": "http://schema.org/EBook",
+             "EPRelease": "http://schema.org/EPRelease",
+             "EUEnergyEfficiencyCategoryA": "http://schema.org/EUEnergyEfficiencyCategoryA",
+             "EUEnergyEfficiencyCategoryA1Plus": "http://schema.org/EUEnergyEfficiencyCategoryA1Plus",
+             "EUEnergyEfficiencyCategoryA2Plus": "http://schema.org/EUEnergyEfficiencyCategoryA2Plus",
+             "EUEnergyEfficiencyCategoryA3Plus": "http://schema.org/EUEnergyEfficiencyCategoryA3Plus",
+             "EUEnergyEfficiencyCategoryB": "http://schema.org/EUEnergyEfficiencyCategoryB",
+             "EUEnergyEfficiencyCategoryC": "http://schema.org/EUEnergyEfficiencyCategoryC",
+             "EUEnergyEfficiencyCategoryD": "http://schema.org/EUEnergyEfficiencyCategoryD",
+             "EUEnergyEfficiencyCategoryE": "http://schema.org/EUEnergyEfficiencyCategoryE",
+             "EUEnergyEfficiencyCategoryF": "http://schema.org/EUEnergyEfficiencyCategoryF",
+             "EUEnergyEfficiencyCategoryG": "http://schema.org/EUEnergyEfficiencyCategoryG",
+             "EUEnergyEfficiencyEnumeration": "http://schema.org/EUEnergyEfficiencyEnumeration",
+             "Ear": "http://schema.org/Ear",
+             "EatAction": "http://schema.org/EatAction",
+             "EducationEvent": "http://schema.org/EducationEvent",
+             "EducationalAudience": "http://schema.org/EducationalAudience",
+             "EducationalOccupationalCredential": "http://schema.org/EducationalOccupationalCredential",
+             "EducationalOccupationalProgram": "http://schema.org/EducationalOccupationalProgram",
+             "EducationalOrganization": "http://schema.org/EducationalOrganization",
+             "Electrician": "http://schema.org/Electrician",
+             "ElectronicsStore": "http://schema.org/ElectronicsStore",
+             "ElementarySchool": "http://schema.org/ElementarySchool",
+             "EmailMessage": "http://schema.org/EmailMessage",
+             "Embassy": "http://schema.org/Embassy",
+             "Emergency": "http://schema.org/Emergency",
+             "EmergencyService": "http://schema.org/EmergencyService",
+             "EmployeeRole": "http://schema.org/EmployeeRole",
+             "EmployerAggregateRating": "http://schema.org/EmployerAggregateRating",
+             "EmployerReview": "http://schema.org/EmployerReview",
+             "EmploymentAgency": "http://schema.org/EmploymentAgency",
+             "Endocrine": "http://schema.org/Endocrine",
+             "EndorseAction": "http://schema.org/EndorseAction",
+             "EndorsementRating": "http://schema.org/EndorsementRating",
+             "Energy": "http://schema.org/Energy",
+             "EnergyConsumptionDetails": "http://schema.org/EnergyConsumptionDetails",
+             "EnergyEfficiencyEnumeration": "http://schema.org/EnergyEfficiencyEnumeration",
+             "EnergyStarCertified": "http://schema.org/EnergyStarCertified",
+             "EnergyStarEnergyEfficiencyEnumeration": "http://schema.org/EnergyStarEnergyEfficiencyEnumeration",
+             "EngineSpecification": "http://schema.org/EngineSpecification",
+             "EnrollingByInvitation": "http://schema.org/EnrollingByInvitation",
+             "EntertainmentBusiness": "http://schema.org/EntertainmentBusiness",
+             "EntryPoint": "http://schema.org/EntryPoint",
+             "Enumeration": "http://schema.org/Enumeration",
+             "Episode": "http://schema.org/Episode",
+             "Event": "http://schema.org/Event",
+             "EventAttendanceModeEnumeration": "http://schema.org/EventAttendanceModeEnumeration",
+             "EventCancelled": "http://schema.org/EventCancelled",
+             "EventMovedOnline": "http://schema.org/EventMovedOnline",
+             "EventPostponed": "http://schema.org/EventPostponed",
+             "EventRescheduled": "http://schema.org/EventRescheduled",
+             "EventReservation": "http://schema.org/EventReservation",
+             "EventScheduled": "http://schema.org/EventScheduled",
+             "EventSeries": "http://schema.org/EventSeries",
+             "EventStatusType": "http://schema.org/EventStatusType",
+             "EventVenue": "http://schema.org/EventVenue",
+             "EvidenceLevelA": "http://schema.org/EvidenceLevelA",
+             "EvidenceLevelB": "http://schema.org/EvidenceLevelB",
+             "EvidenceLevelC": "http://schema.org/EvidenceLevelC",
+             "ExchangeRateSpecification": "http://schema.org/ExchangeRateSpecification",
+             "ExchangeRefund": "http://schema.org/ExchangeRefund",
+             "ExerciseAction": "http://schema.org/ExerciseAction",
+             "ExerciseGym": "http://schema.org/ExerciseGym",
+             "ExercisePlan": "http://schema.org/ExercisePlan",
+             "ExhibitionEvent": "http://schema.org/ExhibitionEvent",
+             "Eye": "http://schema.org/Eye",
+             "FAQPage": "http://schema.org/FAQPage",
+             "FDAcategoryA": "http://schema.org/FDAcategoryA",
+             "FDAcategoryB": "http://schema.org/FDAcategoryB",
+             "FDAcategoryC": "http://schema.org/FDAcategoryC",
+             "FDAcategoryD": "http://schema.org/FDAcategoryD",
+             "FDAcategoryX": "http://schema.org/FDAcategoryX",
+             "FDAnotEvaluated": "http://schema.org/FDAnotEvaluated",
+             "FMRadioChannel": "http://schema.org/FMRadioChannel",
+             "FailedActionStatus": "http://schema.org/FailedActionStatus",
+             "False": "http://schema.org/False",
+             "FastFoodRestaurant": "http://schema.org/FastFoodRestaurant",
+             "Female": "http://schema.org/Female",
+             "Festival": "http://schema.org/Festival",
+             "FilmAction": "http://schema.org/FilmAction",
+             "FinancialProduct": "http://schema.org/FinancialProduct",
+             "FinancialService": "http://schema.org/FinancialService",
+             "FindAction": "http://schema.org/FindAction",
+             "FireStation": "http://schema.org/FireStation",
+             "Flexibility": "http://schema.org/Flexibility",
+             "Flight": "http://schema.org/Flight",
+             "FlightReservation": "http://schema.org/FlightReservation",
+             "Float": "http://schema.org/Float",
+             "FloorPlan": "http://schema.org/FloorPlan",
+             "Florist": "http://schema.org/Florist",
+             "FollowAction": "http://schema.org/FollowAction",
+             "FoodEstablishment": "http://schema.org/FoodEstablishment",
+             "FoodEstablishmentReservation": "http://schema.org/FoodEstablishmentReservation",
+             "FoodEvent": "http://schema.org/FoodEvent",
+             "FoodService": "http://schema.org/FoodService",
+             "FourWheelDriveConfiguration": "http://schema.org/FourWheelDriveConfiguration",
+             "Friday": "http://schema.org/Friday",
+             "FrontWheelDriveConfiguration": "http://schema.org/FrontWheelDriveConfiguration",
+             "FullRefund": "http://schema.org/FullRefund",
+             "FundingAgency": "http://schema.org/FundingAgency",
+             "FundingScheme": "http://schema.org/FundingScheme",
+             "Fungus": "http://schema.org/Fungus",
+             "FurnitureStore": "http://schema.org/FurnitureStore",
+             "Game": "http://schema.org/Game",
+             "GamePlayMode": "http://schema.org/GamePlayMode",
+             "GameServer": "http://schema.org/GameServer",
+             "GameServerStatus": "http://schema.org/GameServerStatus",
+             "GardenStore": "http://schema.org/GardenStore",
+             "GasStation": "http://schema.org/GasStation",
+             "Gastroenterologic": "http://schema.org/Gastroenterologic",
+             "GatedResidenceCommunity": "http://schema.org/GatedResidenceCommunity",
+             "GenderType": "http://schema.org/GenderType",
+             "GeneralContractor": "http://schema.org/GeneralContractor",
+             "Genetic": "http://schema.org/Genetic",
+             "Genitourinary": "http://schema.org/Genitourinary",
+             "GeoCircle": "http://schema.org/GeoCircle",
+             "GeoCoordinates": "http://schema.org/GeoCoordinates",
+             "GeoShape": "http://schema.org/GeoShape",
+             "GeospatialGeometry": "http://schema.org/GeospatialGeometry",
+             "Geriatric": "http://schema.org/Geriatric",
+             "GiveAction": "http://schema.org/GiveAction",
+             "GlutenFreeDiet": "http://schema.org/GlutenFreeDiet",
+             "GolfCourse": "http://schema.org/GolfCourse",
+             "GovernmentBenefitsType": "http://schema.org/GovernmentBenefitsType",
+             "GovernmentBuilding": "http://schema.org/GovernmentBuilding",
+             "GovernmentOffice": "http://schema.org/GovernmentOffice",
+             "GovernmentOrganization": "http://schema.org/GovernmentOrganization",
+             "GovernmentPermit": "http://schema.org/GovernmentPermit",
+             "GovernmentService": "http://schema.org/GovernmentService",
+             "Grant": "http://schema.org/Grant",
+             "GraphicNovel": "http://schema.org/GraphicNovel",
+             "GroceryStore": "http://schema.org/GroceryStore",
+             "GroupBoardingPolicy": "http://schema.org/GroupBoardingPolicy",
+             "Guide": "http://schema.org/Guide",
+             "Gynecologic": "http://schema.org/Gynecologic",
+             "HTML": "rdf:HTML",
+             "HVACBusiness": "http://schema.org/HVACBusiness",
+             "Hackathon": "http://schema.org/Hackathon",
+             "HairSalon": "http://schema.org/HairSalon",
+             "HalalDiet": "http://schema.org/HalalDiet",
+             "Hardcover": "http://schema.org/Hardcover",
+             "HardwareStore": "http://schema.org/HardwareStore",
+             "Head": "http://schema.org/Head",
+             "HealthAndBeautyBusiness": "http://schema.org/HealthAndBeautyBusiness",
+             "HealthAspectEnumeration": "http://schema.org/HealthAspectEnumeration",
+             "HealthCare": "http://schema.org/HealthCare",
+             "HealthClub": "http://schema.org/HealthClub",
+             "HealthInsurancePlan": "http://schema.org/HealthInsurancePlan",
+             "HealthPlanCostSharingSpecification": "http://schema.org/HealthPlanCostSharingSpecification",
+             "HealthPlanFormulary": "http://schema.org/HealthPlanFormulary",
+             "HealthPlanNetwork": "http://schema.org/HealthPlanNetwork",
+             "HealthTopicContent": "http://schema.org/HealthTopicContent",
+             "HearingImpairedSupported": "http://schema.org/HearingImpairedSupported",
+             "Hematologic": "http://schema.org/Hematologic",
+             "HighSchool": "http://schema.org/HighSchool",
+             "HinduDiet": "http://schema.org/HinduDiet",
+             "HinduTemple": "http://schema.org/HinduTemple",
+             "HobbyShop": "http://schema.org/HobbyShop",
+             "HomeAndConstructionBusiness": "http://schema.org/HomeAndConstructionBusiness",
+             "HomeGoodsStore": "http://schema.org/HomeGoodsStore",
+             "Homeopathic": "http://schema.org/Homeopathic",
+             "Hospital": "http://schema.org/Hospital",
+             "Hostel": "http://schema.org/Hostel",
+             "Hotel": "http://schema.org/Hotel",
+             "HotelRoom": "http://schema.org/HotelRoom",
+             "House": "http://schema.org/House",
+             "HousePainter": "http://schema.org/HousePainter",
+             "HowOrWhereHealthAspect": "http://schema.org/HowOrWhereHealthAspect",
+             "HowTo": "http://schema.org/HowTo",
+             "HowToDirection": "http://schema.org/HowToDirection",
+             "HowToItem": "http://schema.org/HowToItem",
+             "HowToSection": "http://schema.org/HowToSection",
+             "HowToStep": "http://schema.org/HowToStep",
+             "HowToSupply": "http://schema.org/HowToSupply",
+             "HowToTip": "http://schema.org/HowToTip",
+             "HowToTool": "http://schema.org/HowToTool",
+             "IceCreamShop": "http://schema.org/IceCreamShop",
+             "IgnoreAction": "http://schema.org/IgnoreAction",
+             "ImageGallery": "http://schema.org/ImageGallery",
+             "ImageObject": "http://schema.org/ImageObject",
+             "ImagingTest": "http://schema.org/ImagingTest",
+             "InForce": "http://schema.org/InForce",
+             "InStock": "http://schema.org/InStock",
+             "InStoreOnly": "http://schema.org/InStoreOnly",
+             "IndividualProduct": "http://schema.org/IndividualProduct",
+             "Infectious": "http://schema.org/Infectious",
+             "InfectiousAgentClass": "http://schema.org/InfectiousAgentClass",
+             "InfectiousDisease": "http://schema.org/InfectiousDisease",
+             "InformAction": "http://schema.org/InformAction",
+             "InsertAction": "http://schema.org/InsertAction",
+             "InstallAction": "http://schema.org/InstallAction",
+             "InsuranceAgency": "http://schema.org/InsuranceAgency",
+             "Intangible": "http://schema.org/Intangible",
+             "Integer": "http://schema.org/Integer",
+             "InteractAction": "http://schema.org/InteractAction",
+             "InteractionCounter": "http://schema.org/InteractionCounter",
+             "InternationalTrial": "http://schema.org/InternationalTrial",
+             "InternetCafe": "http://schema.org/InternetCafe",
+             "InvestmentFund": "http://schema.org/InvestmentFund",
+             "InvestmentOrDeposit": "http://schema.org/InvestmentOrDeposit",
+             "InviteAction": "http://schema.org/InviteAction",
+             "Invoice": "http://schema.org/Invoice",
+             "ItemAvailability": "http://schema.org/ItemAvailability",
+             "ItemList": "http://schema.org/ItemList",
+             "ItemListOrderAscending": "http://schema.org/ItemListOrderAscending",
+             "ItemListOrderDescending": "http://schema.org/ItemListOrderDescending",
+             "ItemListOrderType": "http://schema.org/ItemListOrderType",
+             "ItemListUnordered": "http://schema.org/ItemListUnordered",
+             "ItemPage": "http://schema.org/ItemPage",
+             "JewelryStore": "http://schema.org/JewelryStore",
+             "JobPosting": "http://schema.org/JobPosting",
+             "JoinAction": "http://schema.org/JoinAction",
+             "Joint": "http://schema.org/Joint",
+             "KosherDiet": "http://schema.org/KosherDiet",
+             "LaboratoryScience": "http://schema.org/LaboratoryScience",
+             "LakeBodyOfWater": "http://schema.org/LakeBodyOfWater",
+             "Landform": "http://schema.org/Landform",
+             "LandmarksOrHistoricalBuildings": "http://schema.org/LandmarksOrHistoricalBuildings",
+             "Language": "http://schema.org/Language",
+             "LaserDiscFormat": "http://schema.org/LaserDiscFormat",
+             "LearningResource": "http://schema.org/LearningResource",
+             "LeaveAction": "http://schema.org/LeaveAction",
+             "LeftHandDriving": "http://schema.org/LeftHandDriving",
+             "LegalForceStatus": "http://schema.org/LegalForceStatus",
+             "LegalService": "http://schema.org/LegalService",
+             "LegalValueLevel": "http://schema.org/LegalValueLevel",
+             "Legislation": "http://schema.org/Legislation",
+             "LegislationObject": "http://schema.org/LegislationObject",
+             "LegislativeBuilding": "http://schema.org/LegislativeBuilding",
+             "LeisureTimeActivity": "http://schema.org/LeisureTimeActivity",
+             "LendAction": "http://schema.org/LendAction",
+             "Library": "http://schema.org/Library",
+             "LibrarySystem": "http://schema.org/LibrarySystem",
+             "LifestyleModification": "http://schema.org/LifestyleModification",
+             "Ligament": "http://schema.org/Ligament",
+             "LikeAction": "http://schema.org/LikeAction",
+             "LimitedAvailability": "http://schema.org/LimitedAvailability",
+             "LimitedByGuaranteeCharity": "http://schema.org/LimitedByGuaranteeCharity",
+             "LinkRole": "http://schema.org/LinkRole",
+             "LiquorStore": "http://schema.org/LiquorStore",
+             "ListItem": "http://schema.org/ListItem",
+             "ListenAction": "http://schema.org/ListenAction",
+             "LiteraryEvent": "http://schema.org/LiteraryEvent",
+             "LiveAlbum": "http://schema.org/LiveAlbum",
+             "LiveBlogPosting": "http://schema.org/LiveBlogPosting",
+             "LivingWithHealthAspect": "http://schema.org/LivingWithHealthAspect",
+             "LoanOrCredit": "http://schema.org/LoanOrCredit",
+             "LocalBusiness": "http://schema.org/LocalBusiness",
+             "LocationFeatureSpecification": "http://schema.org/LocationFeatureSpecification",
+             "LockerDelivery": "http://schema.org/LockerDelivery",
+             "Locksmith": "http://schema.org/Locksmith",
+             "LodgingBusiness": "http://schema.org/LodgingBusiness",
+             "LodgingReservation": "http://schema.org/LodgingReservation",
+             "Longitudinal": "http://schema.org/Longitudinal",
+             "LoseAction": "http://schema.org/LoseAction",
+             "LowCalorieDiet": "http://schema.org/LowCalorieDiet",
+             "LowFatDiet": "http://schema.org/LowFatDiet",
+             "LowLactoseDiet": "http://schema.org/LowLactoseDiet",
+             "LowSaltDiet": "http://schema.org/LowSaltDiet",
+             "Lung": "http://schema.org/Lung",
+             "LymphaticVessel": "http://schema.org/LymphaticVessel",
+             "MRI": "http://schema.org/MRI",
+             "Male": "http://schema.org/Male",
+             "Manuscript": "http://schema.org/Manuscript",
+             "Map": "http://schema.org/Map",
+             "MapCategoryType": "http://schema.org/MapCategoryType",
+             "MarryAction": "http://schema.org/MarryAction",
+             "Mass": "http://schema.org/Mass",
+             "MaximumDoseSchedule": "http://schema.org/MaximumDoseSchedule",
+             "MayTreatHealthAspect": "http://schema.org/MayTreatHealthAspect",
+             "MediaGallery": "http://schema.org/MediaGallery",
+             "MediaManipulationRatingEnumeration": "http://schema.org/MediaManipulationRatingEnumeration",
+             "MediaObject": "http://schema.org/MediaObject",
+             "MediaReview": "http://schema.org/MediaReview",
+             "MediaSubscription": "http://schema.org/MediaSubscription",
+             "MedicalAudience": "http://schema.org/MedicalAudience",
+             "MedicalAudienceType": "http://schema.org/MedicalAudienceType",
+             "MedicalBusiness": "http://schema.org/MedicalBusiness",
+             "MedicalCause": "http://schema.org/MedicalCause",
+             "MedicalClinic": "http://schema.org/MedicalClinic",
+             "MedicalCode": "http://schema.org/MedicalCode",
+             "MedicalCondition": "http://schema.org/MedicalCondition",
+             "MedicalConditionStage": "http://schema.org/MedicalConditionStage",
+             "MedicalContraindication": "http://schema.org/MedicalContraindication",
+             "MedicalDevice": "http://schema.org/MedicalDevice",
+             "MedicalDevicePurpose": "http://schema.org/MedicalDevicePurpose",
+             "MedicalEntity": "http://schema.org/MedicalEntity",
+             "MedicalEnumeration": "http://schema.org/MedicalEnumeration",
+             "MedicalEvidenceLevel": "http://schema.org/MedicalEvidenceLevel",
+             "MedicalGuideline": "http://schema.org/MedicalGuideline",
+             "MedicalGuidelineContraindication": "http://schema.org/MedicalGuidelineContraindication",
+             "MedicalGuidelineRecommendation": "http://schema.org/MedicalGuidelineRecommendation",
+             "MedicalImagingTechnique": "http://schema.org/MedicalImagingTechnique",
+             "MedicalIndication": "http://schema.org/MedicalIndication",
+             "MedicalIntangible": "http://schema.org/MedicalIntangible",
+             "MedicalObservationalStudy": "http://schema.org/MedicalObservationalStudy",
+             "MedicalObservationalStudyDesign": "http://schema.org/MedicalObservationalStudyDesign",
+             "MedicalOrganization": "http://schema.org/MedicalOrganization",
+             "MedicalProcedure": "http://schema.org/MedicalProcedure",
+             "MedicalProcedureType": "http://schema.org/MedicalProcedureType",
+             "MedicalResearcher": "http://schema.org/MedicalResearcher",
+             "MedicalRiskCalculator": "http://schema.org/MedicalRiskCalculator",
+             "MedicalRiskEstimator": "http://schema.org/MedicalRiskEstimator",
+             "MedicalRiskFactor": "http://schema.org/MedicalRiskFactor",
+             "MedicalRiskScore": "http://schema.org/MedicalRiskScore",
+             "MedicalScholarlyArticle": "http://schema.org/MedicalScholarlyArticle",
+             "MedicalSign": "http://schema.org/MedicalSign",
+             "MedicalSignOrSymptom": "http://schema.org/MedicalSignOrSymptom",
+             "MedicalSpecialty": "http://schema.org/MedicalSpecialty",
+             "MedicalStudy": "http://schema.org/MedicalStudy",
+             "MedicalStudyStatus": "http://schema.org/MedicalStudyStatus",
+             "MedicalSymptom": "http://schema.org/MedicalSymptom",
+             "MedicalTest": "http://schema.org/MedicalTest",
+             "MedicalTestPanel": "http://schema.org/MedicalTestPanel",
+             "MedicalTherapy": "http://schema.org/MedicalTherapy",
+             "MedicalTrial": "http://schema.org/MedicalTrial",
+             "MedicalTrialDesign": "http://schema.org/MedicalTrialDesign",
+             "MedicalWebPage": "http://schema.org/MedicalWebPage",
+             "MedicineSystem": "http://schema.org/MedicineSystem",
+             "MeetingRoom": "http://schema.org/MeetingRoom",
+             "MensClothingStore": "http://schema.org/MensClothingStore",
+             "Menu": "http://schema.org/Menu",
+             "MenuItem": "http://schema.org/MenuItem",
+             "MenuSection": "http://schema.org/MenuSection",
+             "MerchantReturnEnumeration": "http://schema.org/MerchantReturnEnumeration",
+             "MerchantReturnFiniteReturnWindow": "http://schema.org/MerchantReturnFiniteReturnWindow",
+             "MerchantReturnNotPermitted": "http://schema.org/MerchantReturnNotPermitted",
+             "MerchantReturnPolicy": "http://schema.org/MerchantReturnPolicy",
+             "MerchantReturnUnlimitedWindow": "http://schema.org/MerchantReturnUnlimitedWindow",
+             "MerchantReturnUnspecified": "http://schema.org/MerchantReturnUnspecified",
+             "Message": "http://schema.org/Message",
+             "MiddleSchool": "http://schema.org/MiddleSchool",
+             "Midwifery": "http://schema.org/Midwifery",
+             "MisconceptionsHealthAspect": "http://schema.org/MisconceptionsHealthAspect",
+             "MissingContext": "http://schema.org/MissingContext",
+             "MixedEventAttendanceMode": "http://schema.org/MixedEventAttendanceMode",
+             "MixtapeAlbum": "http://schema.org/MixtapeAlbum",
+             "MobileApplication": "http://schema.org/MobileApplication",
+             "MobilePhoneStore": "http://schema.org/MobilePhoneStore",
+             "Monday": "http://schema.org/Monday",
+             "MonetaryAmount": "http://schema.org/MonetaryAmount",
+             "MonetaryAmountDistribution": "http://schema.org/MonetaryAmountDistribution",
+             "MonetaryGrant": "http://schema.org/MonetaryGrant",
+             "MoneyTransfer": "http://schema.org/MoneyTransfer",
+             "MortgageLoan": "http://schema.org/MortgageLoan",
+             "Mosque": "http://schema.org/Mosque",
+             "Motel": "http://schema.org/Motel",
+             "Motorcycle": "http://schema.org/Motorcycle",
+             "MotorcycleDealer": "http://schema.org/MotorcycleDealer",
+             "MotorcycleRepair": "http://schema.org/MotorcycleRepair",
+             "MotorizedBicycle": "http://schema.org/MotorizedBicycle",
+             "Mountain": "http://schema.org/Mountain",
+             "MoveAction": "http://schema.org/MoveAction",
+             "Movie": "http://schema.org/Movie",
+             "MovieClip": "http://schema.org/MovieClip",
+             "MovieRentalStore": "http://schema.org/MovieRentalStore",
+             "MovieSeries": "http://schema.org/MovieSeries",
+             "MovieTheater": "http://schema.org/MovieTheater",
+             "MovingCompany": "http://schema.org/MovingCompany",
+             "MultiCenterTrial": "http://schema.org/MultiCenterTrial",
+             "MultiPlayer": "http://schema.org/MultiPlayer",
+             "MulticellularParasite": "http://schema.org/MulticellularParasite",
+             "Muscle": "http://schema.org/Muscle",
+             "Musculoskeletal": "http://schema.org/Musculoskeletal",
+             "MusculoskeletalExam": "http://schema.org/MusculoskeletalExam",
+             "Museum": "http://schema.org/Museum",
+             "MusicAlbum": "http://schema.org/MusicAlbum",
+             "MusicAlbumProductionType": "http://schema.org/MusicAlbumProductionType",
+             "MusicAlbumReleaseType": "http://schema.org/MusicAlbumReleaseType",
+             "MusicComposition": "http://schema.org/MusicComposition",
+             "MusicEvent": "http://schema.org/MusicEvent",
+             "MusicGroup": "http://schema.org/MusicGroup",
+             "MusicPlaylist": "http://schema.org/MusicPlaylist",
+             "MusicRecording": "http://schema.org/MusicRecording",
+             "MusicRelease": "http://schema.org/MusicRelease",
+             "MusicReleaseFormatType": "http://schema.org/MusicReleaseFormatType",
+             "MusicStore": "http://schema.org/MusicStore",
+             "MusicVenue": "http://schema.org/MusicVenue",
+             "MusicVideoObject": "http://schema.org/MusicVideoObject",
+             "NGO": "http://schema.org/NGO",
+             "NLNonprofitType": "http://schema.org/NLNonprofitType",
+             "NailSalon": "http://schema.org/NailSalon",
+             "Neck": "http://schema.org/Neck",
+             "Nerve": "http://schema.org/Nerve",
+             "Neuro": "http://schema.org/Neuro",
+             "Neurologic": "http://schema.org/Neurologic",
+             "NewCondition": "http://schema.org/NewCondition",
+             "NewsArticle": "http://schema.org/NewsArticle",
+             "NewsMediaOrganization": "http://schema.org/NewsMediaOrganization",
+             "Newspaper": "http://schema.org/Newspaper",
+             "NightClub": "http://schema.org/NightClub",
+             "NoninvasiveProcedure": "http://schema.org/NoninvasiveProcedure",
+             "Nonprofit501a": "http://schema.org/Nonprofit501a",
+             "Nonprofit501c1": "http://schema.org/Nonprofit501c1",
+             "Nonprofit501c10": "http://schema.org/Nonprofit501c10",
+             "Nonprofit501c11": "http://schema.org/Nonprofit501c11",
+             "Nonprofit501c12": "http://schema.org/Nonprofit501c12",
+             "Nonprofit501c13": "http://schema.org/Nonprofit501c13",
+             "Nonprofit501c14": "http://schema.org/Nonprofit501c14",
+             "Nonprofit501c15": "http://schema.org/Nonprofit501c15",
+             "Nonprofit501c16": "http://schema.org/Nonprofit501c16",
+             "Nonprofit501c17": "http://schema.org/Nonprofit501c17",
+             "Nonprofit501c18": "http://schema.org/Nonprofit501c18",
+             "Nonprofit501c19": "http://schema.org/Nonprofit501c19",
+             "Nonprofit501c2": "http://schema.org/Nonprofit501c2",
+             "Nonprofit501c20": "http://schema.org/Nonprofit501c20",
+             "Nonprofit501c21": "http://schema.org/Nonprofit501c21",
+             "Nonprofit501c22": "http://schema.org/Nonprofit501c22",
+             "Nonprofit501c23": "http://schema.org/Nonprofit501c23",
+             "Nonprofit501c24": "http://schema.org/Nonprofit501c24",
+             "Nonprofit501c25": "http://schema.org/Nonprofit501c25",
+             "Nonprofit501c26": "http://schema.org/Nonprofit501c26",
+             "Nonprofit501c27": "http://schema.org/Nonprofit501c27",
+             "Nonprofit501c28": "http://schema.org/Nonprofit501c28",
+             "Nonprofit501c3": "http://schema.org/Nonprofit501c3",
+             "Nonprofit501c4": "http://schema.org/Nonprofit501c4",
+             "Nonprofit501c5": "http://schema.org/Nonprofit501c5",
+             "Nonprofit501c6": "http://schema.org/Nonprofit501c6",
+             "Nonprofit501c7": "http://schema.org/Nonprofit501c7",
+             "Nonprofit501c8": "http://schema.org/Nonprofit501c8",
+             "Nonprofit501c9": "http://schema.org/Nonprofit501c9",
+             "Nonprofit501d": "http://schema.org/Nonprofit501d",
+             "Nonprofit501e": "http://schema.org/Nonprofit501e",
+             "Nonprofit501f": "http://schema.org/Nonprofit501f",
+             "Nonprofit501k": "http://schema.org/Nonprofit501k",
+             "Nonprofit501n": "http://schema.org/Nonprofit501n",
+             "Nonprofit501q": "http://schema.org/Nonprofit501q",
+             "Nonprofit527": "http://schema.org/Nonprofit527",
+             "NonprofitANBI": "http://schema.org/NonprofitANBI",
+             "NonprofitSBBI": "http://schema.org/NonprofitSBBI",
+             "NonprofitType": "http://schema.org/NonprofitType",
+             "Nose": "http://schema.org/Nose",
+             "NotInForce": "http://schema.org/NotInForce",
+             "NotYetRecruiting": "http://schema.org/NotYetRecruiting",
+             "Notary": "http://schema.org/Notary",
+             "NoteDigitalDocument": "http://schema.org/NoteDigitalDocument",
+             "Number": "http://schema.org/Number",
+             "Nursing": "http://schema.org/Nursing",
+             "NutritionInformation": "http://schema.org/NutritionInformation",
+             "OTC": "http://schema.org/OTC",
+             "Observation": "http://schema.org/Observation",
+             "Observational": "http://schema.org/Observational",
+             "Obstetric": "http://schema.org/Obstetric",
+             "Occupation": "http://schema.org/Occupation",
+             "OccupationalActivity": "http://schema.org/OccupationalActivity",
+             "OccupationalTherapy": "http://schema.org/OccupationalTherapy",
+             "OceanBodyOfWater": "http://schema.org/OceanBodyOfWater",
+             "Offer": "http://schema.org/Offer",
+             "OfferCatalog": "http://schema.org/OfferCatalog",
+             "OfferForLease": "http://schema.org/OfferForLease",
+             "OfferForPurchase": "http://schema.org/OfferForPurchase",
+             "OfferItemCondition": "http://schema.org/OfferItemCondition",
+             "OfferShippingDetails": "http://schema.org/OfferShippingDetails",
+             "OfficeEquipmentStore": "http://schema.org/OfficeEquipmentStore",
+             "OfficialLegalValue": "http://schema.org/OfficialLegalValue",
+             "OfflineEventAttendanceMode": "http://schema.org/OfflineEventAttendanceMode",
+             "OfflinePermanently": "http://schema.org/OfflinePermanently",
+             "OfflineTemporarily": "http://schema.org/OfflineTemporarily",
+             "OnDemandEvent": "http://schema.org/OnDemandEvent",
+             "OnSitePickup": "http://schema.org/OnSitePickup",
+             "Oncologic": "http://schema.org/Oncologic",
+             "OneTimePayments": "http://schema.org/OneTimePayments",
+             "Online": "http://schema.org/Online",
+             "OnlineEventAttendanceMode": "http://schema.org/OnlineEventAttendanceMode",
+             "OnlineFull": "http://schema.org/OnlineFull",
+             "OnlineOnly": "http://schema.org/OnlineOnly",
+             "OpenTrial": "http://schema.org/OpenTrial",
+             "OpeningHoursSpecification": "http://schema.org/OpeningHoursSpecification",
+             "OpinionNewsArticle": "http://schema.org/OpinionNewsArticle",
+             "Optician": "http://schema.org/Optician",
+             "Optometric": "http://schema.org/Optometric",
+             "Order": "http://schema.org/Order",
+             "OrderAction": "http://schema.org/OrderAction",
+             "OrderCancelled": "http://schema.org/OrderCancelled",
+             "OrderDelivered": "http://schema.org/OrderDelivered",
+             "OrderInTransit": "http://schema.org/OrderInTransit",
+             "OrderItem": "http://schema.org/OrderItem",
+             "OrderPaymentDue": "http://schema.org/OrderPaymentDue",
+             "OrderPickupAvailable": "http://schema.org/OrderPickupAvailable",
+             "OrderProblem": "http://schema.org/OrderProblem",
+             "OrderProcessing": "http://schema.org/OrderProcessing",
+             "OrderReturned": "http://schema.org/OrderReturned",
+             "OrderStatus": "http://schema.org/OrderStatus",
+             "Organization": "http://schema.org/Organization",
+             "OrganizationRole": "http://schema.org/OrganizationRole",
+             "OrganizeAction": "http://schema.org/OrganizeAction",
+             "OriginalShippingFees": "http://schema.org/OriginalShippingFees",
+             "Osteopathic": "http://schema.org/Osteopathic",
+             "Otolaryngologic": "http://schema.org/Otolaryngologic",
+             "OutOfStock": "http://schema.org/OutOfStock",
+             "OutletStore": "http://schema.org/OutletStore",
+             "OverviewHealthAspect": "http://schema.org/OverviewHealthAspect",
+             "OwnershipInfo": "http://schema.org/OwnershipInfo",
+             "PET": "http://schema.org/PET",
+             "PaidLeave": "http://schema.org/PaidLeave",
+             "PaintAction": "http://schema.org/PaintAction",
+             "Painting": "http://schema.org/Painting",
+             "PalliativeProcedure": "http://schema.org/PalliativeProcedure",
+             "Paperback": "http://schema.org/Paperback",
+             "ParcelDelivery": "http://schema.org/ParcelDelivery",
+             "ParcelService": "http://schema.org/ParcelService",
+             "ParentAudience": "http://schema.org/ParentAudience",
+             "ParentalSupport": "http://schema.org/ParentalSupport",
+             "Park": "http://schema.org/Park",
+             "ParkingFacility": "http://schema.org/ParkingFacility",
+             "ParkingMap": "http://schema.org/ParkingMap",
+             "PartiallyInForce": "http://schema.org/PartiallyInForce",
+             "Pathology": "http://schema.org/Pathology",
+             "PathologyTest": "http://schema.org/PathologyTest",
+             "Patient": "http://schema.org/Patient",
+             "PatientExperienceHealthAspect": "http://schema.org/PatientExperienceHealthAspect",
+             "PawnShop": "http://schema.org/PawnShop",
+             "PayAction": "http://schema.org/PayAction",
+             "PaymentAutomaticallyApplied": "http://schema.org/PaymentAutomaticallyApplied",
+             "PaymentCard": "http://schema.org/PaymentCard",
+             "PaymentChargeSpecification": "http://schema.org/PaymentChargeSpecification",
+             "PaymentComplete": "http://schema.org/PaymentComplete",
+             "PaymentDeclined": "http://schema.org/PaymentDeclined",
+             "PaymentDue": "http://schema.org/PaymentDue",
+             "PaymentMethod": "http://schema.org/PaymentMethod",
+             "PaymentPastDue": "http://schema.org/PaymentPastDue",
+             "PaymentService": "http://schema.org/PaymentService",
+             "PaymentStatusType": "http://schema.org/PaymentStatusType",
+             "Pediatric": "http://schema.org/Pediatric",
+             "PeopleAudience": "http://schema.org/PeopleAudience",
+             "PercutaneousProcedure": "http://schema.org/PercutaneousProcedure",
+             "PerformAction": "http://schema.org/PerformAction",
+             "PerformanceRole": "http://schema.org/PerformanceRole",
+             "PerformingArtsTheater": "http://schema.org/PerformingArtsTheater",
+             "PerformingGroup": "http://schema.org/PerformingGroup",
+             "Periodical": "http://schema.org/Periodical",
+             "Permit": "http://schema.org/Permit",
+             "Person": "http://schema.org/Person",
+             "PetStore": "http://schema.org/PetStore",
+             "Pharmacy": "http://schema.org/Pharmacy",
+             "PharmacySpecialty": "http://schema.org/PharmacySpecialty",
+             "Photograph": "http://schema.org/Photograph",
+             "PhotographAction": "http://schema.org/PhotographAction",
+             "PhysicalActivity": "http://schema.org/PhysicalActivity",
+             "PhysicalActivityCategory": "http://schema.org/PhysicalActivityCategory",
+             "PhysicalExam": "http://schema.org/PhysicalExam",
+             "PhysicalTherapy": "http://schema.org/PhysicalTherapy",
+             "Physician": "http://schema.org/Physician",
+             "Physiotherapy": "http://schema.org/Physiotherapy",
+             "Place": "http://schema.org/Place",
+             "PlaceOfWorship": "http://schema.org/PlaceOfWorship",
+             "PlaceboControlledTrial": "http://schema.org/PlaceboControlledTrial",
+             "PlanAction": "http://schema.org/PlanAction",
+             "PlasticSurgery": "http://schema.org/PlasticSurgery",
+             "Play": "http://schema.org/Play",
+             "PlayAction": "http://schema.org/PlayAction",
+             "Playground": "http://schema.org/Playground",
+             "Plumber": "http://schema.org/Plumber",
+             "PodcastEpisode": "http://schema.org/PodcastEpisode",
+             "PodcastSeason": "http://schema.org/PodcastSeason",
+             "PodcastSeries": "http://schema.org/PodcastSeries",
+             "Podiatric": "http://schema.org/Podiatric",
+             "PoliceStation": "http://schema.org/PoliceStation",
+             "Pond": "http://schema.org/Pond",
+             "PostOffice": "http://schema.org/PostOffice",
+             "PostalAddress": "http://schema.org/PostalAddress",
+             "PostalCodeRangeSpecification": "http://schema.org/PostalCodeRangeSpecification",
+             "Poster": "http://schema.org/Poster",
+             "PotentialActionStatus": "http://schema.org/PotentialActionStatus",
+             "PreOrder": "http://schema.org/PreOrder",
+             "PreOrderAction": "http://schema.org/PreOrderAction",
+             "PreSale": "http://schema.org/PreSale",
+             "PrependAction": "http://schema.org/PrependAction",
+             "Preschool": "http://schema.org/Preschool",
+             "PrescriptionOnly": "http://schema.org/PrescriptionOnly",
+             "PresentationDigitalDocument": "http://schema.org/PresentationDigitalDocument",
+             "PreventionHealthAspect": "http://schema.org/PreventionHealthAspect",
+             "PreventionIndication": "http://schema.org/PreventionIndication",
+             "PriceSpecification": "http://schema.org/PriceSpecification",
+             "PrimaryCare": "http://schema.org/PrimaryCare",
+             "Prion": "http://schema.org/Prion",
+             "Product": "http://schema.org/Product",
+             "ProductCollection": "http://schema.org/ProductCollection",
+             "ProductGroup": "http://schema.org/ProductGroup",
+             "ProductModel": "http://schema.org/ProductModel",
+             "ProductReturnEnumeration": "http://schema.org/ProductReturnEnumeration",
+             "ProductReturnFiniteReturnWindow": "http://schema.org/ProductReturnFiniteReturnWindow",
+             "ProductReturnNotPermitted": "http://schema.org/ProductReturnNotPermitted",
+             "ProductReturnPolicy": "http://schema.org/ProductReturnPolicy",
+             "ProductReturnUnlimitedWindow": "http://schema.org/ProductReturnUnlimitedWindow",
+             "ProductReturnUnspecified": "http://schema.org/ProductReturnUnspecified",
+             "ProfessionalService": "http://schema.org/ProfessionalService",
+             "ProfilePage": "http://schema.org/ProfilePage",
+             "PrognosisHealthAspect": "http://schema.org/PrognosisHealthAspect",
+             "ProgramMembership": "http://schema.org/ProgramMembership",
+             "Project": "http://schema.org/Project",
+             "PronounceableText": "http://schema.org/PronounceableText",
+             "Property": "http://schema.org/Property",
+             "PropertyValue": "http://schema.org/PropertyValue",
+             "PropertyValueSpecification": "http://schema.org/PropertyValueSpecification",
+             "Protozoa": "http://schema.org/Protozoa",
+             "Psychiatric": "http://schema.org/Psychiatric",
+             "PsychologicalTreatment": "http://schema.org/PsychologicalTreatment",
+             "PublicHealth": "http://schema.org/PublicHealth",
+             "PublicHolidays": "http://schema.org/PublicHolidays",
+             "PublicSwimmingPool": "http://schema.org/PublicSwimmingPool",
+             "PublicToilet": "http://schema.org/PublicToilet",
+             "PublicationEvent": "http://schema.org/PublicationEvent",
+             "PublicationIssue": "http://schema.org/PublicationIssue",
+             "PublicationVolume": "http://schema.org/PublicationVolume",
+             "Pulmonary": "http://schema.org/Pulmonary",
+             "QAPage": "http://schema.org/QAPage",
+             "QualitativeValue": "http://schema.org/QualitativeValue",
+             "QuantitativeValue": "http://schema.org/QuantitativeValue",
+             "QuantitativeValueDistribution": "http://schema.org/QuantitativeValueDistribution",
+             "Quantity": "http://schema.org/Quantity",
+             "Question": "http://schema.org/Question",
+             "Quiz": "http://schema.org/Quiz",
+             "Quotation": "http://schema.org/Quotation",
+             "QuoteAction": "http://schema.org/QuoteAction",
+             "RVPark": "http://schema.org/RVPark",
+             "RadiationTherapy": "http://schema.org/RadiationTherapy",
+             "RadioBroadcastService": "http://schema.org/RadioBroadcastService",
+             "RadioChannel": "http://schema.org/RadioChannel",
+             "RadioClip": "http://schema.org/RadioClip",
+             "RadioEpisode": "http://schema.org/RadioEpisode",
+             "RadioSeason": "http://schema.org/RadioSeason",
+             "RadioSeries": "http://schema.org/RadioSeries",
+             "RadioStation": "http://schema.org/RadioStation",
+             "Radiography": "http://schema.org/Radiography",
+             "RandomizedTrial": "http://schema.org/RandomizedTrial",
+             "Rating": "http://schema.org/Rating",
+             "ReactAction": "http://schema.org/ReactAction",
+             "ReadAction": "http://schema.org/ReadAction",
+             "ReadPermission": "http://schema.org/ReadPermission",
+             "RealEstateAgent": "http://schema.org/RealEstateAgent",
+             "RealEstateListing": "http://schema.org/RealEstateListing",
+             "RearWheelDriveConfiguration": "http://schema.org/RearWheelDriveConfiguration",
+             "ReceiveAction": "http://schema.org/ReceiveAction",
+             "Recipe": "http://schema.org/Recipe",
+             "Recommendation": "http://schema.org/Recommendation",
+             "RecommendedDoseSchedule": "http://schema.org/RecommendedDoseSchedule",
+             "Recruiting": "http://schema.org/Recruiting",
+             "RecyclingCenter": "http://schema.org/RecyclingCenter",
+             "RefundTypeEnumeration": "http://schema.org/RefundTypeEnumeration",
+             "RefurbishedCondition": "http://schema.org/RefurbishedCondition",
+             "RegisterAction": "http://schema.org/RegisterAction",
+             "Registry": "http://schema.org/Registry",
+             "ReimbursementCap": "http://schema.org/ReimbursementCap",
+             "RejectAction": "http://schema.org/RejectAction",
+             "RelatedTopicsHealthAspect": "http://schema.org/RelatedTopicsHealthAspect",
+             "RemixAlbum": "http://schema.org/RemixAlbum",
+             "Renal": "http://schema.org/Renal",
+             "RentAction": "http://schema.org/RentAction",
+             "RentalCarReservation": "http://schema.org/RentalCarReservation",
+             "RentalVehicleUsage": "http://schema.org/RentalVehicleUsage",
+             "RepaymentSpecification": "http://schema.org/RepaymentSpecification",
+             "ReplaceAction": "http://schema.org/ReplaceAction",
+             "ReplyAction": "http://schema.org/ReplyAction",
+             "Report": "http://schema.org/Report",
+             "ReportageNewsArticle": "http://schema.org/ReportageNewsArticle",
+             "ReportedDoseSchedule": "http://schema.org/ReportedDoseSchedule",
+             "ResearchProject": "http://schema.org/ResearchProject",
+             "Researcher": "http://schema.org/Researcher",
+             "Reservation": "http://schema.org/Reservation",
+             "ReservationCancelled": "http://schema.org/ReservationCancelled",
+             "ReservationConfirmed": "http://schema.org/ReservationConfirmed",
+             "ReservationHold": "http://schema.org/ReservationHold",
+             "ReservationPackage": "http://schema.org/ReservationPackage",
+             "ReservationPending": "http://schema.org/ReservationPending",
+             "ReservationStatusType": "http://schema.org/ReservationStatusType",
+             "ReserveAction": "http://schema.org/ReserveAction",
+             "Reservoir": "http://schema.org/Reservoir",
+             "Residence": "http://schema.org/Residence",
+             "Resort": "http://schema.org/Resort",
+             "RespiratoryTherapy": "http://schema.org/RespiratoryTherapy",
+             "Restaurant": "http://schema.org/Restaurant",
+             "RestockingFees": "http://schema.org/RestockingFees",
+             "RestrictedDiet": "http://schema.org/RestrictedDiet",
+             "ResultsAvailable": "http://schema.org/ResultsAvailable",
+             "ResultsNotAvailable": "http://schema.org/ResultsNotAvailable",
+             "ResumeAction": "http://schema.org/ResumeAction",
+             "Retail": "http://schema.org/Retail",
+             "ReturnAction": "http://schema.org/ReturnAction",
+             "ReturnFeesEnumeration": "http://schema.org/ReturnFeesEnumeration",
+             "ReturnShippingFees": "http://schema.org/ReturnShippingFees",
+             "Review": "http://schema.org/Review",
+             "ReviewAction": "http://schema.org/ReviewAction",
+             "ReviewNewsArticle": "http://schema.org/ReviewNewsArticle",
+             "Rheumatologic": "http://schema.org/Rheumatologic",
+             "RightHandDriving": "http://schema.org/RightHandDriving",
+             "RisksOrComplicationsHealthAspect": "http://schema.org/RisksOrComplicationsHealthAspect",
+             "RiverBodyOfWater": "http://schema.org/RiverBodyOfWater",
+             "Role": "http://schema.org/Role",
+             "RoofingContractor": "http://schema.org/RoofingContractor",
+             "Room": "http://schema.org/Room",
+             "RsvpAction": "http://schema.org/RsvpAction",
+             "RsvpResponseMaybe": "http://schema.org/RsvpResponseMaybe",
+             "RsvpResponseNo": "http://schema.org/RsvpResponseNo",
+             "RsvpResponseType": "http://schema.org/RsvpResponseType",
+             "RsvpResponseYes": "http://schema.org/RsvpResponseYes",
+             "SaleEvent": "http://schema.org/SaleEvent",
+             "SatiricalArticle": "http://schema.org/SatiricalArticle",
+             "Saturday": "http://schema.org/Saturday",
+             "Schedule": "http://schema.org/Schedule",
+             "ScheduleAction": "http://schema.org/ScheduleAction",
+             "ScholarlyArticle": "http://schema.org/ScholarlyArticle",
+             "School": "http://schema.org/School",
+             "SchoolDistrict": "http://schema.org/SchoolDistrict",
+             "ScreeningEvent": "http://schema.org/ScreeningEvent",
+             "ScreeningHealthAspect": "http://schema.org/ScreeningHealthAspect",
+             "Sculpture": "http://schema.org/Sculpture",
+             "SeaBodyOfWater": "http://schema.org/SeaBodyOfWater",
+             "SearchAction": "http://schema.org/SearchAction",
+             "SearchResultsPage": "http://schema.org/SearchResultsPage",
+             "Season": "http://schema.org/Season",
+             "Seat": "http://schema.org/Seat",
+             "SeatingMap": "http://schema.org/SeatingMap",
+             "SeeDoctorHealthAspect": "http://schema.org/SeeDoctorHealthAspect",
+             "SelfCareHealthAspect": "http://schema.org/SelfCareHealthAspect",
+             "SelfStorage": "http://schema.org/SelfStorage",
+             "SellAction": "http://schema.org/SellAction",
+             "SendAction": "http://schema.org/SendAction",
+             "Series": "http://schema.org/Series",
+             "Service": "http://schema.org/Service",
+             "ServiceChannel": "http://schema.org/ServiceChannel",
+             "ShareAction": "http://schema.org/ShareAction",
+             "SheetMusic": "http://schema.org/SheetMusic",
+             "ShippingDeliveryTime": "http://schema.org/ShippingDeliveryTime",
+             "ShippingRateSettings": "http://schema.org/ShippingRateSettings",
+             "ShoeStore": "http://schema.org/ShoeStore",
+             "ShoppingCenter": "http://schema.org/ShoppingCenter",
+             "ShortStory": "http://schema.org/ShortStory",
+             "SideEffectsHealthAspect": "http://schema.org/SideEffectsHealthAspect",
+             "SingleBlindedTrial": "http://schema.org/SingleBlindedTrial",
+             "SingleCenterTrial": "http://schema.org/SingleCenterTrial",
+             "SingleFamilyResidence": "http://schema.org/SingleFamilyResidence",
+             "SinglePlayer": "http://schema.org/SinglePlayer",
+             "SingleRelease": "http://schema.org/SingleRelease",
+             "SiteNavigationElement": "http://schema.org/SiteNavigationElement",
+             "SkiResort": "http://schema.org/SkiResort",
+             "Skin": "http://schema.org/Skin",
+             "SocialEvent": "http://schema.org/SocialEvent",
+             "SocialMediaPosting": "http://schema.org/SocialMediaPosting",
+             "SoftwareApplication": "http://schema.org/SoftwareApplication",
+             "SoftwareSourceCode": "http://schema.org/SoftwareSourceCode",
+             "SoldOut": "http://schema.org/SoldOut",
+             "SomeProducts": "http://schema.org/SomeProducts",
+             "SoundtrackAlbum": "http://schema.org/SoundtrackAlbum",
+             "SpeakableSpecification": "http://schema.org/SpeakableSpecification",
+             "SpecialAnnouncement": "http://schema.org/SpecialAnnouncement",
+             "Specialty": "http://schema.org/Specialty",
+             "SpeechPathology": "http://schema.org/SpeechPathology",
+             "SpokenWordAlbum": "http://schema.org/SpokenWordAlbum",
+             "SportingGoodsStore": "http://schema.org/SportingGoodsStore",
+             "SportsActivityLocation": "http://schema.org/SportsActivityLocation",
+             "SportsClub": "http://schema.org/SportsClub",
+             "SportsEvent": "http://schema.org/SportsEvent",
+             "SportsOrganization": "http://schema.org/SportsOrganization",
+             "SportsTeam": "http://schema.org/SportsTeam",
+             "SpreadsheetDigitalDocument": "http://schema.org/SpreadsheetDigitalDocument",
+             "StadiumOrArena": "http://schema.org/StadiumOrArena",
+             "StagesHealthAspect": "http://schema.org/StagesHealthAspect",
+             "State": "http://schema.org/State",
+             "StatisticalPopulation": "http://schema.org/StatisticalPopulation",
+             "StatusEnumeration": "http://schema.org/StatusEnumeration",
+             "SteeringPositionValue": "http://schema.org/SteeringPositionValue",
+             "Store": "http://schema.org/Store",
+             "StoreCreditRefund": "http://schema.org/StoreCreditRefund",
+             "StrengthTraining": "http://schema.org/StrengthTraining",
+             "StructuredValue": "http://schema.org/StructuredValue",
+             "StudioAlbum": "http://schema.org/StudioAlbum",
+             "StupidType": "http://schema.org/StupidType",
+             "SubscribeAction": "http://schema.org/SubscribeAction",
+             "Substance": "http://schema.org/Substance",
+             "SubwayStation": "http://schema.org/SubwayStation",
+             "Suite": "http://schema.org/Suite",
+             "Sunday": "http://schema.org/Sunday",
+             "SuperficialAnatomy": "http://schema.org/SuperficialAnatomy",
+             "Surgical": "http://schema.org/Surgical",
+             "SurgicalProcedure": "http://schema.org/SurgicalProcedure",
+             "SuspendAction": "http://schema.org/SuspendAction",
+             "Suspended": "http://schema.org/Suspended",
+             "SymptomsHealthAspect": "http://schema.org/SymptomsHealthAspect",
+             "Synagogue": "http://schema.org/Synagogue",
+             "TVClip": "http://schema.org/TVClip",
+             "TVEpisode": "http://schema.org/TVEpisode",
+             "TVSeason": "http://schema.org/TVSeason",
+             "TVSeries": "http://schema.org/TVSeries",
+             "Table": "http://schema.org/Table",
+             "TakeAction": "http://schema.org/TakeAction",
+             "TattooParlor": "http://schema.org/TattooParlor",
+             "Taxi": "http://schema.org/Taxi",
+             "TaxiReservation": "http://schema.org/TaxiReservation",
+             "TaxiService": "http://schema.org/TaxiService",
+             "TaxiStand": "http://schema.org/TaxiStand",
+             "TaxiVehicleUsage": "http://schema.org/TaxiVehicleUsage",
+             "TechArticle": "http://schema.org/TechArticle",
+             "TelevisionChannel": "http://schema.org/TelevisionChannel",
+             "TelevisionStation": "http://schema.org/TelevisionStation",
+             "TennisComplex": "http://schema.org/TennisComplex",
+             "Terminated": "http://schema.org/Terminated",
+             "Text": "http://schema.org/Text",
+             "TextDigitalDocument": "http://schema.org/TextDigitalDocument",
+             "TheaterEvent": "http://schema.org/TheaterEvent",
+             "TheaterGroup": "http://schema.org/TheaterGroup",
+             "Therapeutic": "http://schema.org/Therapeutic",
+             "TherapeuticProcedure": "http://schema.org/TherapeuticProcedure",
+             "Thesis": "http://schema.org/Thesis",
+             "Thing": "http://schema.org/Thing",
+             "Throat": "http://schema.org/Throat",
+             "Thursday": "http://schema.org/Thursday",
+             "Ticket": "http://schema.org/Ticket",
+             "TieAction": "http://schema.org/TieAction",
+             "Time": "http://schema.org/Time",
+             "TipAction": "http://schema.org/TipAction",
+             "TireShop": "http://schema.org/TireShop",
+             "TollFree": "http://schema.org/TollFree",
+             "TouristAttraction": "http://schema.org/TouristAttraction",
+             "TouristDestination": "http://schema.org/TouristDestination",
+             "TouristInformationCenter": "http://schema.org/TouristInformationCenter",
+             "TouristTrip": "http://schema.org/TouristTrip",
+             "Toxicologic": "http://schema.org/Toxicologic",
+             "ToyStore": "http://schema.org/ToyStore",
+             "TrackAction": "http://schema.org/TrackAction",
+             "TradeAction": "http://schema.org/TradeAction",
+             "TraditionalChinese": "http://schema.org/TraditionalChinese",
+             "TrainReservation": "http://schema.org/TrainReservation",
+             "TrainStation": "http://schema.org/TrainStation",
+             "TrainTrip": "http://schema.org/TrainTrip",
+             "TransferAction": "http://schema.org/TransferAction",
+             "TransitMap": "http://schema.org/TransitMap",
+             "TravelAction": "http://schema.org/TravelAction",
+             "TravelAgency": "http://schema.org/TravelAgency",
+             "TreatmentIndication": "http://schema.org/TreatmentIndication",
+             "TreatmentsHealthAspect": "http://schema.org/TreatmentsHealthAspect",
+             "Trip": "http://schema.org/Trip",
+             "TripleBlindedTrial": "http://schema.org/TripleBlindedTrial",
+             "True": "http://schema.org/True",
+             "Tuesday": "http://schema.org/Tuesday",
+             "TypeAndQuantityNode": "http://schema.org/TypeAndQuantityNode",
+             "TypesHealthAspect": "http://schema.org/TypesHealthAspect",
+             "UKNonprofitType": "http://schema.org/UKNonprofitType",
+             "UKTrust": "http://schema.org/UKTrust",
+             "URL": "http://schema.org/URL",
+             "USNonprofitType": "http://schema.org/USNonprofitType",
+             "Ultrasound": "http://schema.org/Ultrasound",
+             "UnRegisterAction": "http://schema.org/UnRegisterAction",
+             "UnemploymentSupport": "http://schema.org/UnemploymentSupport",
+             "UnincorporatedAssociationCharity": "http://schema.org/UnincorporatedAssociationCharity",
+             "UnitPriceSpecification": "http://schema.org/UnitPriceSpecification",
+             "UnofficialLegalValue": "http://schema.org/UnofficialLegalValue",
+             "UpdateAction": "http://schema.org/UpdateAction",
+             "Urologic": "http://schema.org/Urologic",
+             "UsageOrScheduleHealthAspect": "http://schema.org/UsageOrScheduleHealthAspect",
+             "UseAction": "http://schema.org/UseAction",
+             "UsedCondition": "http://schema.org/UsedCondition",
+             "UserBlocks": "http://schema.org/UserBlocks",
+             "UserCheckins": "http://schema.org/UserCheckins",
+             "UserComments": "http://schema.org/UserComments",
+             "UserDownloads": "http://schema.org/UserDownloads",
+             "UserInteraction": "http://schema.org/UserInteraction",
+             "UserLikes": "http://schema.org/UserLikes",
+             "UserPageVisits": "http://schema.org/UserPageVisits",
+             "UserPlays": "http://schema.org/UserPlays",
+             "UserPlusOnes": "http://schema.org/UserPlusOnes",
+             "UserReview": "http://schema.org/UserReview",
+             "UserTweets": "http://schema.org/UserTweets",
+             "VeganDiet": "http://schema.org/VeganDiet",
+             "VegetarianDiet": "http://schema.org/VegetarianDiet",
+             "Vehicle": "http://schema.org/Vehicle",
+             "Vein": "http://schema.org/Vein",
+             "VenueMap": "http://schema.org/VenueMap",
+             "Vessel": "http://schema.org/Vessel",
+             "VeterinaryCare": "http://schema.org/VeterinaryCare",
+             "VideoGallery": "http://schema.org/VideoGallery",
+             "VideoGame": "http://schema.org/VideoGame",
+             "VideoGameClip": "http://schema.org/VideoGameClip",
+             "VideoGameSeries": "http://schema.org/VideoGameSeries",
+             "VideoObject": "http://schema.org/VideoObject",
+             "ViewAction": "http://schema.org/ViewAction",
+             "VinylFormat": "http://schema.org/VinylFormat",
+             "VirtualLocation": "http://schema.org/VirtualLocation",
+             "Virus": "http://schema.org/Virus",
+             "VisualArtsEvent": "http://schema.org/VisualArtsEvent",
+             "VisualArtwork": "http://schema.org/VisualArtwork",
+             "VitalSign": "http://schema.org/VitalSign",
+             "Volcano": "http://schema.org/Volcano",
+             "VoteAction": "http://schema.org/VoteAction",
+             "WPAdBlock": "http://schema.org/WPAdBlock",
+             "WPFooter": "http://schema.org/WPFooter",
+             "WPHeader": "http://schema.org/WPHeader",
+             "WPSideBar": "http://schema.org/WPSideBar",
+             "WantAction": "http://schema.org/WantAction",
+             "WarrantyPromise": "http://schema.org/WarrantyPromise",
+             "WarrantyScope": "http://schema.org/WarrantyScope",
+             "WatchAction": "http://schema.org/WatchAction",
+             "Waterfall": "http://schema.org/Waterfall",
+             "WearAction": "http://schema.org/WearAction",
+             "WebAPI": "http://schema.org/WebAPI",
+             "WebApplication": "http://schema.org/WebApplication",
+             "WebContent": "http://schema.org/WebContent",
+             "WebPage": "http://schema.org/WebPage",
+             "WebPageElement": "http://schema.org/WebPageElement",
+             "WebSite": "http://schema.org/WebSite",
+             "Wednesday": "http://schema.org/Wednesday",
+             "WesternConventional": "http://schema.org/WesternConventional",
+             "Wholesale": "http://schema.org/Wholesale",
+             "WholesaleStore": "http://schema.org/WholesaleStore",
+             "WinAction": "http://schema.org/WinAction",
+             "Winery": "http://schema.org/Winery",
+             "Withdrawn": "http://schema.org/Withdrawn",
+             "WorkBasedProgram": "http://schema.org/WorkBasedProgram",
+             "WorkersUnion": "http://schema.org/WorkersUnion",
+             "WriteAction": "http://schema.org/WriteAction",
+             "WritePermission": "http://schema.org/WritePermission",
+             "XPathType": "http://schema.org/XPathType",
+             "XRay": "http://schema.org/XRay",
+             "ZoneBoardingPolicy": "http://schema.org/ZoneBoardingPolicy",
+             "Zoo": "http://schema.org/Zoo",
+             "about": "http://schema.org/about",
+             "abridged": "http://schema.org/abridged",
+             "abstract": "http://schema.org/abstract",
+             "accelerationTime": "http://schema.org/accelerationTime",
+             "acceptedAnswer": "http://schema.org/acceptedAnswer",
+             "acceptedOffer": "http://schema.org/acceptedOffer",
+             "acceptedPaymentMethod": "http://schema.org/acceptedPaymentMethod",
+             "acceptsReservations": "http://schema.org/acceptsReservations",
+             "accessCode": "http://schema.org/accessCode",
+             "accessMode": "http://schema.org/accessMode",
+             "accessModeSufficient": "http://schema.org/accessModeSufficient",
+             "accessibilityAPI": "http://schema.org/accessibilityAPI",
+             "accessibilityControl": "http://schema.org/accessibilityControl",
+             "accessibilityFeature": "http://schema.org/accessibilityFeature",
+             "accessibilityHazard": "http://schema.org/accessibilityHazard",
+             "accessibilitySummary": "http://schema.org/accessibilitySummary",
+             "accommodationCategory": "http://schema.org/accommodationCategory",
+             "accommodationFloorPlan": "http://schema.org/accommodationFloorPlan",
+             "accountId": "http://schema.org/accountId",
+             "accountMinimumInflow": "http://schema.org/accountMinimumInflow",
+             "accountOverdraftLimit": "http://schema.org/accountOverdraftLimit",
+             "accountablePerson": "http://schema.org/accountablePerson",
+             "acquireLicensePage": "http://schema.org/acquireLicensePage",
+             "acquiredFrom": "http://schema.org/acquiredFrom",
+             "acrissCode": "http://schema.org/acrissCode",
+             "actionAccessibilityRequirement": "http://schema.org/actionAccessibilityRequirement",
+             "actionApplication": "http://schema.org/actionApplication",
+             "actionOption": "http://schema.org/actionOption",
+             "actionPlatform": "http://schema.org/actionPlatform",
+             "actionStatus": "http://schema.org/actionStatus",
+             "actionableFeedbackPolicy": "http://schema.org/actionableFeedbackPolicy",
+             "activeIngredient": "http://schema.org/activeIngredient",
+             "activityDuration": "http://schema.org/activityDuration",
+             "activityFrequency": "http://schema.org/activityFrequency",
+             "actor": "http://schema.org/actor",
+             "actors": "http://schema.org/actors",
+             "addOn": "http://schema.org/addOn",
+             "additionalName": "http://schema.org/additionalName",
+             "additionalNumberOfGuests": "http://schema.org/additionalNumberOfGuests",
+             "additionalProperty": "http://schema.org/additionalProperty",
+             "additionalType": "http://schema.org/additionalType",
+             "additionalVariable": "http://schema.org/additionalVariable",
+             "address": "http://schema.org/address",
+             "addressCountry": "http://schema.org/addressCountry",
+             "addressLocality": "http://schema.org/addressLocality",
+             "addressRegion": "http://schema.org/addressRegion",
+             "administrationRoute": "http://schema.org/administrationRoute",
+             "advanceBookingRequirement": "http://schema.org/advanceBookingRequirement",
+             "adverseOutcome": "http://schema.org/adverseOutcome",
+             "affectedBy": "http://schema.org/affectedBy",
+             "affiliation": "http://schema.org/affiliation",
+             "afterMedia": "http://schema.org/afterMedia",
+             "agent": "http://schema.org/agent",
+             "aggregateRating": "http://schema.org/aggregateRating",
+             "aircraft": "http://schema.org/aircraft",
+             "album": "http://schema.org/album",
+             "albumProductionType": "http://schema.org/albumProductionType",
+             "albumRelease": "http://schema.org/albumRelease",
+             "albumReleaseType": "http://schema.org/albumReleaseType",
+             "albums": "http://schema.org/albums",
+             "alcoholWarning": "http://schema.org/alcoholWarning",
+             "algorithm": "http://schema.org/algorithm",
+             "alignmentType": "http://schema.org/alignmentType",
+             "alternateName": "http://schema.org/alternateName",
+             "alternativeHeadline": "http://schema.org/alternativeHeadline",
+             "alumni": "http://schema.org/alumni",
+             "alumniOf": "http://schema.org/alumniOf",
+             "amenityFeature": "http://schema.org/amenityFeature",
+             "amount": "http://schema.org/amount",
+             "amountOfThisGood": "http://schema.org/amountOfThisGood",
+             "announcementLocation": "http://schema.org/announcementLocation",
+             "annualPercentageRate": "http://schema.org/annualPercentageRate",
+             "answerCount": "http://schema.org/answerCount",
+             "answerExplanation": "http://schema.org/answerExplanation",
+             "antagonist": "http://schema.org/antagonist",
+             "appearance": "http://schema.org/appearance",
+             "applicableLocation": "http://schema.org/applicableLocation",
+             "applicantLocationRequirements": "http://schema.org/applicantLocationRequirements",
+             "application": "http://schema.org/application",
+             "applicationCategory": "http://schema.org/applicationCategory",
+             "applicationContact": "http://schema.org/applicationContact",
+             "applicationDeadline": "http://schema.org/applicationDeadline",
+             "applicationStartDate": "http://schema.org/applicationStartDate",
+             "applicationSubCategory": "http://schema.org/applicationSubCategory",
+             "applicationSuite": "http://schema.org/applicationSuite",
+             "appliesToDeliveryMethod": "http://schema.org/appliesToDeliveryMethod",
+             "appliesToPaymentMethod": "http://schema.org/appliesToPaymentMethod",
+             "archiveHeld": "http://schema.org/archiveHeld",
+             "area": "http://schema.org/area",
+             "areaServed": "http://schema.org/areaServed",
+             "arrivalAirport": "http://schema.org/arrivalAirport",
+             "arrivalBoatTerminal": "http://schema.org/arrivalBoatTerminal",
+             "arrivalBusStop": "http://schema.org/arrivalBusStop",
+             "arrivalGate": "http://schema.org/arrivalGate",
+             "arrivalPlatform": "http://schema.org/arrivalPlatform",
+             "arrivalStation": "http://schema.org/arrivalStation",
+             "arrivalTerminal": "http://schema.org/arrivalTerminal",
+             "arrivalTime": "http://schema.org/arrivalTime",
+             "artEdition": "http://schema.org/artEdition",
+             "artMedium": "http://schema.org/artMedium",
+             "arterialBranch": "http://schema.org/arterialBranch",
+             "artform": "http://schema.org/artform",
+             "articleBody": "http://schema.org/articleBody",
+             "articleSection": "http://schema.org/articleSection",
+             "artist": "http://schema.org/artist",
+             "artworkSurface": "http://schema.org/artworkSurface",
+             "aspect": "http://schema.org/aspect",
+             "assembly": "http://schema.org/assembly",
+             "assemblyVersion": "http://schema.org/assemblyVersion",
+             "assesses": "http://schema.org/assesses",
+             "associatedAnatomy": "http://schema.org/associatedAnatomy",
+             "associatedArticle": "http://schema.org/associatedArticle",
+             "associatedMedia": "http://schema.org/associatedMedia",
+             "associatedPathophysiology": "http://schema.org/associatedPathophysiology",
+             "athlete": "http://schema.org/athlete",
+             "attendee": "http://schema.org/attendee",
+             "attendees": "http://schema.org/attendees",
+             "audience": "http://schema.org/audience",
+             "audienceType": "http://schema.org/audienceType",
+             "audio": "http://schema.org/audio",
+             "authenticator": "http://schema.org/authenticator",
+             "author": "http://schema.org/author",
+             "availability": "http://schema.org/availability",
+             "availabilityEnds": "http://schema.org/availabilityEnds",
+             "availabilityStarts": "http://schema.org/availabilityStarts",
+             "availableAtOrFrom": "http://schema.org/availableAtOrFrom",
+             "availableChannel": "http://schema.org/availableChannel",
+             "availableDeliveryMethod": "http://schema.org/availableDeliveryMethod",
+             "availableFrom": "http://schema.org/availableFrom",
+             "availableIn": "http://schema.org/availableIn",
+             "availableLanguage": "http://schema.org/availableLanguage",
+             "availableOnDevice": "http://schema.org/availableOnDevice",
+             "availableService": "http://schema.org/availableService",
+             "availableStrength": "http://schema.org/availableStrength",
+             "availableTest": "http://schema.org/availableTest",
+             "availableThrough": "http://schema.org/availableThrough",
+             "award": "http://schema.org/award",
+             "awards": "http://schema.org/awards",
+             "awayTeam": "http://schema.org/awayTeam",
+             "backstory": "http://schema.org/backstory",
+             "bankAccountType": "http://schema.org/bankAccountType",
+             "baseSalary": "http://schema.org/baseSalary",
+             "bccRecipient": "http://schema.org/bccRecipient",
+             "bed": "http://schema.org/bed",
+             "beforeMedia": "http://schema.org/beforeMedia",
+             "beneficiaryBank": "http://schema.org/beneficiaryBank",
+             "benefits": "http://schema.org/benefits",
+             "benefitsSummaryUrl": "http://schema.org/benefitsSummaryUrl",
+             "bestRating": "http://schema.org/bestRating",
+             "billingAddress": "http://schema.org/billingAddress",
+             "billingIncrement": "http://schema.org/billingIncrement",
+             "billingPeriod": "http://schema.org/billingPeriod",
+             "biomechnicalClass": "http://schema.org/biomechnicalClass",
+             "birthDate": "http://schema.org/birthDate",
+             "birthPlace": "http://schema.org/birthPlace",
+             "bitrate": "http://schema.org/bitrate",
+             "blogPost": "http://schema.org/blogPost",
+             "blogPosts": "http://schema.org/blogPosts",
+             "bloodSupply": "http://schema.org/bloodSupply",
+             "boardingGroup": "http://schema.org/boardingGroup",
+             "boardingPolicy": "http://schema.org/boardingPolicy",
+             "bodyLocation": "http://schema.org/bodyLocation",
+             "bodyType": "http://schema.org/bodyType",
+             "bookEdition": "http://schema.org/bookEdition",
+             "bookFormat": "http://schema.org/bookFormat",
+             "bookingAgent": "http://schema.org/bookingAgent",
+             "bookingTime": "http://schema.org/bookingTime",
+             "borrower": "http://schema.org/borrower",
+             "box": "http://schema.org/box",
+             "branch": "http://schema.org/branch",
+             "branchCode": "http://schema.org/branchCode",
+             "branchOf": "http://schema.org/branchOf",
+             "brand": "http://schema.org/brand",
+             "breadcrumb": "http://schema.org/breadcrumb",
+             "breastfeedingWarning": "http://schema.org/breastfeedingWarning",
+             "broadcastAffiliateOf": "http://schema.org/broadcastAffiliateOf",
+             "broadcastChannelId": "http://schema.org/broadcastChannelId",
+             "broadcastDisplayName": "http://schema.org/broadcastDisplayName",
+             "broadcastFrequency": "http://schema.org/broadcastFrequency",
+             "broadcastFrequencyValue": "http://schema.org/broadcastFrequencyValue",
+             "broadcastOfEvent": "http://schema.org/broadcastOfEvent",
+             "broadcastServiceTier": "http://schema.org/broadcastServiceTier",
+             "broadcastSignalModulation": "http://schema.org/broadcastSignalModulation",
+             "broadcastSubChannel": "http://schema.org/broadcastSubChannel",
+             "broadcastTimezone": "http://schema.org/broadcastTimezone",
+             "broadcaster": "http://schema.org/broadcaster",
+             "broker": "http://schema.org/broker",
+             "browserRequirements": "http://schema.org/browserRequirements",
+             "busName": "http://schema.org/busName",
+             "busNumber": "http://schema.org/busNumber",
+             "businessDays": "http://schema.org/businessDays",
+             "businessFunction": "http://schema.org/businessFunction",
+             "buyer": "http://schema.org/buyer",
+             "byArtist": "http://schema.org/byArtist",
+             "byDay": "http://schema.org/byDay",
+             "byMonth": "http://schema.org/byMonth",
+             "byMonthDay": "http://schema.org/byMonthDay",
+             "byMonthWeek": "http://schema.org/byMonthWeek",
+             "callSign": "http://schema.org/callSign",
+             "calories": "http://schema.org/calories",
+             "candidate": "http://schema.org/candidate",
+             "caption": "http://schema.org/caption",
+             "carbohydrateContent": "http://schema.org/carbohydrateContent",
+             "cargoVolume": "http://schema.org/cargoVolume",
+             "carrier": "http://schema.org/carrier",
+             "carrierRequirements": "http://schema.org/carrierRequirements",
+             "cashBack": "http://schema.org/cashBack",
+             "catalog": "http://schema.org/catalog",
+             "catalogNumber": "http://schema.org/catalogNumber",
+             "category": "http://schema.org/category",
+             "causeOf": "http://schema.org/causeOf",
+             "ccRecipient": "http://schema.org/ccRecipient",
+             "character": "http://schema.org/character",
+             "characterAttribute": "http://schema.org/characterAttribute",
+             "characterName": "http://schema.org/characterName",
+             "cheatCode": "http://schema.org/cheatCode",
+             "checkinTime": "http://schema.org/checkinTime",
+             "checkoutTime": "http://schema.org/checkoutTime",
+             "childMaxAge": "http://schema.org/childMaxAge",
+             "childMinAge": "http://schema.org/childMinAge",
+             "children": "http://schema.org/children",
+             "cholesterolContent": "http://schema.org/cholesterolContent",
+             "circle": "http://schema.org/circle",
+             "citation": "http://schema.org/citation",
+             "claimReviewed": "http://schema.org/claimReviewed",
+             "clincalPharmacology": "http://schema.org/clincalPharmacology",
+             "clinicalPharmacology": "http://schema.org/clinicalPharmacology",
+             "clipNumber": "http://schema.org/clipNumber",
+             "closes": "http://schema.org/closes",
+             "coach": "http://schema.org/coach",
+             "code": "http://schema.org/code",
+             "codeRepository": "http://schema.org/codeRepository",
+             "codeSampleType": "http://schema.org/codeSampleType",
+             "codeValue": "http://schema.org/codeValue",
+             "codingSystem": "http://schema.org/codingSystem",
+             "colleague": "http://schema.org/colleague",
+             "colleagues": "http://schema.org/colleagues",
+             "collection": "http://schema.org/collection",
+             "collectionSize": "http://schema.org/collectionSize",
+             "color": "http://schema.org/color",
+             "colorist": "http://schema.org/colorist",
+             "comment": "http://schema.org/comment",
+             "commentCount": "http://schema.org/commentCount",
+             "commentText": "http://schema.org/commentText",
+             "commentTime": "http://schema.org/commentTime",
+             "competencyRequired": "http://schema.org/competencyRequired",
+             "competitor": "http://schema.org/competitor",
+             "composer": "http://schema.org/composer",
+             "comprisedOf": "http://schema.org/comprisedOf",
+             "conditionsOfAccess": "http://schema.org/conditionsOfAccess",
+             "confirmationNumber": "http://schema.org/confirmationNumber",
+             "connectedTo": "http://schema.org/connectedTo",
+             "constrainingProperty": "http://schema.org/constrainingProperty",
+             "contactOption": "http://schema.org/contactOption",
+             "contactPoint": "http://schema.org/contactPoint",
+             "contactPoints": "http://schema.org/contactPoints",
+             "contactType": "http://schema.org/contactType",
+             "contactlessPayment": "http://schema.org/contactlessPayment",
+             "containedIn": "http://schema.org/containedIn",
+             "containedInPlace": "http://schema.org/containedInPlace",
+             "containsPlace": "http://schema.org/containsPlace",
+             "containsSeason": "http://schema.org/containsSeason",
+             "contentLocation": "http://schema.org/contentLocation",
+             "contentRating": "http://schema.org/contentRating",
+             "contentReferenceTime": "http://schema.org/contentReferenceTime",
+             "contentSize": "http://schema.org/contentSize",
+             "contentType": "http://schema.org/contentType",
+             "contentUrl": "http://schema.org/contentUrl",
+             "contraindication": "http://schema.org/contraindication",
+             "contributor": "http://schema.org/contributor",
+             "cookTime": "http://schema.org/cookTime",
+             "cookingMethod": "http://schema.org/cookingMethod",
+             "copyrightHolder": "http://schema.org/copyrightHolder",
+             "copyrightYear": "http://schema.org/copyrightYear",
+             "correction": "http://schema.org/correction",
+             "correctionsPolicy": "http://schema.org/correctionsPolicy",
+             "costCategory": "http://schema.org/costCategory",
+             "costCurrency": "http://schema.org/costCurrency",
+             "costOrigin": "http://schema.org/costOrigin",
+             "costPerUnit": "http://schema.org/costPerUnit",
+             "countriesNotSupported": "http://schema.org/countriesNotSupported",
+             "countriesSupported": "http://schema.org/countriesSupported",
+             "countryOfOrigin": "http://schema.org/countryOfOrigin",
+             "course": "http://schema.org/course",
+             "courseCode": "http://schema.org/courseCode",
+             "courseMode": "http://schema.org/courseMode",
+             "coursePrerequisites": "http://schema.org/coursePrerequisites",
+             "courseWorkload": "http://schema.org/courseWorkload",
+             "coverageEndTime": "http://schema.org/coverageEndTime",
+             "coverageStartTime": "http://schema.org/coverageStartTime",
+             "creativeWorkStatus": "http://schema.org/creativeWorkStatus",
+             "creator": "http://schema.org/creator",
+             "credentialCategory": "http://schema.org/credentialCategory",
+             "creditedTo": "http://schema.org/creditedTo",
+             "cssSelector": "http://schema.org/cssSelector",
+             "currenciesAccepted": "http://schema.org/currenciesAccepted",
+             "currency": "http://schema.org/currency",
+             "currentExchangeRate": "http://schema.org/currentExchangeRate",
+             "customer": "http://schema.org/customer",
+             "cutoffTime": "http://schema.org/cutoffTime",
+             "cvdCollectionDate": "http://schema.org/cvdCollectionDate",
+             "cvdFacilityCounty": "http://schema.org/cvdFacilityCounty",
+             "cvdFacilityId": "http://schema.org/cvdFacilityId",
+             "cvdNumBeds": "http://schema.org/cvdNumBeds",
+             "cvdNumBedsOcc": "http://schema.org/cvdNumBedsOcc",
+             "cvdNumC19Died": "http://schema.org/cvdNumC19Died",
+             "cvdNumC19HOPats": "http://schema.org/cvdNumC19HOPats",
+             "cvdNumC19HospPats": "http://schema.org/cvdNumC19HospPats",
+             "cvdNumC19MechVentPats": "http://schema.org/cvdNumC19MechVentPats",
+             "cvdNumC19OFMechVentPats": "http://schema.org/cvdNumC19OFMechVentPats",
+             "cvdNumC19OverflowPats": "http://schema.org/cvdNumC19OverflowPats",
+             "cvdNumICUBeds": "http://schema.org/cvdNumICUBeds",
+             "cvdNumICUBedsOcc": "http://schema.org/cvdNumICUBedsOcc",
+             "cvdNumTotBeds": "http://schema.org/cvdNumTotBeds",
+             "cvdNumVent": "http://schema.org/cvdNumVent",
+             "cvdNumVentUse": "http://schema.org/cvdNumVentUse",
+             "dataFeedElement": "http://schema.org/dataFeedElement",
+             "dataset": "http://schema.org/dataset",
+             "datasetTimeInterval": "http://schema.org/datasetTimeInterval",
+             "dateCreated": "http://schema.org/dateCreated",
+             "dateDeleted": "http://schema.org/dateDeleted",
+             "dateIssued": "http://schema.org/dateIssued",
+             "dateModified": "http://schema.org/dateModified",
+             "datePosted": "http://schema.org/datePosted",
+             "datePublished": "http://schema.org/datePublished",
+             "dateRead": "http://schema.org/dateRead",
+             "dateReceived": "http://schema.org/dateReceived",
+             "dateSent": "http://schema.org/dateSent",
+             "dateVehicleFirstRegistered": "http://schema.org/dateVehicleFirstRegistered",
+             "dateline": "http://schema.org/dateline",
+             "dayOfWeek": "http://schema.org/dayOfWeek",
+             "deathDate": "http://schema.org/deathDate",
+             "deathPlace": "http://schema.org/deathPlace",
+             "defaultValue": "http://schema.org/defaultValue",
+             "deliveryAddress": "http://schema.org/deliveryAddress",
+             "deliveryLeadTime": "http://schema.org/deliveryLeadTime",
+             "deliveryMethod": "http://schema.org/deliveryMethod",
+             "deliveryStatus": "http://schema.org/deliveryStatus",
+             "deliveryTime": "http://schema.org/deliveryTime",
+             "department": "http://schema.org/department",
+             "departureAirport": "http://schema.org/departureAirport",
+             "departureBoatTerminal": "http://schema.org/departureBoatTerminal",
+             "departureBusStop": "http://schema.org/departureBusStop",
+             "departureGate": "http://schema.org/departureGate",
+             "departurePlatform": "http://schema.org/departurePlatform",
+             "departureStation": "http://schema.org/departureStation",
+             "departureTerminal": "http://schema.org/departureTerminal",
+             "departureTime": "http://schema.org/departureTime",
+             "dependencies": "http://schema.org/dependencies",
+             "depth": "http://schema.org/depth",
+             "description": "http://schema.org/description",
+             "device": "http://schema.org/device",
+             "diagnosis": "http://schema.org/diagnosis",
+             "diagram": "http://schema.org/diagram",
+             "diet": "http://schema.org/diet",
+             "dietFeatures": "http://schema.org/dietFeatures",
+             "differentialDiagnosis": "http://schema.org/differentialDiagnosis",
+             "director": "http://schema.org/director",
+             "directors": "http://schema.org/directors",
+             "disambiguatingDescription": "http://schema.org/disambiguatingDescription",
+             "discount": "http://schema.org/discount",
+             "discountCode": "http://schema.org/discountCode",
+             "discountCurrency": "http://schema.org/discountCurrency",
+             "discusses": "http://schema.org/discusses",
+             "discussionUrl": "http://schema.org/discussionUrl",
+             "diseasePreventionInfo": "http://schema.org/diseasePreventionInfo",
+             "diseaseSpreadStatistics": "http://schema.org/diseaseSpreadStatistics",
+             "dissolutionDate": "http://schema.org/dissolutionDate",
+             "distance": "http://schema.org/distance",
+             "distinguishingSign": "http://schema.org/distinguishingSign",
+             "distribution": "http://schema.org/distribution",
+             "diversityPolicy": "http://schema.org/diversityPolicy",
+             "diversityStaffingReport": "http://schema.org/diversityStaffingReport",
+             "documentation": "http://schema.org/documentation",
+             "doesNotShip": "http://schema.org/doesNotShip",
+             "domainIncludes": "http://schema.org/domainIncludes",
+             "domiciledMortgage": "http://schema.org/domiciledMortgage",
+             "doorTime": "http://schema.org/doorTime",
+             "dosageForm": "http://schema.org/dosageForm",
+             "doseSchedule": "http://schema.org/doseSchedule",
+             "doseUnit": "http://schema.org/doseUnit",
+             "doseValue": "http://schema.org/doseValue",
+             "downPayment": "http://schema.org/downPayment",
+             "downloadUrl": "http://schema.org/downloadUrl",
+             "downvoteCount": "http://schema.org/downvoteCount",
+             "drainsTo": "http://schema.org/drainsTo",
+             "driveWheelConfiguration": "http://schema.org/driveWheelConfiguration",
+             "dropoffLocation": "http://schema.org/dropoffLocation",
+             "dropoffTime": "http://schema.org/dropoffTime",
+             "drug": "http://schema.org/drug",
+             "drugClass": "http://schema.org/drugClass",
+             "drugUnit": "http://schema.org/drugUnit",
+             "duns": "http://schema.org/duns",
+             "duplicateTherapy": "http://schema.org/duplicateTherapy",
+             "duration": "http://schema.org/duration",
+             "durationOfWarranty": "http://schema.org/durationOfWarranty",
+             "duringMedia": "http://schema.org/duringMedia",
+             "earlyPrepaymentPenalty": "http://schema.org/earlyPrepaymentPenalty",
+             "editEIDR": "http://schema.org/editEIDR",
+             "editor": "http://schema.org/editor",
+             "eduQuestionType": "http://schema.org/eduQuestionType",
+             "educationRequirements": "http://schema.org/educationRequirements",
+             "educationalAlignment": "http://schema.org/educationalAlignment",
+             "educationalCredentialAwarded": "http://schema.org/educationalCredentialAwarded",
+             "educationalFramework": "http://schema.org/educationalFramework",
+             "educationalLevel": "http://schema.org/educationalLevel",
+             "educationalProgramMode": "http://schema.org/educationalProgramMode",
+             "educationalRole": "http://schema.org/educationalRole",
+             "educationalUse": "http://schema.org/educationalUse",
+             "elevation": "http://schema.org/elevation",
+             "eligibilityToWorkRequirement": "http://schema.org/eligibilityToWorkRequirement",
+             "eligibleCustomerType": "http://schema.org/eligibleCustomerType",
+             "eligibleDuration": "http://schema.org/eligibleDuration",
+             "eligibleQuantity": "http://schema.org/eligibleQuantity",
+             "eligibleRegion": "http://schema.org/eligibleRegion",
+             "eligibleTransactionVolume": "http://schema.org/eligibleTransactionVolume",
+             "email": "http://schema.org/email",
+             "embedUrl": "http://schema.org/embedUrl",
+             "emissionsCO2": "http://schema.org/emissionsCO2",
+             "employee": "http://schema.org/employee",
+             "employees": "http://schema.org/employees",
+             "employerOverview": "http://schema.org/employerOverview",
+             "employmentType": "http://schema.org/employmentType",
+             "employmentUnit": "http://schema.org/employmentUnit",
+             "encodesCreativeWork": "http://schema.org/encodesCreativeWork",
+             "encoding": "http://schema.org/encoding",
+             "encodingFormat": "http://schema.org/encodingFormat",
+             "encodingType": "http://schema.org/encodingType",
+             "encodings": "http://schema.org/encodings",
+             "endDate": "http://schema.org/endDate",
+             "endOffset": "http://schema.org/endOffset",
+             "endTime": "http://schema.org/endTime",
+             "endorsee": "http://schema.org/endorsee",
+             "endorsers": "http://schema.org/endorsers",
+             "energyEfficiencyScaleMax": "http://schema.org/energyEfficiencyScaleMax",
+             "energyEfficiencyScaleMin": "http://schema.org/energyEfficiencyScaleMin",
+             "engineDisplacement": "http://schema.org/engineDisplacement",
+             "enginePower": "http://schema.org/enginePower",
+             "engineType": "http://schema.org/engineType",
+             "entertainmentBusiness": "http://schema.org/entertainmentBusiness",
+             "epidemiology": "http://schema.org/epidemiology",
+             "episode": "http://schema.org/episode",
+             "episodeNumber": "http://schema.org/episodeNumber",
+             "episodes": "http://schema.org/episodes",
+             "equal": "http://schema.org/equal",
+             "error": "http://schema.org/error",
+             "estimatedCost": "http://schema.org/estimatedCost",
+             "estimatedFlightDuration": "http://schema.org/estimatedFlightDuration",
+             "estimatedSalary": "http://schema.org/estimatedSalary",
+             "estimatesRiskOf": "http://schema.org/estimatesRiskOf",
+             "ethicsPolicy": "http://schema.org/ethicsPolicy",
+             "event": "http://schema.org/event",
+             "eventAttendanceMode": "http://schema.org/eventAttendanceMode",
+             "eventSchedule": "http://schema.org/eventSchedule",
+             "eventStatus": "http://schema.org/eventStatus",
+             "events": "http://schema.org/events",
+             "evidenceLevel": "http://schema.org/evidenceLevel",
+             "evidenceOrigin": "http://schema.org/evidenceOrigin",
+             "exampleOfWork": "http://schema.org/exampleOfWork",
+             "exceptDate": "http://schema.org/exceptDate",
+             "exchangeRateSpread": "http://schema.org/exchangeRateSpread",
+             "executableLibraryName": "http://schema.org/executableLibraryName",
+             "exerciseCourse": "http://schema.org/exerciseCourse",
+             "exercisePlan": "http://schema.org/exercisePlan",
+             "exerciseRelatedDiet": "http://schema.org/exerciseRelatedDiet",
+             "exerciseType": "http://schema.org/exerciseType",
+             "exifData": "http://schema.org/exifData",
+             "expectedArrivalFrom": "http://schema.org/expectedArrivalFrom",
+             "expectedArrivalUntil": "http://schema.org/expectedArrivalUntil",
+             "expectedPrognosis": "http://schema.org/expectedPrognosis",
+             "expectsAcceptanceOf": "http://schema.org/expectsAcceptanceOf",
+             "experienceRequirements": "http://schema.org/experienceRequirements",
+             "expertConsiderations": "http://schema.org/expertConsiderations",
+             "expires": "http://schema.org/expires",
+             "familyName": "http://schema.org/familyName",
+             "fatContent": "http://schema.org/fatContent",
+             "faxNumber": "http://schema.org/faxNumber",
+             "featureList": "http://schema.org/featureList",
+             "feesAndCommissionsSpecification": "http://schema.org/feesAndCommissionsSpecification",
+             "fiberContent": "http://schema.org/fiberContent",
+             "fileFormat": "http://schema.org/fileFormat",
+             "fileSize": "http://schema.org/fileSize",
+             "financialAidEligible": "http://schema.org/financialAidEligible",
+             "firstAppearance": "http://schema.org/firstAppearance",
+             "firstPerformance": "http://schema.org/firstPerformance",
+             "flightDistance": "http://schema.org/flightDistance",
+             "flightNumber": "http://schema.org/flightNumber",
+             "floorLevel": "http://schema.org/floorLevel",
+             "floorLimit": "http://schema.org/floorLimit",
+             "floorSize": "http://schema.org/floorSize",
+             "followee": "http://schema.org/followee",
+             "follows": "http://schema.org/follows",
+             "followup": "http://schema.org/followup",
+             "foodEstablishment": "http://schema.org/foodEstablishment",
+             "foodEvent": "http://schema.org/foodEvent",
+             "foodWarning": "http://schema.org/foodWarning",
+             "founder": "http://schema.org/founder",
+             "founders": "http://schema.org/founders",
+             "foundingDate": "http://schema.org/foundingDate",
+             "foundingLocation": "http://schema.org/foundingLocation",
+             "free": "http://schema.org/free",
+             "freeShippingThreshold": "http://schema.org/freeShippingThreshold",
+             "frequency": "http://schema.org/frequency",
+             "fromLocation": "http://schema.org/fromLocation",
+             "fuelCapacity": "http://schema.org/fuelCapacity",
+             "fuelConsumption": "http://schema.org/fuelConsumption",
+             "fuelEfficiency": "http://schema.org/fuelEfficiency",
+             "fuelType": "http://schema.org/fuelType",
+             "functionalClass": "http://schema.org/functionalClass",
+             "fundedItem": "http://schema.org/fundedItem",
+             "funder": "http://schema.org/funder",
+             "game": "http://schema.org/game",
+             "gameItem": "http://schema.org/gameItem",
+             "gameLocation": "http://schema.org/gameLocation",
+             "gamePlatform": "http://schema.org/gamePlatform",
+             "gameServer": "http://schema.org/gameServer",
+             "gameTip": "http://schema.org/gameTip",
+             "gender": "http://schema.org/gender",
+             "genre": "http://schema.org/genre",
+             "geo": "http://schema.org/geo",
+             "geoContains": "http://schema.org/geoContains",
+             "geoCoveredBy": "http://schema.org/geoCoveredBy",
+             "geoCovers": "http://schema.org/geoCovers",
+             "geoCrosses": "http://schema.org/geoCrosses",
+             "geoDisjoint": "http://schema.org/geoDisjoint",
+             "geoEquals": "http://schema.org/geoEquals",
+             "geoIntersects": "http://schema.org/geoIntersects",
+             "geoMidpoint": "http://schema.org/geoMidpoint",
+             "geoOverlaps": "http://schema.org/geoOverlaps",
+             "geoRadius": "http://schema.org/geoRadius",
+             "geoTouches": "http://schema.org/geoTouches",
+             "geoWithin": "http://schema.org/geoWithin",
+             "geographicArea": "http://schema.org/geographicArea",
+             "gettingTestedInfo": "http://schema.org/gettingTestedInfo",
+             "givenName": "http://schema.org/givenName",
+             "globalLocationNumber": "http://schema.org/globalLocationNumber",
+             "governmentBenefitsInfo": "http://schema.org/governmentBenefitsInfo",
+             "gracePeriod": "http://schema.org/gracePeriod",
+             "grantee": "http://schema.org/grantee",
+             "greater": "http://schema.org/greater",
+             "greaterOrEqual": "http://schema.org/greaterOrEqual",
+             "gtin": "http://schema.org/gtin",
+             "gtin12": "http://schema.org/gtin12",
+             "gtin13": "http://schema.org/gtin13",
+             "gtin14": "http://schema.org/gtin14",
+             "gtin8": "http://schema.org/gtin8",
+             "guideline": "http://schema.org/guideline",
+             "guidelineDate": "http://schema.org/guidelineDate",
+             "guidelineSubject": "http://schema.org/guidelineSubject",
+             "handlingTime": "http://schema.org/handlingTime",
+             "hasBroadcastChannel": "http://schema.org/hasBroadcastChannel",
+             "hasCategoryCode": "http://schema.org/hasCategoryCode",
+             "hasCourse": "http://schema.org/hasCourse",
+             "hasCourseInstance": "http://schema.org/hasCourseInstance",
+             "hasCredential": "http://schema.org/hasCredential",
+             "hasDefinedTerm": "http://schema.org/hasDefinedTerm",
+             "hasDeliveryMethod": "http://schema.org/hasDeliveryMethod",
+             "hasDigitalDocumentPermission": "http://schema.org/hasDigitalDocumentPermission",
+             "hasDriveThroughService": "http://schema.org/hasDriveThroughService",
+             "hasEnergyConsumptionDetails": "http://schema.org/hasEnergyConsumptionDetails",
+             "hasEnergyEfficiencyCategory": "http://schema.org/hasEnergyEfficiencyCategory",
+             "hasHealthAspect": "http://schema.org/hasHealthAspect",
+             "hasMap": "http://schema.org/hasMap",
+             "hasMenu": "http://schema.org/hasMenu",
+             "hasMenuItem": "http://schema.org/hasMenuItem",
+             "hasMenuSection": "http://schema.org/hasMenuSection",
+             "hasMerchantReturnPolicy": "http://schema.org/hasMerchantReturnPolicy",
+             "hasOccupation": "http://schema.org/hasOccupation",
+             "hasOfferCatalog": "http://schema.org/hasOfferCatalog",
+             "hasPOS": "http://schema.org/hasPOS",
+             "hasPart": "http://schema.org/hasPart",
+             "hasProductReturnPolicy": "http://schema.org/hasProductReturnPolicy",
+             "hasVariant": "http://schema.org/hasVariant",
+             "headline": "http://schema.org/headline",
+             "healthCondition": "http://schema.org/healthCondition",
+             "healthPlanCoinsuranceOption": "http://schema.org/healthPlanCoinsuranceOption",
+             "healthPlanCoinsuranceRate": "http://schema.org/healthPlanCoinsuranceRate",
+             "healthPlanCopay": "http://schema.org/healthPlanCopay",
+             "healthPlanCopayOption": "http://schema.org/healthPlanCopayOption",
+             "healthPlanCostSharing": "http://schema.org/healthPlanCostSharing",
+             "healthPlanDrugOption": "http://schema.org/healthPlanDrugOption",
+             "healthPlanDrugTier": "http://schema.org/healthPlanDrugTier",
+             "healthPlanId": "http://schema.org/healthPlanId",
+             "healthPlanMarketingUrl": "http://schema.org/healthPlanMarketingUrl",
+             "healthPlanNetworkId": "http://schema.org/healthPlanNetworkId",
+             "healthPlanNetworkTier": "http://schema.org/healthPlanNetworkTier",
+             "healthPlanPharmacyCategory": "http://schema.org/healthPlanPharmacyCategory",
+             "healthcareReportingData": "http://schema.org/healthcareReportingData",
+             "height": "http://schema.org/height",
+             "highPrice": "http://schema.org/highPrice",
+             "hiringOrganization": "http://schema.org/hiringOrganization",
+             "holdingArchive": "http://schema.org/holdingArchive",
+             "homeLocation": "http://schema.org/homeLocation",
+             "homeTeam": "http://schema.org/homeTeam",
+             "honorificPrefix": "http://schema.org/honorificPrefix",
+             "honorificSuffix": "http://schema.org/honorificSuffix",
+             "hospitalAffiliation": "http://schema.org/hospitalAffiliation",
+             "hostingOrganization": "http://schema.org/hostingOrganization",
+             "hoursAvailable": "http://schema.org/hoursAvailable",
+             "howPerformed": "http://schema.org/howPerformed",
+             "httpMethod": "http://schema.org/httpMethod",
+             "iataCode": "http://schema.org/iataCode",
+             "icaoCode": "http://schema.org/icaoCode",
+             "identifier": "http://schema.org/identifier",
+             "identifyingExam": "http://schema.org/identifyingExam",
+             "identifyingTest": "http://schema.org/identifyingTest",
+             "illustrator": "http://schema.org/illustrator",
+             "image": "http://schema.org/image",
+             "imagingTechnique": "http://schema.org/imagingTechnique",
+             "inAlbum": "http://schema.org/inAlbum",
+             "inBroadcastLineup": "http://schema.org/inBroadcastLineup",
+             "inCodeSet": "http://schema.org/inCodeSet",
+             "inDefinedTermSet": "http://schema.org/inDefinedTermSet",
+             "inLanguage": "http://schema.org/inLanguage",
+             "inPlaylist": "http://schema.org/inPlaylist",
+             "inProductGroupWithID": "http://schema.org/inProductGroupWithID",
+             "inStoreReturnsOffered": "http://schema.org/inStoreReturnsOffered",
+             "inSupportOf": "http://schema.org/inSupportOf",
+             "incentiveCompensation": "http://schema.org/incentiveCompensation",
+             "incentives": "http://schema.org/incentives",
+             "includedComposition": "http://schema.org/includedComposition",
+             "includedDataCatalog": "http://schema.org/includedDataCatalog",
+             "includedInDataCatalog": "http://schema.org/includedInDataCatalog",
+             "includedInHealthInsurancePlan": "http://schema.org/includedInHealthInsurancePlan",
+             "includedRiskFactor": "http://schema.org/includedRiskFactor",
+             "includesAttraction": "http://schema.org/includesAttraction",
+             "includesHealthPlanFormulary": "http://schema.org/includesHealthPlanFormulary",
+             "includesHealthPlanNetwork": "http://schema.org/includesHealthPlanNetwork",
+             "includesObject": "http://schema.org/includesObject",
+             "increasesRiskOf": "http://schema.org/increasesRiskOf",
+             "industry": "http://schema.org/industry",
+             "ineligibleRegion": "http://schema.org/ineligibleRegion",
+             "infectiousAgent": "http://schema.org/infectiousAgent",
+             "infectiousAgentClass": "http://schema.org/infectiousAgentClass",
+             "ingredients": "http://schema.org/ingredients",
+             "inker": "http://schema.org/inker",
+             "insertion": "http://schema.org/insertion",
+             "installUrl": "http://schema.org/installUrl",
+             "instructor": "http://schema.org/instructor",
+             "instrument": "http://schema.org/instrument",
+             "intensity": "http://schema.org/intensity",
+             "interactingDrug": "http://schema.org/interactingDrug",
+             "interactionCount": "http://schema.org/interactionCount",
+             "interactionService": "http://schema.org/interactionService",
+             "interactionStatistic": "http://schema.org/interactionStatistic",
+             "interactionType": "http://schema.org/interactionType",
+             "interactivityType": "http://schema.org/interactivityType",
+             "interestRate": "http://schema.org/interestRate",
+             "inventoryLevel": "http://schema.org/inventoryLevel",
+             "inverseOf": "http://schema.org/inverseOf",
+             "isAcceptingNewPatients": "http://schema.org/isAcceptingNewPatients",
+             "isAccessibleForFree": "http://schema.org/isAccessibleForFree",
+             "isAccessoryOrSparePartFor": "http://schema.org/isAccessoryOrSparePartFor",
+             "isAvailableGenerically": "http://schema.org/isAvailableGenerically",
+             "isBasedOn": "http://schema.org/isBasedOn",
+             "isBasedOnUrl": "http://schema.org/isBasedOnUrl",
+             "isConsumableFor": "http://schema.org/isConsumableFor",
+             "isFamilyFriendly": "http://schema.org/isFamilyFriendly",
+             "isGift": "http://schema.org/isGift",
+             "isLiveBroadcast": "http://schema.org/isLiveBroadcast",
+             "isPartOf": "http://schema.org/isPartOf",
+             "isPlanForApartment": "http://schema.org/isPlanForApartment",
+             "isProprietary": "http://schema.org/isProprietary",
+             "isRelatedTo": "http://schema.org/isRelatedTo",
+             "isResizable": "http://schema.org/isResizable",
+             "isSimilarTo": "http://schema.org/isSimilarTo",
+             "isUnlabelledFallback": "http://schema.org/isUnlabelledFallback",
+             "isVariantOf": "http://schema.org/isVariantOf",
+             "isbn": "http://schema.org/isbn",
+             "isicV4": "http://schema.org/isicV4",
+             "isrcCode": "http://schema.org/isrcCode",
+             "issn": "http://schema.org/issn",
+             "issueNumber": "http://schema.org/issueNumber",
+             "issuedBy": "http://schema.org/issuedBy",
+             "issuedThrough": "http://schema.org/issuedThrough",
+             "iswcCode": "http://schema.org/iswcCode",
+             "item": "http://schema.org/item",
+             "itemCondition": "http://schema.org/itemCondition",
+             "itemListElement": "http://schema.org/itemListElement",
+             "itemListOrder": "http://schema.org/itemListOrder",
+             "itemLocation": "http://schema.org/itemLocation",
+             "itemOffered": "http://schema.org/itemOffered",
+             "itemReviewed": "http://schema.org/itemReviewed",
+             "itemShipped": "http://schema.org/itemShipped",
+             "itinerary": "http://schema.org/itinerary",
+             "jobBenefits": "http://schema.org/jobBenefits",
+             "jobImmediateStart": "http://schema.org/jobImmediateStart",
+             "jobLocation": "http://schema.org/jobLocation",
+             "jobLocationType": "http://schema.org/jobLocationType",
+             "jobStartDate": "http://schema.org/jobStartDate",
+             "jobTitle": "http://schema.org/jobTitle",
+             "jurisdiction": "http://schema.org/jurisdiction",
+             "keywords": "http://schema.org/keywords",
+             "knownVehicleDamages": "http://schema.org/knownVehicleDamages",
+             "knows": "http://schema.org/knows",
+             "knowsAbout": "http://schema.org/knowsAbout",
+             "knowsLanguage": "http://schema.org/knowsLanguage",
+             "labelDetails": "http://schema.org/labelDetails",
+             "landlord": "http://schema.org/landlord",
+             "language": "http://schema.org/language",
+             "lastReviewed": "http://schema.org/lastReviewed",
+             "latitude": "http://schema.org/latitude",
+             "layoutImage": "http://schema.org/layoutImage",
+             "learningResourceType": "http://schema.org/learningResourceType",
+             "leaseLength": "http://schema.org/leaseLength",
+             "legalName": "http://schema.org/legalName",
+             "legalStatus": "http://schema.org/legalStatus",
+             "legislationApplies": "http://schema.org/legislationApplies",
+             "legislationChanges": "http://schema.org/legislationChanges",
+             "legislationConsolidates": "http://schema.org/legislationConsolidates",
+             "legislationDate": "http://schema.org/legislationDate",
+             "legislationDateVersion": "http://schema.org/legislationDateVersion",
+             "legislationIdentifier": "http://schema.org/legislationIdentifier",
+             "legislationJurisdiction": "http://schema.org/legislationJurisdiction",
+             "legislationLegalForce": "http://schema.org/legislationLegalForce",
+             "legislationLegalValue": "http://schema.org/legislationLegalValue",
+             "legislationPassedBy": "http://schema.org/legislationPassedBy",
+             "legislationResponsible": "http://schema.org/legislationResponsible",
+             "legislationTransposes": "http://schema.org/legislationTransposes",
+             "legislationType": "http://schema.org/legislationType",
+             "leiCode": "http://schema.org/leiCode",
+             "lender": "http://schema.org/lender",
+             "lesser": "http://schema.org/lesser",
+             "lesserOrEqual": "http://schema.org/lesserOrEqual",
+             "letterer": "http://schema.org/letterer",
+             "license": "http://schema.org/license",
+             "line": "http://schema.org/line",
+             "linkRelationship": "http://schema.org/linkRelationship",
+             "liveBlogUpdate": "http://schema.org/liveBlogUpdate",
+             "loanMortgageMandateAmount": "http://schema.org/loanMortgageMandateAmount",
+             "loanPaymentAmount": "http://schema.org/loanPaymentAmount",
+             "loanPaymentFrequency": "http://schema.org/loanPaymentFrequency",
+             "loanRepaymentForm": "http://schema.org/loanRepaymentForm",
+             "loanTerm": "http://schema.org/loanTerm",
+             "loanType": "http://schema.org/loanType",
+             "location": "http://schema.org/location",
+             "locationCreated": "http://schema.org/locationCreated",
+             "lodgingUnitDescription": "http://schema.org/lodgingUnitDescription",
+             "lodgingUnitType": "http://schema.org/lodgingUnitType",
+             "logo": "http://schema.org/logo",
+             "longitude": "http://schema.org/longitude",
+             "loser": "http://schema.org/loser",
+             "lowPrice": "http://schema.org/lowPrice",
+             "lyricist": "http://schema.org/lyricist",
+             "lyrics": "http://schema.org/lyrics",
+             "mainContentOfPage": "http://schema.org/mainContentOfPage",
+             "mainEntity": "http://schema.org/mainEntity",
+             "mainEntityOfPage": "http://schema.org/mainEntityOfPage",
+             "maintainer": "http://schema.org/maintainer",
+             "makesOffer": "http://schema.org/makesOffer",
+             "manufacturer": "http://schema.org/manufacturer",
+             "map": "http://schema.org/map",
+             "mapType": "http://schema.org/mapType",
+             "maps": "http://schema.org/maps",
+             "marginOfError": "http://schema.org/marginOfError",
+             "masthead": "http://schema.org/masthead",
+             "material": "http://schema.org/material",
+             "materialExtent": "http://schema.org/materialExtent",
+             "maxPrice": "http://schema.org/maxPrice",
+             "maxValue": "http://schema.org/maxValue",
+             "maximumAttendeeCapacity": "http://schema.org/maximumAttendeeCapacity",
+             "maximumEnrollment": "http://schema.org/maximumEnrollment",
+             "maximumIntake": "http://schema.org/maximumIntake",
+             "maximumPhysicalAttendeeCapacity": "http://schema.org/maximumPhysicalAttendeeCapacity",
+             "maximumVirtualAttendeeCapacity": "http://schema.org/maximumVirtualAttendeeCapacity",
+             "mealService": "http://schema.org/mealService",
+             "measuredProperty": "http://schema.org/measuredProperty",
+             "measuredValue": "http://schema.org/measuredValue",
+             "measurementTechnique": "http://schema.org/measurementTechnique",
+             "mechanismOfAction": "http://schema.org/mechanismOfAction",
+             "mediaAuthenticityCategory": "http://schema.org/mediaAuthenticityCategory",
+             "median": "http://schema.org/median",
+             "medicalAudience": "http://schema.org/medicalAudience",
+             "medicalSpecialty": "http://schema.org/medicalSpecialty",
+             "medicineSystem": "http://schema.org/medicineSystem",
+             "meetsEmissionStandard": "http://schema.org/meetsEmissionStandard",
+             "member": "http://schema.org/member",
+             "memberOf": "http://schema.org/memberOf",
+             "members": "http://schema.org/members",
+             "membershipNumber": "http://schema.org/membershipNumber",
+             "membershipPointsEarned": "http://schema.org/membershipPointsEarned",
+             "memoryRequirements": "http://schema.org/memoryRequirements",
+             "mentions": "http://schema.org/mentions",
+             "menu": "http://schema.org/menu",
+             "menuAddOn": "http://schema.org/menuAddOn",
+             "merchant": "http://schema.org/merchant",
+             "merchantReturnDays": "http://schema.org/merchantReturnDays",
+             "merchantReturnLink": "http://schema.org/merchantReturnLink",
+             "messageAttachment": "http://schema.org/messageAttachment",
+             "mileageFromOdometer": "http://schema.org/mileageFromOdometer",
+             "minPrice": "http://schema.org/minPrice",
+             "minValue": "http://schema.org/minValue",
+             "minimumPaymentDue": "http://schema.org/minimumPaymentDue",
+             "missionCoveragePrioritiesPolicy": "http://schema.org/missionCoveragePrioritiesPolicy",
+             "model": "http://schema.org/model",
+             "modelDate": "http://schema.org/modelDate",
+             "modifiedTime": "http://schema.org/modifiedTime",
+             "monthlyMinimumRepaymentAmount": "http://schema.org/monthlyMinimumRepaymentAmount",
+             "mpn": "http://schema.org/mpn",
+             "multipleValues": "http://schema.org/multipleValues",
+             "muscleAction": "http://schema.org/muscleAction",
+             "musicArrangement": "http://schema.org/musicArrangement",
+             "musicBy": "http://schema.org/musicBy",
+             "musicCompositionForm": "http://schema.org/musicCompositionForm",
+             "musicGroupMember": "http://schema.org/musicGroupMember",
+             "musicReleaseFormat": "http://schema.org/musicReleaseFormat",
+             "musicalKey": "http://schema.org/musicalKey",
+             "naics": "http://schema.org/naics",
+             "name": "http://schema.org/name",
+             "namedPosition": "http://schema.org/namedPosition",
+             "nationality": "http://schema.org/nationality",
+             "naturalProgression": "http://schema.org/naturalProgression",
+             "nerve": "http://schema.org/nerve",
+             "nerveMotor": "http://schema.org/nerveMotor",
+             "netWorth": "http://schema.org/netWorth",
+             "newsUpdatesAndGuidelines": "http://schema.org/newsUpdatesAndGuidelines",
+             "nextItem": "http://schema.org/nextItem",
+             "noBylinesPolicy": "http://schema.org/noBylinesPolicy",
+             "nonEqual": "http://schema.org/nonEqual",
+             "nonProprietaryName": "http://schema.org/nonProprietaryName",
+             "nonprofitStatus": "http://schema.org/nonprofitStatus",
+             "normalRange": "http://schema.org/normalRange",
+             "nsn": "http://schema.org/nsn",
+             "numAdults": "http://schema.org/numAdults",
+             "numChildren": "http://schema.org/numChildren",
+             "numConstraints": "http://schema.org/numConstraints",
+             "numTracks": "http://schema.org/numTracks",
+             "numberOfAccommodationUnits": "http://schema.org/numberOfAccommodationUnits",
+             "numberOfAirbags": "http://schema.org/numberOfAirbags",
+             "numberOfAvailableAccommodationUnits": "http://schema.org/numberOfAvailableAccommodationUnits",
+             "numberOfAxles": "http://schema.org/numberOfAxles",
+             "numberOfBathroomsTotal": "http://schema.org/numberOfBathroomsTotal",
+             "numberOfBedrooms": "http://schema.org/numberOfBedrooms",
+             "numberOfBeds": "http://schema.org/numberOfBeds",
+             "numberOfCredits": "http://schema.org/numberOfCredits",
+             "numberOfDoors": "http://schema.org/numberOfDoors",
+             "numberOfEmployees": "http://schema.org/numberOfEmployees",
+             "numberOfEpisodes": "http://schema.org/numberOfEpisodes",
+             "numberOfForwardGears": "http://schema.org/numberOfForwardGears",
+             "numberOfFullBathrooms": "http://schema.org/numberOfFullBathrooms",
+             "numberOfItems": "http://schema.org/numberOfItems",
+             "numberOfLoanPayments": "http://schema.org/numberOfLoanPayments",
+             "numberOfPages": "http://schema.org/numberOfPages",
+             "numberOfPartialBathrooms": "http://schema.org/numberOfPartialBathrooms",
+             "numberOfPlayers": "http://schema.org/numberOfPlayers",
+             "numberOfPreviousOwners": "http://schema.org/numberOfPreviousOwners",
+             "numberOfRooms": "http://schema.org/numberOfRooms",
+             "numberOfSeasons": "http://schema.org/numberOfSeasons",
+             "numberedPosition": "http://schema.org/numberedPosition",
+             "nutrition": "http://schema.org/nutrition",
+             "object": "http://schema.org/object",
+             "observationDate": "http://schema.org/observationDate",
+             "observedNode": "http://schema.org/observedNode",
+             "occupancy": "http://schema.org/occupancy",
+             "occupationLocation": "http://schema.org/occupationLocation",
+             "occupationalCategory": "http://schema.org/occupationalCategory",
+             "occupationalCredentialAwarded": "http://schema.org/occupationalCredentialAwarded",
+             "offerCount": "http://schema.org/offerCount",
+             "offeredBy": "http://schema.org/offeredBy",
+             "offers": "http://schema.org/offers",
+             "offersPrescriptionByMail": "http://schema.org/offersPrescriptionByMail",
+             "openingHours": "http://schema.org/openingHours",
+             "openingHoursSpecification": "http://schema.org/openingHoursSpecification",
+             "opens": "http://schema.org/opens",
+             "operatingSystem": "http://schema.org/operatingSystem",
+             "opponent": "http://schema.org/opponent",
+             "option": "http://schema.org/option",
+             "orderDate": "http://schema.org/orderDate",
+             "orderDelivery": "http://schema.org/orderDelivery",
+             "orderItemNumber": "http://schema.org/orderItemNumber",
+             "orderItemStatus": "http://schema.org/orderItemStatus",
+             "orderNumber": "http://schema.org/orderNumber",
+             "orderQuantity": "http://schema.org/orderQuantity",
+             "orderStatus": "http://schema.org/orderStatus",
+             "orderedItem": "http://schema.org/orderedItem",
+             "organizer": "http://schema.org/organizer",
+             "originAddress": "http://schema.org/originAddress",
+             "originatesFrom": "http://schema.org/originatesFrom",
+             "overdosage": "http://schema.org/overdosage",
+             "ownedFrom": "http://schema.org/ownedFrom",
+             "ownedThrough": "http://schema.org/ownedThrough",
+             "ownershipFundingInfo": "http://schema.org/ownershipFundingInfo",
+             "owns": "http://schema.org/owns",
+             "pageEnd": "http://schema.org/pageEnd",
+             "pageStart": "http://schema.org/pageStart",
+             "pagination": "http://schema.org/pagination",
+             "parent": "http://schema.org/parent",
+             "parentItem": "http://schema.org/parentItem",
+             "parentOrganization": "http://schema.org/parentOrganization",
+             "parentService": "http://schema.org/parentService",
+             "parents": "http://schema.org/parents",
+             "partOfEpisode": "http://schema.org/partOfEpisode",
+             "partOfInvoice": "http://schema.org/partOfInvoice",
+             "partOfOrder": "http://schema.org/partOfOrder",
+             "partOfSeason": "http://schema.org/partOfSeason",
+             "partOfSeries": "http://schema.org/partOfSeries",
+             "partOfSystem": "http://schema.org/partOfSystem",
+             "partOfTVSeries": "http://schema.org/partOfTVSeries",
+             "partOfTrip": "http://schema.org/partOfTrip",
+             "participant": "http://schema.org/participant",
+             "partySize": "http://schema.org/partySize",
+             "passengerPriorityStatus": "http://schema.org/passengerPriorityStatus",
+             "passengerSequenceNumber": "http://schema.org/passengerSequenceNumber",
+             "pathophysiology": "http://schema.org/pathophysiology",
+             "pattern": "http://schema.org/pattern",
+             "payload": "http://schema.org/payload",
+             "paymentAccepted": "http://schema.org/paymentAccepted",
+             "paymentDue": "http://schema.org/paymentDue",
+             "paymentDueDate": "http://schema.org/paymentDueDate",
+             "paymentMethod": "http://schema.org/paymentMethod",
+             "paymentMethodId": "http://schema.org/paymentMethodId",
+             "paymentStatus": "http://schema.org/paymentStatus",
+             "paymentUrl": "http://schema.org/paymentUrl",
+             "penciler": "http://schema.org/penciler",
+             "percentile10": "http://schema.org/percentile10",
+             "percentile25": "http://schema.org/percentile25",
+             "percentile75": "http://schema.org/percentile75",
+             "percentile90": "http://schema.org/percentile90",
+             "performTime": "http://schema.org/performTime",
+             "performer": "http://schema.org/performer",
+             "performerIn": "http://schema.org/performerIn",
+             "performers": "http://schema.org/performers",
+             "permissionType": "http://schema.org/permissionType",
+             "permissions": "http://schema.org/permissions",
+             "permitAudience": "http://schema.org/permitAudience",
+             "permittedUsage": "http://schema.org/permittedUsage",
+             "petsAllowed": "http://schema.org/petsAllowed",
+             "phoneticText": "http://schema.org/phoneticText",
+             "photo": "http://schema.org/photo",
+             "photos": "http://schema.org/photos",
+             "physicalRequirement": "http://schema.org/physicalRequirement",
+             "physiologicalBenefits": "http://schema.org/physiologicalBenefits",
+             "pickupLocation": "http://schema.org/pickupLocation",
+             "pickupTime": "http://schema.org/pickupTime",
+             "playMode": "http://schema.org/playMode",
+             "playerType": "http://schema.org/playerType",
+             "playersOnline": "http://schema.org/playersOnline",
+             "polygon": "http://schema.org/polygon",
+             "populationType": "http://schema.org/populationType",
+             "position": "http://schema.org/position",
+             "possibleComplication": "http://schema.org/possibleComplication",
+             "possibleTreatment": "http://schema.org/possibleTreatment",
+             "postOfficeBoxNumber": "http://schema.org/postOfficeBoxNumber",
+             "postOp": "http://schema.org/postOp",
+             "postalCode": "http://schema.org/postalCode",
+             "postalCodeBegin": "http://schema.org/postalCodeBegin",
+             "postalCodeEnd": "http://schema.org/postalCodeEnd",
+             "postalCodePrefix": "http://schema.org/postalCodePrefix",
+             "postalCodeRange": "http://schema.org/postalCodeRange",
+             "potentialAction": "http://schema.org/potentialAction",
+             "preOp": "http://schema.org/preOp",
+             "predecessorOf": "http://schema.org/predecessorOf",
+             "pregnancyCategory": "http://schema.org/pregnancyCategory",
+             "pregnancyWarning": "http://schema.org/pregnancyWarning",
+             "prepTime": "http://schema.org/prepTime",
+             "preparation": "http://schema.org/preparation",
+             "prescribingInfo": "http://schema.org/prescribingInfo",
+             "prescriptionStatus": "http://schema.org/prescriptionStatus",
+             "previousItem": "http://schema.org/previousItem",
+             "previousStartDate": "http://schema.org/previousStartDate",
+             "price": "http://schema.org/price",
+             "priceComponent": "http://schema.org/priceComponent",
+             "priceCurrency": "http://schema.org/priceCurrency",
+             "priceRange": "http://schema.org/priceRange",
+             "priceSpecification": "http://schema.org/priceSpecification",
+             "priceType": "http://schema.org/priceType",
+             "priceValidUntil": "http://schema.org/priceValidUntil",
+             "primaryImageOfPage": "http://schema.org/primaryImageOfPage",
+             "primaryPrevention": "http://schema.org/primaryPrevention",
+             "printColumn": "http://schema.org/printColumn",
+             "printEdition": "http://schema.org/printEdition",
+             "printPage": "http://schema.org/printPage",
+             "printSection": "http://schema.org/printSection",
+             "procedure": "http://schema.org/procedure",
+             "procedureType": "http://schema.org/procedureType",
+             "processingTime": "http://schema.org/processingTime",
+             "processorRequirements": "http://schema.org/processorRequirements",
+             "producer": "http://schema.org/producer",
+             "produces": "http://schema.org/produces",
+             "productGroupID": "http://schema.org/productGroupID",
+             "productID": "http://schema.org/productID",
+             "productReturnDays": "http://schema.org/productReturnDays",
+             "productReturnLink": "http://schema.org/productReturnLink",
+             "productSupported": "http://schema.org/productSupported",
+             "productionCompany": "http://schema.org/productionCompany",
+             "productionDate": "http://schema.org/productionDate",
+             "proficiencyLevel": "http://schema.org/proficiencyLevel",
+             "programMembershipUsed": "http://schema.org/programMembershipUsed",
+             "programName": "http://schema.org/programName",
+             "programPrerequisites": "http://schema.org/programPrerequisites",
+             "programType": "http://schema.org/programType",
+             "programmingLanguage": "http://schema.org/programmingLanguage",
+             "programmingModel": "http://schema.org/programmingModel",
+             "propertyID": "http://schema.org/propertyID",
+             "proprietaryName": "http://schema.org/proprietaryName",
+             "proteinContent": "http://schema.org/proteinContent",
+             "provider": "http://schema.org/provider",
+             "providerMobility": "http://schema.org/providerMobility",
+             "providesBroadcastService": "http://schema.org/providesBroadcastService",
+             "providesService": "http://schema.org/providesService",
+             "publicAccess": "http://schema.org/publicAccess",
+             "publicTransportClosuresInfo": "http://schema.org/publicTransportClosuresInfo",
+             "publication": "http://schema.org/publication",
+             "publicationType": "http://schema.org/publicationType",
+             "publishedBy": "http://schema.org/publishedBy",
+             "publishedOn": "http://schema.org/publishedOn",
+             "publisher": "http://schema.org/publisher",
+             "publisherImprint": "http://schema.org/publisherImprint",
+             "publishingPrinciples": "http://schema.org/publishingPrinciples",
+             "purchaseDate": "http://schema.org/purchaseDate",
+             "qualifications": "http://schema.org/qualifications",
+             "quarantineGuidelines": "http://schema.org/quarantineGuidelines",
+             "query": "http://schema.org/query",
+             "quest": "http://schema.org/quest",
+             "question": "http://schema.org/question",
+             "rangeIncludes": "http://schema.org/rangeIncludes",
+             "ratingCount": "http://schema.org/ratingCount",
+             "ratingExplanation": "http://schema.org/ratingExplanation",
+             "ratingValue": "http://schema.org/ratingValue",
+             "readBy": "http://schema.org/readBy",
+             "readonlyValue": "http://schema.org/readonlyValue",
+             "realEstateAgent": "http://schema.org/realEstateAgent",
+             "recipe": "http://schema.org/recipe",
+             "recipeCategory": "http://schema.org/recipeCategory",
+             "recipeCuisine": "http://schema.org/recipeCuisine",
+             "recipeIngredient": "http://schema.org/recipeIngredient",
+             "recipeInstructions": "http://schema.org/recipeInstructions",
+             "recipeYield": "http://schema.org/recipeYield",
+             "recipient": "http://schema.org/recipient",
+             "recognizedBy": "http://schema.org/recognizedBy",
+             "recognizingAuthority": "http://schema.org/recognizingAuthority",
+             "recommendationStrength": "http://schema.org/recommendationStrength",
+             "recommendedIntake": "http://schema.org/recommendedIntake",
+             "recordLabel": "http://schema.org/recordLabel",
+             "recordedAs": "http://schema.org/recordedAs",
+             "recordedAt": "http://schema.org/recordedAt",
+             "recordedIn": "http://schema.org/recordedIn",
+             "recordingOf": "http://schema.org/recordingOf",
+             "recourseLoan": "http://schema.org/recourseLoan",
+             "referenceQuantity": "http://schema.org/referenceQuantity",
+             "referencesOrder": "http://schema.org/referencesOrder",
+             "refundType": "http://schema.org/refundType",
+             "regionDrained": "http://schema.org/regionDrained",
+             "regionsAllowed": "http://schema.org/regionsAllowed",
+             "relatedAnatomy": "http://schema.org/relatedAnatomy",
+             "relatedCondition": "http://schema.org/relatedCondition",
+             "relatedDrug": "http://schema.org/relatedDrug",
+             "relatedLink": "http://schema.org/relatedLink",
+             "relatedStructure": "http://schema.org/relatedStructure",
+             "relatedTherapy": "http://schema.org/relatedTherapy",
+             "relatedTo": "http://schema.org/relatedTo",
+             "releaseDate": "http://schema.org/releaseDate",
+             "releaseNotes": "http://schema.org/releaseNotes",
+             "releaseOf": "http://schema.org/releaseOf",
+             "releasedEvent": "http://schema.org/releasedEvent",
+             "relevantOccupation": "http://schema.org/relevantOccupation",
+             "relevantSpecialty": "http://schema.org/relevantSpecialty",
+             "remainingAttendeeCapacity": "http://schema.org/remainingAttendeeCapacity",
+             "renegotiableLoan": "http://schema.org/renegotiableLoan",
+             "repeatCount": "http://schema.org/repeatCount",
+             "repeatFrequency": "http://schema.org/repeatFrequency",
+             "repetitions": "http://schema.org/repetitions",
+             "replacee": "http://schema.org/replacee",
+             "replacer": "http://schema.org/replacer",
+             "replyToUrl": "http://schema.org/replyToUrl",
+             "reportNumber": "http://schema.org/reportNumber",
+             "representativeOfPage": "http://schema.org/representativeOfPage",
+             "requiredCollateral": "http://schema.org/requiredCollateral",
+             "requiredGender": "http://schema.org/requiredGender",
+             "requiredMaxAge": "http://schema.org/requiredMaxAge",
+             "requiredMinAge": "http://schema.org/requiredMinAge",
+             "requiredQuantity": "http://schema.org/requiredQuantity",
+             "requirements": "http://schema.org/requirements",
+             "requiresSubscription": "http://schema.org/requiresSubscription",
+             "reservationFor": "http://schema.org/reservationFor",
+             "reservationId": "http://schema.org/reservationId",
+             "reservationStatus": "http://schema.org/reservationStatus",
+             "reservedTicket": "http://schema.org/reservedTicket",
+             "responsibilities": "http://schema.org/responsibilities",
+             "restPeriods": "http://schema.org/restPeriods",
+             "result": "http://schema.org/result",
+             "resultComment": "http://schema.org/resultComment",
+             "resultReview": "http://schema.org/resultReview",
+             "returnFees": "http://schema.org/returnFees",
+             "returnPolicyCategory": "http://schema.org/returnPolicyCategory",
+             "review": "http://schema.org/review",
+             "reviewAspect": "http://schema.org/reviewAspect",
+             "reviewBody": "http://schema.org/reviewBody",
+             "reviewCount": "http://schema.org/reviewCount",
+             "reviewRating": "http://schema.org/reviewRating",
+             "reviewedBy": "http://schema.org/reviewedBy",
+             "reviews": "http://schema.org/reviews",
+             "riskFactor": "http://schema.org/riskFactor",
+             "risks": "http://schema.org/risks",
+             "roleName": "http://schema.org/roleName",
+             "roofLoad": "http://schema.org/roofLoad",
+             "rsvpResponse": "http://schema.org/rsvpResponse",
+             "runsTo": "http://schema.org/runsTo",
+             "runtime": "http://schema.org/runtime",
+             "runtimePlatform": "http://schema.org/runtimePlatform",
+             "rxcui": "http://schema.org/rxcui",
+             "safetyConsideration": "http://schema.org/safetyConsideration",
+             "salaryCurrency": "http://schema.org/salaryCurrency",
+             "salaryUponCompletion": "http://schema.org/salaryUponCompletion",
+             "sameAs": "http://schema.org/sameAs",
+             "sampleType": "http://schema.org/sampleType",
+             "saturatedFatContent": "http://schema.org/saturatedFatContent",
+             "scheduleTimezone": "http://schema.org/scheduleTimezone",
+             "scheduledPaymentDate": "http://schema.org/scheduledPaymentDate",
+             "scheduledTime": "http://schema.org/scheduledTime",
+             "schemaVersion": "http://schema.org/schemaVersion",
+             "schoolClosuresInfo": "http://schema.org/schoolClosuresInfo",
+             "screenCount": "http://schema.org/screenCount",
+             "screenshot": "http://schema.org/screenshot",
+             "sdDatePublished": "http://schema.org/sdDatePublished",
+             "sdLicense": "http://schema.org/sdLicense",
+             "sdPublisher": "http://schema.org/sdPublisher",
+             "season": "http://schema.org/season",
+             "seasonNumber": "http://schema.org/seasonNumber",
+             "seasons": "http://schema.org/seasons",
+             "seatNumber": "http://schema.org/seatNumber",
+             "seatRow": "http://schema.org/seatRow",
+             "seatSection": "http://schema.org/seatSection",
+             "seatingCapacity": "http://schema.org/seatingCapacity",
+             "seatingType": "http://schema.org/seatingType",
+             "secondaryPrevention": "http://schema.org/secondaryPrevention",
+             "securityClearanceRequirement": "http://schema.org/securityClearanceRequirement",
+             "securityScreening": "http://schema.org/securityScreening",
+             "seeks": "http://schema.org/seeks",
+             "seller": "http://schema.org/seller",
+             "sender": "http://schema.org/sender",
+             "sensoryRequirement": "http://schema.org/sensoryRequirement",
+             "sensoryUnit": "http://schema.org/sensoryUnit",
+             "serialNumber": "http://schema.org/serialNumber",
+             "seriousAdverseOutcome": "http://schema.org/seriousAdverseOutcome",
+             "serverStatus": "http://schema.org/serverStatus",
+             "servesCuisine": "http://schema.org/servesCuisine",
+             "serviceArea": "http://schema.org/serviceArea",
+             "serviceAudience": "http://schema.org/serviceAudience",
+             "serviceLocation": "http://schema.org/serviceLocation",
+             "serviceOperator": "http://schema.org/serviceOperator",
+             "serviceOutput": "http://schema.org/serviceOutput",
+             "servicePhone": "http://schema.org/servicePhone",
+             "servicePostalAddress": "http://schema.org/servicePostalAddress",
+             "serviceSmsNumber": "http://schema.org/serviceSmsNumber",
+             "serviceType": "http://schema.org/serviceType",
+             "serviceUrl": "http://schema.org/serviceUrl",
+             "servingSize": "http://schema.org/servingSize",
+             "sharedContent": "http://schema.org/sharedContent",
+             "shippingDestination": "http://schema.org/shippingDestination",
+             "shippingDetails": "http://schema.org/shippingDetails",
+             "shippingLabel": "http://schema.org/shippingLabel",
+             "shippingRate": "http://schema.org/shippingRate",
+             "shippingSettingsLink": "http://schema.org/shippingSettingsLink",
+             "sibling": "http://schema.org/sibling",
+             "siblings": "http://schema.org/siblings",
+             "signDetected": "http://schema.org/signDetected",
+             "signOrSymptom": "http://schema.org/signOrSymptom",
+             "significance": "http://schema.org/significance",
+             "significantLink": "http://schema.org/significantLink",
+             "significantLinks": "http://schema.org/significantLinks",
+             "size": "http://schema.org/size",
+             "skills": "http://schema.org/skills",
+             "sku": "http://schema.org/sku",
+             "slogan": "http://schema.org/slogan",
+             "smokingAllowed": "http://schema.org/smokingAllowed",
+             "sodiumContent": "http://schema.org/sodiumContent",
+             "softwareAddOn": "http://schema.org/softwareAddOn",
+             "softwareHelp": "http://schema.org/softwareHelp",
+             "softwareRequirements": "http://schema.org/softwareRequirements",
+             "softwareVersion": "http://schema.org/softwareVersion",
+             "sourceOrganization": "http://schema.org/sourceOrganization",
+             "sourcedFrom": "http://schema.org/sourcedFrom",
+             "spatial": "http://schema.org/spatial",
+             "spatialCoverage": "http://schema.org/spatialCoverage",
+             "speakable": "http://schema.org/speakable",
+             "specialCommitments": "http://schema.org/specialCommitments",
+             "specialOpeningHoursSpecification": "http://schema.org/specialOpeningHoursSpecification",
+             "specialty": "http://schema.org/specialty",
+             "speechToTextMarkup": "http://schema.org/speechToTextMarkup",
+             "speed": "http://schema.org/speed",
+             "spokenByCharacter": "http://schema.org/spokenByCharacter",
+             "sponsor": "http://schema.org/sponsor",
+             "sport": "http://schema.org/sport",
+             "sportsActivityLocation": "http://schema.org/sportsActivityLocation",
+             "sportsEvent": "http://schema.org/sportsEvent",
+             "sportsTeam": "http://schema.org/sportsTeam",
+             "spouse": "http://schema.org/spouse",
+             "stage": "http://schema.org/stage",
+             "stageAsNumber": "http://schema.org/stageAsNumber",
+             "starRating": "http://schema.org/starRating",
+             "startDate": "http://schema.org/startDate",
+             "startOffset": "http://schema.org/startOffset",
+             "startTime": "http://schema.org/startTime",
+             "status": "http://schema.org/status",
+             "steeringPosition": "http://schema.org/steeringPosition",
+             "step": "http://schema.org/step",
+             "stepValue": "http://schema.org/stepValue",
+             "steps": "http://schema.org/steps",
+             "storageRequirements": "http://schema.org/storageRequirements",
+             "streetAddress": "http://schema.org/streetAddress",
+             "strengthUnit": "http://schema.org/strengthUnit",
+             "strengthValue": "http://schema.org/strengthValue",
+             "structuralClass": "http://schema.org/structuralClass",
+             "study": "http://schema.org/study",
+             "studyDesign": "http://schema.org/studyDesign",
+             "studyLocation": "http://schema.org/studyLocation",
+             "studySubject": "http://schema.org/studySubject",
+             "stupidProperty": "http://schema.org/stupidProperty",
+             "subEvent": "http://schema.org/subEvent",
+             "subEvents": "http://schema.org/subEvents",
+             "subOrganization": "http://schema.org/subOrganization",
+             "subReservation": "http://schema.org/subReservation",
+             "subStageSuffix": "http://schema.org/subStageSuffix",
+             "subStructure": "http://schema.org/subStructure",
+             "subTest": "http://schema.org/subTest",
+             "subTrip": "http://schema.org/subTrip",
+             "subjectOf": "http://schema.org/subjectOf",
+             "subtitleLanguage": "http://schema.org/subtitleLanguage",
+             "successorOf": "http://schema.org/successorOf",
+             "sugarContent": "http://schema.org/sugarContent",
+             "suggestedAnswer": "http://schema.org/suggestedAnswer",
+             "suggestedGender": "http://schema.org/suggestedGender",
+             "suggestedMaxAge": "http://schema.org/suggestedMaxAge",
+             "suggestedMinAge": "http://schema.org/suggestedMinAge",
+             "suitableForDiet": "http://schema.org/suitableForDiet",
+             "superEvent": "http://schema.org/superEvent",
+             "supersededBy": "http://schema.org/supersededBy",
+             "supply": "http://schema.org/supply",
+             "supplyTo": "http://schema.org/supplyTo",
+             "supportingData": "http://schema.org/supportingData",
+             "surface": "http://schema.org/surface",
+             "target": "http://schema.org/target",
+             "targetCollection": "http://schema.org/targetCollection",
+             "targetDescription": "http://schema.org/targetDescription",
+             "targetName": "http://schema.org/targetName",
+             "targetPlatform": "http://schema.org/targetPlatform",
+             "targetPopulation": "http://schema.org/targetPopulation",
+             "targetProduct": "http://schema.org/targetProduct",
+             "targetUrl": "http://schema.org/targetUrl",
+             "taxID": "http://schema.org/taxID",
+             "teaches": "http://schema.org/teaches",
+             "telephone": "http://schema.org/telephone",
+             "temporal": "http://schema.org/temporal",
+             "temporalCoverage": "http://schema.org/temporalCoverage",
+             "termCode": "http://schema.org/termCode",
+             "termDuration": "http://schema.org/termDuration",
+             "termsOfService": "http://schema.org/termsOfService",
+             "termsPerYear": "http://schema.org/termsPerYear",
+             "text": "http://schema.org/text",
+             "textValue": "http://schema.org/textValue",
+             "thumbnail": "http://schema.org/thumbnail",
+             "thumbnailUrl": "http://schema.org/thumbnailUrl",
+             "tickerSymbol": "http://schema.org/tickerSymbol",
+             "ticketNumber": "http://schema.org/ticketNumber",
+             "ticketToken": "http://schema.org/ticketToken",
+             "ticketedSeat": "http://schema.org/ticketedSeat",
+             "timeOfDay": "http://schema.org/timeOfDay",
+             "timeRequired": "http://schema.org/timeRequired",
+             "timeToComplete": "http://schema.org/timeToComplete",
+             "tissueSample": "http://schema.org/tissueSample",
+             "title": "http://schema.org/title",
+             "titleEIDR": "http://schema.org/titleEIDR",
+             "toLocation": "http://schema.org/toLocation",
+             "toRecipient": "http://schema.org/toRecipient",
+             "tongueWeight": "http://schema.org/tongueWeight",
+             "tool": "http://schema.org/tool",
+             "torque": "http://schema.org/torque",
+             "totalJobOpenings": "http://schema.org/totalJobOpenings",
+             "totalPaymentDue": "http://schema.org/totalPaymentDue",
+             "totalPrice": "http://schema.org/totalPrice",
+             "totalTime": "http://schema.org/totalTime",
+             "tourBookingPage": "http://schema.org/tourBookingPage",
+             "touristType": "http://schema.org/touristType",
+             "track": "http://schema.org/track",
+             "trackingNumber": "http://schema.org/trackingNumber",
+             "trackingUrl": "http://schema.org/trackingUrl",
+             "tracks": "http://schema.org/tracks",
+             "trailer": "http://schema.org/trailer",
+             "trailerWeight": "http://schema.org/trailerWeight",
+             "trainName": "http://schema.org/trainName",
+             "trainNumber": "http://schema.org/trainNumber",
+             "trainingSalary": "http://schema.org/trainingSalary",
+             "transFatContent": "http://schema.org/transFatContent",
+             "transcript": "http://schema.org/transcript",
+             "transitTime": "http://schema.org/transitTime",
+             "transitTimeLabel": "http://schema.org/transitTimeLabel",
+             "translationOfWork": "http://schema.org/translationOfWork",
+             "translator": "http://schema.org/translator",
+             "transmissionMethod": "http://schema.org/transmissionMethod",
+             "travelBans": "http://schema.org/travelBans",
+             "trialDesign": "http://schema.org/trialDesign",
+             "tributary": "http://schema.org/tributary",
+             "typeOfBed": "http://schema.org/typeOfBed",
+             "typeOfGood": "http://schema.org/typeOfGood",
+             "typicalAgeRange": "http://schema.org/typicalAgeRange",
+             "typicalCreditsPerTerm": "http://schema.org/typicalCreditsPerTerm",
+             "typicalTest": "http://schema.org/typicalTest",
+             "underName": "http://schema.org/underName",
+             "unitCode": "http://schema.org/unitCode",
+             "unitText": "http://schema.org/unitText",
+             "unnamedSourcesPolicy": "http://schema.org/unnamedSourcesPolicy",
+             "unsaturatedFatContent": "http://schema.org/unsaturatedFatContent",
+             "uploadDate": "http://schema.org/uploadDate",
+             "upvoteCount": "http://schema.org/upvoteCount",
+             "url": "http://schema.org/url",
+             "urlTemplate": "http://schema.org/urlTemplate",
+             "usageInfo": "http://schema.org/usageInfo",
+             "usedToDiagnose": "http://schema.org/usedToDiagnose",
+             "userInteractionCount": "http://schema.org/userInteractionCount",
+             "usesDevice": "http://schema.org/usesDevice",
+             "usesHealthPlanIdStandard": "http://schema.org/usesHealthPlanIdStandard",
+             "validFor": "http://schema.org/validFor",
+             "validFrom": "http://schema.org/validFrom",
+             "validIn": "http://schema.org/validIn",
+             "validThrough": "http://schema.org/validThrough",
+             "validUntil": "http://schema.org/validUntil",
+             "value": "http://schema.org/value",
+             "valueAddedTaxIncluded": "http://schema.org/valueAddedTaxIncluded",
+             "valueMaxLength": "http://schema.org/valueMaxLength",
+             "valueMinLength": "http://schema.org/valueMinLength",
+             "valueName": "http://schema.org/valueName",
+             "valuePattern": "http://schema.org/valuePattern",
+             "valueReference": "http://schema.org/valueReference",
+             "valueRequired": "http://schema.org/valueRequired",
+             "variableMeasured": "http://schema.org/variableMeasured",
+             "variablesMeasured": "http://schema.org/variablesMeasured",
+             "variantCover": "http://schema.org/variantCover",
+             "variesBy": "http://schema.org/variesBy",
+             "vatID": "http://schema.org/vatID",
+             "vehicleConfiguration": "http://schema.org/vehicleConfiguration",
+             "vehicleEngine": "http://schema.org/vehicleEngine",
+             "vehicleIdentificationNumber": "http://schema.org/vehicleIdentificationNumber",
+             "vehicleInteriorColor": "http://schema.org/vehicleInteriorColor",
+             "vehicleInteriorType": "http://schema.org/vehicleInteriorType",
+             "vehicleModelDate": "http://schema.org/vehicleModelDate",
+             "vehicleSeatingCapacity": "http://schema.org/vehicleSeatingCapacity",
+             "vehicleSpecialUsage": "http://schema.org/vehicleSpecialUsage",
+             "vehicleTransmission": "http://schema.org/vehicleTransmission",
+             "vendor": "http://schema.org/vendor",
+             "verificationFactCheckingPolicy": "http://schema.org/verificationFactCheckingPolicy",
+             "version": "http://schema.org/version",
+             "video": "http://schema.org/video",
+             "videoFormat": "http://schema.org/videoFormat",
+             "videoFrameSize": "http://schema.org/videoFrameSize",
+             "videoQuality": "http://schema.org/videoQuality",
+             "volumeNumber": "http://schema.org/volumeNumber",
+             "warning": "http://schema.org/warning",
+             "warranty": "http://schema.org/warranty",
+             "warrantyPromise": "http://schema.org/warrantyPromise",
+             "warrantyScope": "http://schema.org/warrantyScope",
+             "webCheckinTime": "http://schema.org/webCheckinTime",
+             "webFeed": "http://schema.org/webFeed",
+             "weight": "http://schema.org/weight",
+             "weightTotal": "http://schema.org/weightTotal",
+             "wheelbase": "http://schema.org/wheelbase",
+             "width": "http://schema.org/width",
+             "winner": "http://schema.org/winner",
+             "wordCount": "http://schema.org/wordCount",
+             "workExample": "http://schema.org/workExample",
+             "workFeatured": "http://schema.org/workFeatured",
+             "workHours": "http://schema.org/workHours",
+             "workLocation": "http://schema.org/workLocation",
+             "workPerformed": "http://schema.org/workPerformed",
+             "workPresented": "http://schema.org/workPresented",
+             "workTranslation": "http://schema.org/workTranslation",
+             "workload": "http://schema.org/workload",
+             "worksFor": "http://schema.org/worksFor",
+             "worstRating": "http://schema.org/worstRating",
+             "xpath": "http://schema.org/xpath",
+             "yearBuilt": "http://schema.org/yearBuilt",
+             "yearlyRevenue": "http://schema.org/yearlyRevenue",
+             "yearsInOperation": "http://schema.org/yearsInOperation",
+             "yield": "http://schema.org/yield",
+             "File": "http://schema.org/MediaObject",
+             "path": "http://schema.org/contentUrl",
+             "Journal": "http://schema.org/Periodical",
+             "cite-as": "https://www.w3.org/ns/iana/link-relations/relation#cite-as",
+             "hasFile": "http://pcdm.org/models#hasFile",
+             "hasMember": "http://pcdm.org/models#hasMember",
+             "RepositoryCollection": "http://pcdm.org/models#Collection",
+             "RepositoryObject": "http://pcdm.org/models#object",
+             "ComputationalWorkflow": "https://bioschemas.org/ComputationalWorkflow",
+             "input": "https://bioschemas.org/ComputationalWorkflow#input",
+             "output": "https://bioschemas.org/ComputationalWorkflow#output",
+             "FormalParameter": "https://bioschemas.org/FormalParameter",
+             "funding": "http://schema.org/funding",
+             "wasDerivedFrom": "http://www.w3.org/ns/prov#wasDerivedFrom",
+             "importedFrom": "http://purl.org/pav/importedFrom",
+             "importedOn": "http://purl.org/pav/importedOn",
+             "importedBy": "http://purl.org/pav/importedBy",
+             "retrievedFrom": "http://purl.org/pav/retrievedFrom",
+             "retrievedOn": "http://purl.org/pav/retrievedOn",
+             "retrievedBy": "http://purl.org/pav/retrievedBy",
+             "conformsTo": "http://purl.org/dc/terms/conformsTo",
+             "@label": "http://www.w3.org/2000/01/rdf-schema#label",
+             "pcdm": "http://pcdm.org/models#",
+             "bibo": "http://purl.org/ontology/bibo/",
+             "cc": "http://creativecommons.org/ns#",
+             "dct": "http://purl.org/dc/terms/",
+             "foaf": "http://xmlns.com/foaf/0.1/",
+             "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+             "rdfa": "http://www.w3.org/ns/rdfa#",
+             "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+             "schema": "http://schema.org/",
+             "frapo": "http://purl.org/cerif/frapo/",
+             "rel": "https://www.w3.org/ns/iana/link-relations/relation#",
+             "pav": "http://purl.org/pav/",
+             "prov": "http://www.w3.org/ns/prov#",
+             "wfdesc": "http://purl.org/ro/wfdesc#",
+             "wfprov": "http://purl.org/ro/wfprov#",
+             "roterms": "http://purl.org/ro/roterms#",
+             "wf4ever": "http://purl.org/ro/wf4ever#"
+        }
+   }
+
+}
+
 const defaults = {
     ro_crate_name: "ro-crate-metadata",
     roCrateMetadataID: roCrateMetadataID,
     roCrateMetadataIDs: roCrateMetadataIDs,
-    context: ["https://researchobject.github.io/ro-crate/1.0/context.jsonld", {"@vocab": "http://schema.org/"}],
+    context: ["https://w3id.org/ro/crate/1.1/context", {"@vocab": "http://schema.org/"}],
+    standardContexts: standardContexts,
     render_script: "https://data.research.uts.edu.au/examples/ro-crate/examples/src/crate.js",
     back_links: back_links,
     back_back_links: back_back_links,
@@ -52938,10 +55672,12 @@ const defaults = {
 }
 
 
+
+
 module.exports = defaults;
 
 },{}],371:[function(require,module,exports){
-(function (__dirname){
+(function (__dirname){(function (){
 const path = require("path");
 const fs = require("fs");
 const ejs  = require("ejs");
@@ -52981,8 +55717,8 @@ class HtmlFile  {
  }
 
  module.exports = HtmlFile;
-}).call(this,"/node_modules/ro-crate/lib")
-},{"ejs":101,"fs":406,"path":416}],372:[function(require,module,exports){
+}).call(this)}).call(this,"/node_modules/ro-crate/lib")
+},{"ejs":101,"fs":382,"path":403}],372:[function(require,module,exports){
 // Load a wrapper for use off line
 
 $ = require('cheerio');
@@ -53367,7 +56103,7 @@ class Preview {
 
 module.exports = Preview;
 
-},{"./defaults":370,"axios":376,"lodash":319,"xmlhttprequest":403}],374:[function(require,module,exports){
+},{"./defaults":370,"axios":7,"lodash":319,"xmlhttprequest":377}],374:[function(require,module,exports){
 /* This is part of rocrate-js a node library for implementing the RO-Crate data
 packaging spec. Copyright (C) 2019 University of Technology Sydney
 
@@ -53701,7 +56437,9 @@ class ROCrate {
     }
 
     addBackLinks() {
-        // Add @reverse properties if not there
+        for (let item of this.graph) {
+            delete item["@reverse"];
+        }
         for (let item of this.graph) {
             this.backLinkItem(item);
         }
@@ -53746,8 +56484,11 @@ class ROCrate {
      async resolveContext() {
         this.context = {};
         var cont = {};
+        console.log(this.utils.asArray(this.json_ld["@context"]));
         for (let contextUrl of  this.utils.asArray(this.json_ld["@context"])) {
-            if (typeof contextUrl === 'string' || contextUrl instanceof String) {
+            if (this.defaults.standardContexts[contextUrl]) {
+                cont = this.defaults.standardContexts[contextUrl]["@context"];
+            } else if (typeof contextUrl === 'string' || contextUrl instanceof String) {
                 try {
                     const response = await axios.get(contextUrl,{headers: {
                         'accept': "application/ld+json, application/ld+json, text/text" 
@@ -53760,6 +56501,7 @@ class ROCrate {
             } else {
                 cont = contextUrl;
             }
+            // Put all the keys into a flat lookup TODO: handele indirection
             for (let k of Object.keys(cont)) {
                 const v = cont[k];
                 if (v && v["@id"]) {
@@ -53836,7 +56578,7 @@ class ROCrate {
 
 
 module.exports = ROCrate;
-},{"./defaults":370,"./utils":375,"axios":376,"lodash":319}],375:[function(require,module,exports){
+},{"./defaults":370,"./utils":375,"axios":7,"lodash":319}],375:[function(require,module,exports){
 /* This is part of rocrate-js a node library for implementing the RO-Crate data
 packaging spec. Copyright (C) 2019 University of Technology Sydney
 
@@ -53890,1040 +56632,7 @@ class jsonldUtils {
 
 module.exports = jsonldUtils;
 },{}],376:[function(require,module,exports){
-arguments[4][7][0].apply(exports,arguments)
-},{"./lib/axios":378,"dup":7}],377:[function(require,module,exports){
-'use strict';
-
-var utils = require('./../utils');
-var settle = require('./../core/settle');
-var buildURL = require('./../helpers/buildURL');
-var buildFullPath = require('../core/buildFullPath');
-var parseHeaders = require('./../helpers/parseHeaders');
-var isURLSameOrigin = require('./../helpers/isURLSameOrigin');
-var createError = require('../core/createError');
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    var fullPath = buildFullPath(config.baseURL, config.url);
-    request.open(config.method.toUpperCase(), buildURL(fullPath, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    // Listen for ready state
-    request.onreadystatechange = function handleLoad() {
-      if (!request || request.readyState !== 4) {
-        return;
-      }
-
-      // The request errored out and we didn't get a response, this will be
-      // handled by onerror instead
-      // With one exception: request that using file: protocol, most browsers
-      // will return status as 0 even though it's a successful request
-      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-        return;
-      }
-
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
-      var response = {
-        data: responseData,
-        status: request.status,
-        statusText: request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(resolve, reject, response);
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle browser request cancellation (as opposed to a manual cancellation)
-    request.onabort = function handleAbort() {
-      if (!request) {
-        return;
-      }
-
-      reject(createError('Request aborted', config, 'ECONNABORTED', request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config, null, request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      var timeoutErrorMessage = 'timeout of ' + config.timeout + 'ms exceeded';
-      if (config.timeoutErrorMessage) {
-        timeoutErrorMessage = config.timeoutErrorMessage;
-      }
-      reject(createError(timeoutErrorMessage, config, 'ECONNABORTED',
-        request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      var cookies = require('./../helpers/cookies');
-
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(fullPath)) && config.xsrfCookieName ?
-        cookies.read(config.xsrfCookieName) :
-        undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (!utils.isUndefined(config.withCredentials)) {
-      request.withCredentials = !!config.withCredentials;
-    }
-
-    // Add responseType to request if needed
-    if (config.responseType) {
-      try {
-        request.responseType = config.responseType;
-      } catch (e) {
-        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
-        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
-        if (config.responseType !== 'json') {
-          throw e;
-        }
-      }
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken) {
-      // Handle cancellation
-      config.cancelToken.promise.then(function onCanceled(cancel) {
-        if (!request) {
-          return;
-        }
-
-        request.abort();
-        reject(cancel);
-        // Clean up request
-        request = null;
-      });
-    }
-
-    if (requestData === undefined) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-
-},{"../core/buildFullPath":384,"../core/createError":385,"./../core/settle":389,"./../helpers/buildURL":393,"./../helpers/cookies":395,"./../helpers/isURLSameOrigin":397,"./../helpers/parseHeaders":399,"./../utils":401}],378:[function(require,module,exports){
-'use strict';
-
-var utils = require('./utils');
-var bind = require('./helpers/bind');
-var Axios = require('./core/Axios');
-var mergeConfig = require('./core/mergeConfig');
-var defaults = require('./defaults');
-
-/**
- * Create an instance of Axios
- *
- * @param {Object} defaultConfig The default config for the instance
- * @return {Axios} A new instance of Axios
- */
-function createInstance(defaultConfig) {
-  var context = new Axios(defaultConfig);
-  var instance = bind(Axios.prototype.request, context);
-
-  // Copy axios.prototype to instance
-  utils.extend(instance, Axios.prototype, context);
-
-  // Copy context to instance
-  utils.extend(instance, context);
-
-  return instance;
-}
-
-// Create the default instance to be exported
-var axios = createInstance(defaults);
-
-// Expose Axios class to allow class inheritance
-axios.Axios = Axios;
-
-// Factory for creating new instances
-axios.create = function create(instanceConfig) {
-  return createInstance(mergeConfig(axios.defaults, instanceConfig));
-};
-
-// Expose Cancel & CancelToken
-axios.Cancel = require('./cancel/Cancel');
-axios.CancelToken = require('./cancel/CancelToken');
-axios.isCancel = require('./cancel/isCancel');
-
-// Expose all/spread
-axios.all = function all(promises) {
-  return Promise.all(promises);
-};
-axios.spread = require('./helpers/spread');
-
-module.exports = axios;
-
-// Allow use of default import syntax in TypeScript
-module.exports.default = axios;
-
-},{"./cancel/Cancel":379,"./cancel/CancelToken":380,"./cancel/isCancel":381,"./core/Axios":382,"./core/mergeConfig":388,"./defaults":391,"./helpers/bind":392,"./helpers/spread":400,"./utils":401}],379:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],380:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"./Cancel":379,"dup":11}],381:[function(require,module,exports){
-arguments[4][12][0].apply(exports,arguments)
-},{"dup":12}],382:[function(require,module,exports){
-'use strict';
-
-var utils = require('./../utils');
-var buildURL = require('../helpers/buildURL');
-var InterceptorManager = require('./InterceptorManager');
-var dispatchRequest = require('./dispatchRequest');
-var mergeConfig = require('./mergeConfig');
-
-/**
- * Create a new instance of Axios
- *
- * @param {Object} instanceConfig The default config for the instance
- */
-function Axios(instanceConfig) {
-  this.defaults = instanceConfig;
-  this.interceptors = {
-    request: new InterceptorManager(),
-    response: new InterceptorManager()
-  };
-}
-
-/**
- * Dispatch a request
- *
- * @param {Object} config The config specific for this request (merged with this.defaults)
- */
-Axios.prototype.request = function request(config) {
-  /*eslint no-param-reassign:0*/
-  // Allow for axios('example/url'[, config]) a la fetch API
-  if (typeof config === 'string') {
-    config = arguments[1] || {};
-    config.url = arguments[0];
-  } else {
-    config = config || {};
-  }
-
-  config = mergeConfig(this.defaults, config);
-
-  // Set config.method
-  if (config.method) {
-    config.method = config.method.toLowerCase();
-  } else if (this.defaults.method) {
-    config.method = this.defaults.method.toLowerCase();
-  } else {
-    config.method = 'get';
-  }
-
-  // Hook up interceptors middleware
-  var chain = [dispatchRequest, undefined];
-  var promise = Promise.resolve(config);
-
-  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-    chain.unshift(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-    chain.push(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  while (chain.length) {
-    promise = promise.then(chain.shift(), chain.shift());
-  }
-
-  return promise;
-};
-
-Axios.prototype.getUri = function getUri(config) {
-  config = mergeConfig(this.defaults, config);
-  return buildURL(config.url, config.params, config.paramsSerializer).replace(/^\?/, '');
-};
-
-// Provide aliases for supported request methods
-utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, config) {
-    return this.request(utils.merge(config || {}, {
-      method: method,
-      url: url
-    }));
-  };
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, data, config) {
-    return this.request(utils.merge(config || {}, {
-      method: method,
-      url: url,
-      data: data
-    }));
-  };
-});
-
-module.exports = Axios;
-
-},{"../helpers/buildURL":393,"./../utils":401,"./InterceptorManager":383,"./dispatchRequest":386,"./mergeConfig":388}],383:[function(require,module,exports){
-arguments[4][14][0].apply(exports,arguments)
-},{"./../utils":401,"dup":14}],384:[function(require,module,exports){
-arguments[4][15][0].apply(exports,arguments)
-},{"../helpers/combineURLs":394,"../helpers/isAbsoluteURL":396,"dup":15}],385:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"./enhanceError":387,"dup":16}],386:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"../cancel/isCancel":381,"../defaults":391,"./../utils":401,"./transformData":390,"dup":17}],387:[function(require,module,exports){
-'use strict';
-
-/**
- * Update an Error with the specified config, error code, and response.
- *
- * @param {Error} error The error to update.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- * @param {Object} [request] The request.
- * @param {Object} [response] The response.
- * @returns {Error} The error.
- */
-module.exports = function enhanceError(error, config, code, request, response) {
-  error.config = config;
-  if (code) {
-    error.code = code;
-  }
-
-  error.request = request;
-  error.response = response;
-  error.isAxiosError = true;
-
-  error.toJSON = function() {
-    return {
-      // Standard
-      message: this.message,
-      name: this.name,
-      // Microsoft
-      description: this.description,
-      number: this.number,
-      // Mozilla
-      fileName: this.fileName,
-      lineNumber: this.lineNumber,
-      columnNumber: this.columnNumber,
-      stack: this.stack,
-      // Axios
-      config: this.config,
-      code: this.code
-    };
-  };
-  return error;
-};
-
-},{}],388:[function(require,module,exports){
-'use strict';
-
-var utils = require('../utils');
-
-/**
- * Config-specific merge-function which creates a new config-object
- * by merging two configuration objects together.
- *
- * @param {Object} config1
- * @param {Object} config2
- * @returns {Object} New object resulting from merging config2 to config1
- */
-module.exports = function mergeConfig(config1, config2) {
-  // eslint-disable-next-line no-param-reassign
-  config2 = config2 || {};
-  var config = {};
-
-  var valueFromConfig2Keys = ['url', 'method', 'params', 'data'];
-  var mergeDeepPropertiesKeys = ['headers', 'auth', 'proxy'];
-  var defaultToConfig2Keys = [
-    'baseURL', 'url', 'transformRequest', 'transformResponse', 'paramsSerializer',
-    'timeout', 'withCredentials', 'adapter', 'responseType', 'xsrfCookieName',
-    'xsrfHeaderName', 'onUploadProgress', 'onDownloadProgress',
-    'maxContentLength', 'validateStatus', 'maxRedirects', 'httpAgent',
-    'httpsAgent', 'cancelToken', 'socketPath'
-  ];
-
-  utils.forEach(valueFromConfig2Keys, function valueFromConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    }
-  });
-
-  utils.forEach(mergeDeepPropertiesKeys, function mergeDeepProperties(prop) {
-    if (utils.isObject(config2[prop])) {
-      config[prop] = utils.deepMerge(config1[prop], config2[prop]);
-    } else if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (utils.isObject(config1[prop])) {
-      config[prop] = utils.deepMerge(config1[prop]);
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
-    }
-  });
-
-  utils.forEach(defaultToConfig2Keys, function defaultToConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
-    }
-  });
-
-  var axiosKeys = valueFromConfig2Keys
-    .concat(mergeDeepPropertiesKeys)
-    .concat(defaultToConfig2Keys);
-
-  var otherKeys = Object
-    .keys(config2)
-    .filter(function filterAxiosKeys(key) {
-      return axiosKeys.indexOf(key) === -1;
-    });
-
-  utils.forEach(otherKeys, function otherKeysDefaultToConfig2(prop) {
-    if (typeof config2[prop] !== 'undefined') {
-      config[prop] = config2[prop];
-    } else if (typeof config1[prop] !== 'undefined') {
-      config[prop] = config1[prop];
-    }
-  });
-
-  return config;
-};
-
-},{"../utils":401}],389:[function(require,module,exports){
-'use strict';
-
-var createError = require('./createError');
-
-/**
- * Resolve or reject a Promise based on response status.
- *
- * @param {Function} resolve A function that resolves the promise.
- * @param {Function} reject A function that rejects the promise.
- * @param {object} response The response.
- */
-module.exports = function settle(resolve, reject, response) {
-  var validateStatus = response.config.validateStatus;
-  if (!validateStatus || validateStatus(response.status)) {
-    resolve(response);
-  } else {
-    reject(createError(
-      'Request failed with status code ' + response.status,
-      response.config,
-      null,
-      response.request,
-      response
-    ));
-  }
-};
-
-},{"./createError":385}],390:[function(require,module,exports){
-arguments[4][21][0].apply(exports,arguments)
-},{"./../utils":401,"dup":21}],391:[function(require,module,exports){
-(function (process){
-'use strict';
-
-var utils = require('./utils');
-var normalizeHeaderName = require('./helpers/normalizeHeaderName');
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = require('./adapters/xhr');
-  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
-    // For node use HTTP adapter
-    adapter = require('./adapters/http');
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Accept');
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-}).call(this,require('_process'))
-},{"./adapters/http":377,"./adapters/xhr":377,"./helpers/normalizeHeaderName":398,"./utils":401,"_process":418}],392:[function(require,module,exports){
-arguments[4][23][0].apply(exports,arguments)
-},{"dup":23}],393:[function(require,module,exports){
-'use strict';
-
-var utils = require('./../utils');
-
-function encode(val) {
-  return encodeURIComponent(val).
-    replace(/%40/gi, '@').
-    replace(/%3A/gi, ':').
-    replace(/%24/g, '$').
-    replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
-}
-
-/**
- * Build a URL by appending params to the end
- *
- * @param {string} url The base of the url (e.g., http://www.google.com)
- * @param {object} [params] The params to be appended
- * @returns {string} The formatted url
- */
-module.exports = function buildURL(url, params, paramsSerializer) {
-  /*eslint no-param-reassign:0*/
-  if (!params) {
-    return url;
-  }
-
-  var serializedParams;
-  if (paramsSerializer) {
-    serializedParams = paramsSerializer(params);
-  } else if (utils.isURLSearchParams(params)) {
-    serializedParams = params.toString();
-  } else {
-    var parts = [];
-
-    utils.forEach(params, function serialize(val, key) {
-      if (val === null || typeof val === 'undefined') {
-        return;
-      }
-
-      if (utils.isArray(val)) {
-        key = key + '[]';
-      } else {
-        val = [val];
-      }
-
-      utils.forEach(val, function parseValue(v) {
-        if (utils.isDate(v)) {
-          v = v.toISOString();
-        } else if (utils.isObject(v)) {
-          v = JSON.stringify(v);
-        }
-        parts.push(encode(key) + '=' + encode(v));
-      });
-    });
-
-    serializedParams = parts.join('&');
-  }
-
-  if (serializedParams) {
-    var hashmarkIndex = url.indexOf('#');
-    if (hashmarkIndex !== -1) {
-      url = url.slice(0, hashmarkIndex);
-    }
-
-    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-  }
-
-  return url;
-};
-
-},{"./../utils":401}],394:[function(require,module,exports){
-arguments[4][25][0].apply(exports,arguments)
-},{"dup":25}],395:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"./../utils":401,"dup":26}],396:[function(require,module,exports){
-arguments[4][27][0].apply(exports,arguments)
-},{"dup":27}],397:[function(require,module,exports){
-arguments[4][29][0].apply(exports,arguments)
-},{"./../utils":401,"dup":29}],398:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"../utils":401,"dup":30}],399:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"./../utils":401,"dup":31}],400:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"dup":32}],401:[function(require,module,exports){
-'use strict';
-
-var bind = require('./helpers/bind');
-
-/*global toString:true*/
-
-// utils is a library of generic helper functions non-specific to axios
-
-var toString = Object.prototype.toString;
-
-/**
- * Determine if a value is an Array
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Array, otherwise false
- */
-function isArray(val) {
-  return toString.call(val) === '[object Array]';
-}
-
-/**
- * Determine if a value is undefined
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if the value is undefined, otherwise false
- */
-function isUndefined(val) {
-  return typeof val === 'undefined';
-}
-
-/**
- * Determine if a value is a Buffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Buffer, otherwise false
- */
-function isBuffer(val) {
-  return val !== null && !isUndefined(val) && val.constructor !== null && !isUndefined(val.constructor)
-    && typeof val.constructor.isBuffer === 'function' && val.constructor.isBuffer(val);
-}
-
-/**
- * Determine if a value is an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an ArrayBuffer, otherwise false
- */
-function isArrayBuffer(val) {
-  return toString.call(val) === '[object ArrayBuffer]';
-}
-
-/**
- * Determine if a value is a FormData
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an FormData, otherwise false
- */
-function isFormData(val) {
-  return (typeof FormData !== 'undefined') && (val instanceof FormData);
-}
-
-/**
- * Determine if a value is a view on an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
- */
-function isArrayBufferView(val) {
-  var result;
-  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
-    result = ArrayBuffer.isView(val);
-  } else {
-    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
-  }
-  return result;
-}
-
-/**
- * Determine if a value is a String
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a String, otherwise false
- */
-function isString(val) {
-  return typeof val === 'string';
-}
-
-/**
- * Determine if a value is a Number
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Number, otherwise false
- */
-function isNumber(val) {
-  return typeof val === 'number';
-}
-
-/**
- * Determine if a value is an Object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Object, otherwise false
- */
-function isObject(val) {
-  return val !== null && typeof val === 'object';
-}
-
-/**
- * Determine if a value is a Date
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Date, otherwise false
- */
-function isDate(val) {
-  return toString.call(val) === '[object Date]';
-}
-
-/**
- * Determine if a value is a File
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a File, otherwise false
- */
-function isFile(val) {
-  return toString.call(val) === '[object File]';
-}
-
-/**
- * Determine if a value is a Blob
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Blob, otherwise false
- */
-function isBlob(val) {
-  return toString.call(val) === '[object Blob]';
-}
-
-/**
- * Determine if a value is a Function
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Function, otherwise false
- */
-function isFunction(val) {
-  return toString.call(val) === '[object Function]';
-}
-
-/**
- * Determine if a value is a Stream
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Stream, otherwise false
- */
-function isStream(val) {
-  return isObject(val) && isFunction(val.pipe);
-}
-
-/**
- * Determine if a value is a URLSearchParams object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a URLSearchParams object, otherwise false
- */
-function isURLSearchParams(val) {
-  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
-}
-
-/**
- * Trim excess whitespace off the beginning and end of a string
- *
- * @param {String} str The String to trim
- * @returns {String} The String freed of excess whitespace
- */
-function trim(str) {
-  return str.replace(/^\s*/, '').replace(/\s*$/, '');
-}
-
-/**
- * Determine if we're running in a standard browser environment
- *
- * This allows axios to run in a web worker, and react-native.
- * Both environments support XMLHttpRequest, but not fully standard globals.
- *
- * web workers:
- *  typeof window -> undefined
- *  typeof document -> undefined
- *
- * react-native:
- *  navigator.product -> 'ReactNative'
- * nativescript
- *  navigator.product -> 'NativeScript' or 'NS'
- */
-function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && (navigator.product === 'ReactNative' ||
-                                           navigator.product === 'NativeScript' ||
-                                           navigator.product === 'NS')) {
-    return false;
-  }
-  return (
-    typeof window !== 'undefined' &&
-    typeof document !== 'undefined'
-  );
-}
-
-/**
- * Iterate over an Array or an Object invoking a function for each item.
- *
- * If `obj` is an Array callback will be called passing
- * the value, index, and complete array for each item.
- *
- * If 'obj' is an Object callback will be called passing
- * the value, key, and complete object for each property.
- *
- * @param {Object|Array} obj The object to iterate
- * @param {Function} fn The callback to invoke for each item
- */
-function forEach(obj, fn) {
-  // Don't bother if no value provided
-  if (obj === null || typeof obj === 'undefined') {
-    return;
-  }
-
-  // Force an array if not already something iterable
-  if (typeof obj !== 'object') {
-    /*eslint no-param-reassign:0*/
-    obj = [obj];
-  }
-
-  if (isArray(obj)) {
-    // Iterate over array values
-    for (var i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    // Iterate over object keys
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        fn.call(null, obj[key], key, obj);
-      }
-    }
-  }
-}
-
-/**
- * Accepts varargs expecting each argument to be an object, then
- * immutably merges the properties of each object and returns result.
- *
- * When multiple objects contain the same key the later object in
- * the arguments list will take precedence.
- *
- * Example:
- *
- * ```js
- * var result = merge({foo: 123}, {foo: 456});
- * console.log(result.foo); // outputs 456
- * ```
- *
- * @param {Object} obj1 Object to merge
- * @returns {Object} Result of all merge properties
- */
-function merge(/* obj1, obj2, obj3, ... */) {
-  var result = {};
-  function assignValue(val, key) {
-    if (typeof result[key] === 'object' && typeof val === 'object') {
-      result[key] = merge(result[key], val);
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
- * Function equal to merge with the difference being that no reference
- * to original objects is kept.
- *
- * @see merge
- * @param {Object} obj1 Object to merge
- * @returns {Object} Result of all merge properties
- */
-function deepMerge(/* obj1, obj2, obj3, ... */) {
-  var result = {};
-  function assignValue(val, key) {
-    if (typeof result[key] === 'object' && typeof val === 'object') {
-      result[key] = deepMerge(result[key], val);
-    } else if (typeof val === 'object') {
-      result[key] = deepMerge({}, val);
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
- * Extends object a by mutably adding to it the properties of object b.
- *
- * @param {Object} a The object to be extended
- * @param {Object} b The object to copy properties from
- * @param {Object} thisArg The object to bind function to
- * @return {Object} The resulting value of object a
- */
-function extend(a, b, thisArg) {
-  forEach(b, function assignValue(val, key) {
-    if (thisArg && typeof val === 'function') {
-      a[key] = bind(val, thisArg);
-    } else {
-      a[key] = val;
-    }
-  });
-  return a;
-}
-
-module.exports = {
-  isArray: isArray,
-  isArrayBuffer: isArrayBuffer,
-  isBuffer: isBuffer,
-  isFormData: isFormData,
-  isArrayBufferView: isArrayBufferView,
-  isString: isString,
-  isNumber: isNumber,
-  isObject: isObject,
-  isUndefined: isUndefined,
-  isDate: isDate,
-  isFile: isFile,
-  isBlob: isBlob,
-  isFunction: isFunction,
-  isStream: isStream,
-  isURLSearchParams: isURLSearchParams,
-  isStandardBrowserEnv: isStandardBrowserEnv,
-  forEach: forEach,
-  merge: merge,
-  deepMerge: deepMerge,
-  extend: extend,
-  trim: trim
-};
-
-},{"./helpers/bind":392}],402:[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
@@ -55313,9 +57022,9 @@ return typeDetect;
 
 })));
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],403:[function(require,module,exports){
-(function (process,Buffer){
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],377:[function(require,module,exports){
+(function (process,Buffer){(function (){
 /**
  * Wrapper for built-in http.js to emulate the browser XMLHttpRequest object.
  *
@@ -55937,8 +57646,60 @@ exports.XMLHttpRequest = function() {
   };
 };
 
-}).call(this,require('_process'),require("buffer").Buffer)
-},{"_process":418,"buffer":407,"child_process":406,"fs":406,"http":439,"https":411,"url":447}],404:[function(require,module,exports){
+}).call(this)}).call(this,require('_process'),require("buffer").Buffer)
+},{"_process":404,"buffer":383,"child_process":382,"fs":382,"http":425,"https":396,"url":445}],378:[function(require,module,exports){
+
+/**
+ * Array#filter.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @param {Object=} self
+ * @return {Array}
+ * @throw TypeError
+ */
+
+module.exports = function (arr, fn, self) {
+  if (arr.filter) return arr.filter(fn, self);
+  if (void 0 === arr || null === arr) throw new TypeError;
+  if ('function' != typeof fn) throw new TypeError;
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (!hasOwn.call(arr, i)) continue;
+    var val = arr[i];
+    if (fn.call(self, val, i, arr)) ret.push(val);
+  }
+  return ret;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+},{}],379:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var filter = require('array-filter');
+
+module.exports = function availableTypedArrays() {
+	return filter([
+		'BigInt64Array',
+		'BigUint64Array',
+		'Float32Array',
+		'Float64Array',
+		'Int16Array',
+		'Int32Array',
+		'Int8Array',
+		'Uint16Array',
+		'Uint32Array',
+		'Uint8Array',
+		'Uint8ClampedArray'
+	], function (typedArray) {
+		return typeof global[typedArray] === 'function';
+	});
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"array-filter":378}],380:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -56006,7 +57767,8 @@ function toByteArray (b64) {
     ? validLen - 4
     : validLen
 
-  for (var i = 0; i < len; i += 4) {
+  var i
+  for (i = 0; i < len; i += 4) {
     tmp =
       (revLookup[b64.charCodeAt(i)] << 18) |
       (revLookup[b64.charCodeAt(i + 1)] << 12) |
@@ -56065,9 +57827,7 @@ function fromByteArray (uint8) {
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
@@ -56091,12 +57851,12 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],405:[function(require,module,exports){
+},{}],381:[function(require,module,exports){
 
-},{}],406:[function(require,module,exports){
-arguments[4][405][0].apply(exports,arguments)
-},{"dup":405}],407:[function(require,module,exports){
-(function (Buffer){
+},{}],382:[function(require,module,exports){
+arguments[4][381][0].apply(exports,arguments)
+},{"dup":381}],383:[function(require,module,exports){
+(function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -57875,8 +59635,8 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-}).call(this,require("buffer").Buffer)
-},{"base64-js":404,"buffer":407,"ieee754":412}],408:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"base64-js":380,"buffer":383,"ieee754":397}],384:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -57942,8 +59702,90 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],409:[function(require,module,exports){
-(function (Buffer){
+},{}],385:[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('get-intrinsic');
+
+var callBind = require('./');
+
+var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+
+module.exports = function callBoundIntrinsic(name, allowMissing) {
+	var intrinsic = GetIntrinsic(name, !!allowMissing);
+	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.') > -1) {
+		return callBind(intrinsic);
+	}
+	return intrinsic;
+};
+
+},{"./":386,"get-intrinsic":392}],386:[function(require,module,exports){
+'use strict';
+
+var bind = require('function-bind');
+var GetIntrinsic = require('get-intrinsic');
+
+var $apply = GetIntrinsic('%Function.prototype.apply%');
+var $call = GetIntrinsic('%Function.prototype.call%');
+var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
+
+var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
+var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+var $max = GetIntrinsic('%Math.max%');
+
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = null;
+	}
+}
+
+module.exports = function callBind(originalFunction) {
+	var func = $reflectApply(bind, $call, arguments);
+	if ($gOPD && $defineProperty) {
+		var desc = $gOPD(func, 'length');
+		if (desc.configurable) {
+			// original length, plus the receiver, minus any additional arguments (after the receiver)
+			$defineProperty(
+				func,
+				'length',
+				{ value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
+			);
+		}
+	}
+	return func;
+};
+
+var applyBind = function applyBind() {
+	return $reflectApply(bind, $apply, arguments);
+};
+
+if ($defineProperty) {
+	$defineProperty(module.exports, 'apply', { value: applyBind });
+} else {
+	module.exports.apply = applyBind;
+}
+
+},{"function-bind":391,"get-intrinsic":392}],387:[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('get-intrinsic');
+
+var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+if ($gOPD) {
+	try {
+		$gOPD([], 'length');
+	} catch (e) {
+		// IE 8 has a broken gOPD
+		$gOPD = null;
+	}
+}
+
+module.exports = $gOPD;
+
+},{"get-intrinsic":392}],388:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -57965,292 +59807,143 @@ module.exports = {
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
+'use strict';
 
-function isArray(arg) {
-  if (Array.isArray) {
-    return Array.isArray(arg);
+var R = typeof Reflect === 'object' ? Reflect : null
+var ReflectApply = R && typeof R.apply === 'function'
+  ? R.apply
+  : function ReflectApply(target, receiver, args) {
+    return Function.prototype.apply.call(target, receiver, args);
   }
-  return objectToString(arg) === '[object Array]';
-}
-exports.isArray = isArray;
 
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = Buffer.isBuffer;
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
+var ReflectOwnKeys
+if (R && typeof R.ownKeys === 'function') {
+  ReflectOwnKeys = R.ownKeys
+} else if (Object.getOwnPropertySymbols) {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target)
+      .concat(Object.getOwnPropertySymbols(target));
+  };
+} else {
+  ReflectOwnKeys = function ReflectOwnKeys(target) {
+    return Object.getOwnPropertyNames(target);
+  };
 }
 
-}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":414}],410:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
+function ProcessEmitWarning(warning) {
+  if (console && console.warn) console.warn(warning);
+}
 
-var objectCreate = Object.create || objectCreatePolyfill
-var objectKeys = Object.keys || objectKeysPolyfill
-var bind = Function.prototype.bind || functionBindPolyfill
+var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
+  return value !== value;
+}
 
 function EventEmitter() {
-  if (!this._events || !Object.prototype.hasOwnProperty.call(this, '_events')) {
-    this._events = objectCreate(null);
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
+  EventEmitter.init.call(this);
 }
 module.exports = EventEmitter;
+module.exports.once = once;
 
 // Backwards-compat with node 0.10.x
 EventEmitter.EventEmitter = EventEmitter;
 
 EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._eventsCount = 0;
 EventEmitter.prototype._maxListeners = undefined;
 
 // By default EventEmitters will print a warning if more than 10 listeners are
 // added to it. This is a useful default which helps finding memory leaks.
 var defaultMaxListeners = 10;
 
-var hasDefineProperty;
-try {
-  var o = {};
-  if (Object.defineProperty) Object.defineProperty(o, 'x', { value: 0 });
-  hasDefineProperty = o.x === 0;
-} catch (err) { hasDefineProperty = false }
-if (hasDefineProperty) {
-  Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
-    enumerable: true,
-    get: function() {
-      return defaultMaxListeners;
-    },
-    set: function(arg) {
-      // check whether the input is a positive number (whose value is zero or
-      // greater and not a NaN).
-      if (typeof arg !== 'number' || arg < 0 || arg !== arg)
-        throw new TypeError('"defaultMaxListeners" must be a positive number');
-      defaultMaxListeners = arg;
-    }
-  });
-} else {
-  EventEmitter.defaultMaxListeners = defaultMaxListeners;
+function checkListener(listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
 }
+
+Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+  enumerable: true,
+  get: function() {
+    return defaultMaxListeners;
+  },
+  set: function(arg) {
+    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
+      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+    }
+    defaultMaxListeners = arg;
+  }
+});
+
+EventEmitter.init = function() {
+
+  if (this._events === undefined ||
+      this._events === Object.getPrototypeOf(this)._events) {
+    this._events = Object.create(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+};
 
 // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
 EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || isNaN(n))
-    throw new TypeError('"n" argument must be a positive number');
+  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
+    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
+  }
   this._maxListeners = n;
   return this;
 };
 
-function $getMaxListeners(that) {
+function _getMaxListeners(that) {
   if (that._maxListeners === undefined)
     return EventEmitter.defaultMaxListeners;
   return that._maxListeners;
 }
 
 EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return $getMaxListeners(this);
+  return _getMaxListeners(this);
 };
 
-// These standalone emit* functions are used to optimize calling of event
-// handlers for fast cases because emit() itself often has a variable number of
-// arguments and can be deoptimized because of that. These functions always have
-// the same number of arguments and thus do not get deoptimized, so the code
-// inside them can execute faster.
-function emitNone(handler, isFn, self) {
-  if (isFn)
-    handler.call(self);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self);
-  }
-}
-function emitOne(handler, isFn, self, arg1) {
-  if (isFn)
-    handler.call(self, arg1);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1);
-  }
-}
-function emitTwo(handler, isFn, self, arg1, arg2) {
-  if (isFn)
-    handler.call(self, arg1, arg2);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1, arg2);
-  }
-}
-function emitThree(handler, isFn, self, arg1, arg2, arg3) {
-  if (isFn)
-    handler.call(self, arg1, arg2, arg3);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].call(self, arg1, arg2, arg3);
-  }
-}
-
-function emitMany(handler, isFn, self, args) {
-  if (isFn)
-    handler.apply(self, args);
-  else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      listeners[i].apply(self, args);
-  }
-}
-
 EventEmitter.prototype.emit = function emit(type) {
-  var er, handler, len, args, i, events;
+  var args = [];
+  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
   var doError = (type === 'error');
 
-  events = this._events;
-  if (events)
-    doError = (doError && events.error == null);
+  var events = this._events;
+  if (events !== undefined)
+    doError = (doError && events.error === undefined);
   else if (!doError)
     return false;
 
   // If there is no 'error' event listener then throw.
   if (doError) {
-    if (arguments.length > 1)
-      er = arguments[1];
+    var er;
+    if (args.length > 0)
+      er = args[0];
     if (er instanceof Error) {
+      // Note: The comments on the `throw` lines are intentional, they show
+      // up in Node's output if this results in an unhandled exception.
       throw er; // Unhandled 'error' event
-    } else {
-      // At least give some kind of context to the user
-      var err = new Error('Unhandled "error" event. (' + er + ')');
-      err.context = er;
-      throw err;
     }
-    return false;
+    // At least give some kind of context to the user
+    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
+    err.context = er;
+    throw err; // Unhandled 'error' event
   }
 
-  handler = events[type];
+  var handler = events[type];
 
-  if (!handler)
+  if (handler === undefined)
     return false;
 
-  var isFn = typeof handler === 'function';
-  len = arguments.length;
-  switch (len) {
-      // fast cases
-    case 1:
-      emitNone(handler, isFn, this);
-      break;
-    case 2:
-      emitOne(handler, isFn, this, arguments[1]);
-      break;
-    case 3:
-      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
-      break;
-    case 4:
-      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
-      break;
-      // slower
-    default:
-      args = new Array(len - 1);
-      for (i = 1; i < len; i++)
-        args[i - 1] = arguments[i];
-      emitMany(handler, isFn, this, args);
+  if (typeof handler === 'function') {
+    ReflectApply(handler, this, args);
+  } else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      ReflectApply(listeners[i], this, args);
   }
 
   return true;
@@ -58261,19 +59954,18 @@ function _addListener(target, type, listener, prepend) {
   var events;
   var existing;
 
-  if (typeof listener !== 'function')
-    throw new TypeError('"listener" argument must be a function');
+  checkListener(listener);
 
   events = target._events;
-  if (!events) {
-    events = target._events = objectCreate(null);
+  if (events === undefined) {
+    events = target._events = Object.create(null);
     target._eventsCount = 0;
   } else {
     // To avoid recursion in the case that type === "newListener"! Before
     // adding it to the listeners, first emit "newListener".
-    if (events.newListener) {
+    if (events.newListener !== undefined) {
       target.emit('newListener', type,
-          listener.listener ? listener.listener : listener);
+                  listener.listener ? listener.listener : listener);
 
       // Re-assign `events` because a newListener handler could have caused the
       // this._events to be assigned to a new object
@@ -58282,7 +59974,7 @@ function _addListener(target, type, listener, prepend) {
     existing = events[type];
   }
 
-  if (!existing) {
+  if (existing === undefined) {
     // Optimize the case of one listener. Don't need the extra array object.
     existing = events[type] = listener;
     ++target._eventsCount;
@@ -58290,33 +59982,29 @@ function _addListener(target, type, listener, prepend) {
     if (typeof existing === 'function') {
       // Adding the second element, need to change to array.
       existing = events[type] =
-          prepend ? [listener, existing] : [existing, listener];
-    } else {
+        prepend ? [listener, existing] : [existing, listener];
       // If we've already got an array, just append.
-      if (prepend) {
-        existing.unshift(listener);
-      } else {
-        existing.push(listener);
-      }
+    } else if (prepend) {
+      existing.unshift(listener);
+    } else {
+      existing.push(listener);
     }
 
     // Check for listener leak
-    if (!existing.warned) {
-      m = $getMaxListeners(target);
-      if (m && m > 0 && existing.length > m) {
-        existing.warned = true;
-        var w = new Error('Possible EventEmitter memory leak detected. ' +
-            existing.length + ' "' + String(type) + '" listeners ' +
-            'added. Use emitter.setMaxListeners() to ' +
-            'increase limit.');
-        w.name = 'MaxListenersExceededWarning';
-        w.emitter = target;
-        w.type = type;
-        w.count = existing.length;
-        if (typeof console === 'object' && console.warn) {
-          console.warn('%s: %s', w.name, w.message);
-        }
-      }
+    m = _getMaxListeners(target);
+    if (m > 0 && existing.length > m && !existing.warned) {
+      existing.warned = true;
+      // No error code for this since it is a Warning
+      // eslint-disable-next-line no-restricted-syntax
+      var w = new Error('Possible EventEmitter memory leak detected. ' +
+                          existing.length + ' ' + String(type) + ' listeners ' +
+                          'added. Use emitter.setMaxListeners() to ' +
+                          'increase limit');
+      w.name = 'MaxListenersExceededWarning';
+      w.emitter = target;
+      w.type = type;
+      w.count = existing.length;
+      ProcessEmitWarning(w);
     }
   }
 
@@ -58338,44 +60026,29 @@ function onceWrapper() {
   if (!this.fired) {
     this.target.removeListener(this.type, this.wrapFn);
     this.fired = true;
-    switch (arguments.length) {
-      case 0:
-        return this.listener.call(this.target);
-      case 1:
-        return this.listener.call(this.target, arguments[0]);
-      case 2:
-        return this.listener.call(this.target, arguments[0], arguments[1]);
-      case 3:
-        return this.listener.call(this.target, arguments[0], arguments[1],
-            arguments[2]);
-      default:
-        var args = new Array(arguments.length);
-        for (var i = 0; i < args.length; ++i)
-          args[i] = arguments[i];
-        this.listener.apply(this.target, args);
-    }
+    if (arguments.length === 0)
+      return this.listener.call(this.target);
+    return this.listener.apply(this.target, arguments);
   }
 }
 
 function _onceWrap(target, type, listener) {
   var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
-  var wrapped = bind.call(onceWrapper, state);
+  var wrapped = onceWrapper.bind(state);
   wrapped.listener = listener;
   state.wrapFn = wrapped;
   return wrapped;
 }
 
 EventEmitter.prototype.once = function once(type, listener) {
-  if (typeof listener !== 'function')
-    throw new TypeError('"listener" argument must be a function');
+  checkListener(listener);
   this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
 EventEmitter.prototype.prependOnceListener =
     function prependOnceListener(type, listener) {
-      if (typeof listener !== 'function')
-        throw new TypeError('"listener" argument must be a function');
+      checkListener(listener);
       this.prependListener(type, _onceWrap(this, type, listener));
       return this;
     };
@@ -58385,20 +60058,19 @@ EventEmitter.prototype.removeListener =
     function removeListener(type, listener) {
       var list, events, position, i, originalListener;
 
-      if (typeof listener !== 'function')
-        throw new TypeError('"listener" argument must be a function');
+      checkListener(listener);
 
       events = this._events;
-      if (!events)
+      if (events === undefined)
         return this;
 
       list = events[type];
-      if (!list)
+      if (list === undefined)
         return this;
 
       if (list === listener || list.listener === listener) {
         if (--this._eventsCount === 0)
-          this._events = objectCreate(null);
+          this._events = Object.create(null);
         else {
           delete events[type];
           if (events.removeListener)
@@ -58420,35 +60092,38 @@ EventEmitter.prototype.removeListener =
 
         if (position === 0)
           list.shift();
-        else
+        else {
           spliceOne(list, position);
+        }
 
         if (list.length === 1)
           events[type] = list[0];
 
-        if (events.removeListener)
+        if (events.removeListener !== undefined)
           this.emit('removeListener', type, originalListener || listener);
       }
 
       return this;
     };
 
+EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
+
 EventEmitter.prototype.removeAllListeners =
     function removeAllListeners(type) {
       var listeners, events, i;
 
       events = this._events;
-      if (!events)
+      if (events === undefined)
         return this;
 
       // not listening for removeListener, no need to emit
-      if (!events.removeListener) {
+      if (events.removeListener === undefined) {
         if (arguments.length === 0) {
-          this._events = objectCreate(null);
+          this._events = Object.create(null);
           this._eventsCount = 0;
-        } else if (events[type]) {
+        } else if (events[type] !== undefined) {
           if (--this._eventsCount === 0)
-            this._events = objectCreate(null);
+            this._events = Object.create(null);
           else
             delete events[type];
         }
@@ -58457,7 +60132,7 @@ EventEmitter.prototype.removeAllListeners =
 
       // emit removeListener for all listeners on all events
       if (arguments.length === 0) {
-        var keys = objectKeys(events);
+        var keys = Object.keys(events);
         var key;
         for (i = 0; i < keys.length; ++i) {
           key = keys[i];
@@ -58465,7 +60140,7 @@ EventEmitter.prototype.removeAllListeners =
           this.removeAllListeners(key);
         }
         this.removeAllListeners('removeListener');
-        this._events = objectCreate(null);
+        this._events = Object.create(null);
         this._eventsCount = 0;
         return this;
       }
@@ -58474,7 +60149,7 @@ EventEmitter.prototype.removeAllListeners =
 
       if (typeof listeners === 'function') {
         this.removeListener(type, listeners);
-      } else if (listeners) {
+      } else if (listeners !== undefined) {
         // LIFO order
         for (i = listeners.length - 1; i >= 0; i--) {
           this.removeListener(type, listeners[i]);
@@ -58487,17 +60162,18 @@ EventEmitter.prototype.removeAllListeners =
 function _listeners(target, type, unwrap) {
   var events = target._events;
 
-  if (!events)
+  if (events === undefined)
     return [];
 
   var evlistener = events[type];
-  if (!evlistener)
+  if (evlistener === undefined)
     return [];
 
   if (typeof evlistener === 'function')
     return unwrap ? [evlistener.listener || evlistener] : [evlistener];
 
-  return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+  return unwrap ?
+    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
 }
 
 EventEmitter.prototype.listeners = function listeners(type) {
@@ -58520,12 +60196,12 @@ EventEmitter.prototype.listenerCount = listenerCount;
 function listenerCount(type) {
   var events = this._events;
 
-  if (events) {
+  if (events !== undefined) {
     var evlistener = events[type];
 
     if (typeof evlistener === 'function') {
       return 1;
-    } else if (evlistener) {
+    } else if (evlistener !== undefined) {
       return evlistener.length;
     }
   }
@@ -58534,21 +60210,20 @@ function listenerCount(type) {
 }
 
 EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
+  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
 };
-
-// About 1.5x faster than the two-arg version of Array#splice().
-function spliceOne(list, index) {
-  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
-    list[i] = list[k];
-  list.pop();
-}
 
 function arrayClone(arr, n) {
   var copy = new Array(n);
   for (var i = 0; i < n; ++i)
     copy[i] = arr[i];
   return copy;
+}
+
+function spliceOne(list, index) {
+  for (; index + 1 < list.length; index++)
+    list[index] = list[index + 1];
+  list.pop();
 }
 
 function unwrapListeners(arr) {
@@ -58559,26 +60234,540 @@ function unwrapListeners(arr) {
   return ret;
 }
 
-function objectCreatePolyfill(proto) {
-  var F = function() {};
-  F.prototype = proto;
-  return new F;
-}
-function objectKeysPolyfill(obj) {
-  var keys = [];
-  for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) {
-    keys.push(k);
-  }
-  return k;
-}
-function functionBindPolyfill(context) {
-  var fn = this;
-  return function () {
-    return fn.apply(context, arguments);
-  };
+function once(emitter, name) {
+  return new Promise(function (resolve, reject) {
+    function errorListener(err) {
+      emitter.removeListener(name, resolver);
+      reject(err);
+    }
+
+    function resolver() {
+      if (typeof emitter.removeListener === 'function') {
+        emitter.removeListener('error', errorListener);
+      }
+      resolve([].slice.call(arguments));
+    };
+
+    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
+    if (name !== 'error') {
+      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
+    }
+  });
 }
 
-},{}],411:[function(require,module,exports){
+function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
+  if (typeof emitter.on === 'function') {
+    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
+  }
+}
+
+function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
+  if (typeof emitter.on === 'function') {
+    if (flags.once) {
+      emitter.once(name, listener);
+    } else {
+      emitter.on(name, listener);
+    }
+  } else if (typeof emitter.addEventListener === 'function') {
+    // EventTarget does not have `error` event semantics like Node
+    // EventEmitters, we do not listen for `error` events here.
+    emitter.addEventListener(name, function wrapListener(arg) {
+      // IE does not have builtin `{ once: true }` support so we
+      // have to do it manually.
+      if (flags.once) {
+        emitter.removeEventListener(name, wrapListener);
+      }
+      listener(arg);
+    });
+  } else {
+    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
+  }
+}
+
+},{}],389:[function(require,module,exports){
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+
+module.exports = function forEach (obj, fn, ctx) {
+    if (toString.call(fn) !== '[object Function]') {
+        throw new TypeError('iterator must be a function');
+    }
+    var l = obj.length;
+    if (l === +l) {
+        for (var i = 0; i < l; i++) {
+            fn.call(ctx, obj[i], i, obj);
+        }
+    } else {
+        for (var k in obj) {
+            if (hasOwn.call(obj, k)) {
+                fn.call(ctx, obj[k], k, obj);
+            }
+        }
+    }
+};
+
+
+},{}],390:[function(require,module,exports){
+'use strict';
+
+/* eslint no-invalid-this: 1 */
+
+var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
+var slice = Array.prototype.slice;
+var toStr = Object.prototype.toString;
+var funcType = '[object Function]';
+
+module.exports = function bind(that) {
+    var target = this;
+    if (typeof target !== 'function' || toStr.call(target) !== funcType) {
+        throw new TypeError(ERROR_MESSAGE + target);
+    }
+    var args = slice.call(arguments, 1);
+
+    var bound;
+    var binder = function () {
+        if (this instanceof bound) {
+            var result = target.apply(
+                this,
+                args.concat(slice.call(arguments))
+            );
+            if (Object(result) === result) {
+                return result;
+            }
+            return this;
+        } else {
+            return target.apply(
+                that,
+                args.concat(slice.call(arguments))
+            );
+        }
+    };
+
+    var boundLength = Math.max(0, target.length - args.length);
+    var boundArgs = [];
+    for (var i = 0; i < boundLength; i++) {
+        boundArgs.push('$' + i);
+    }
+
+    bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
+
+    if (target.prototype) {
+        var Empty = function Empty() {};
+        Empty.prototype = target.prototype;
+        bound.prototype = new Empty();
+        Empty.prototype = null;
+    }
+
+    return bound;
+};
+
+},{}],391:[function(require,module,exports){
+'use strict';
+
+var implementation = require('./implementation');
+
+module.exports = Function.prototype.bind || implementation;
+
+},{"./implementation":390}],392:[function(require,module,exports){
+'use strict';
+
+var undefined;
+
+var $SyntaxError = SyntaxError;
+var $Function = Function;
+var $TypeError = TypeError;
+
+// eslint-disable-next-line consistent-return
+var getEvalledConstructor = function (expressionSyntax) {
+	try {
+		return $Function('"use strict"; return (' + expressionSyntax + ').constructor;')();
+	} catch (e) {}
+};
+
+var $gOPD = Object.getOwnPropertyDescriptor;
+if ($gOPD) {
+	try {
+		$gOPD({}, '');
+	} catch (e) {
+		$gOPD = null; // this is IE 8, which has a broken gOPD
+	}
+}
+
+var throwTypeError = function () {
+	throw new $TypeError();
+};
+var ThrowTypeError = $gOPD
+	? (function () {
+		try {
+			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
+			arguments.callee; // IE 8 does not throw here
+			return throwTypeError;
+		} catch (calleeThrows) {
+			try {
+				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
+				return $gOPD(arguments, 'callee').get;
+			} catch (gOPDthrows) {
+				return throwTypeError;
+			}
+		}
+	}())
+	: throwTypeError;
+
+var hasSymbols = require('has-symbols')();
+
+var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+
+var needsEval = {};
+
+var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+
+var INTRINSICS = {
+	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
+	'%Array%': Array,
+	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
+	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%AsyncFromSyncIteratorPrototype%': undefined,
+	'%AsyncFunction%': needsEval,
+	'%AsyncGenerator%': needsEval,
+	'%AsyncGeneratorFunction%': needsEval,
+	'%AsyncIteratorPrototype%': needsEval,
+	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
+	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
+	'%Boolean%': Boolean,
+	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
+	'%Date%': Date,
+	'%decodeURI%': decodeURI,
+	'%decodeURIComponent%': decodeURIComponent,
+	'%encodeURI%': encodeURI,
+	'%encodeURIComponent%': encodeURIComponent,
+	'%Error%': Error,
+	'%eval%': eval, // eslint-disable-line no-eval
+	'%EvalError%': EvalError,
+	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
+	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
+	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined : FinalizationRegistry,
+	'%Function%': $Function,
+	'%GeneratorFunction%': needsEval,
+	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
+	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
+	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
+	'%isFinite%': isFinite,
+	'%isNaN%': isNaN,
+	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
+	'%Map%': typeof Map === 'undefined' ? undefined : Map,
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%Math%': Math,
+	'%Number%': Number,
+	'%Object%': Object,
+	'%parseFloat%': parseFloat,
+	'%parseInt%': parseInt,
+	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
+	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
+	'%RangeError%': RangeError,
+	'%ReferenceError%': ReferenceError,
+	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
+	'%RegExp%': RegExp,
+	'%Set%': typeof Set === 'undefined' ? undefined : Set,
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
+	'%String%': String,
+	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%Symbol%': hasSymbols ? Symbol : undefined,
+	'%SyntaxError%': $SyntaxError,
+	'%ThrowTypeError%': ThrowTypeError,
+	'%TypedArray%': TypedArray,
+	'%TypeError%': $TypeError,
+	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
+	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
+	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
+	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
+	'%URIError%': URIError,
+	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
+	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
+};
+
+var doEval = function doEval(name) {
+	var value;
+	if (name === '%AsyncFunction%') {
+		value = getEvalledConstructor('async function () {}');
+	} else if (name === '%GeneratorFunction%') {
+		value = getEvalledConstructor('function* () {}');
+	} else if (name === '%AsyncGeneratorFunction%') {
+		value = getEvalledConstructor('async function* () {}');
+	} else if (name === '%AsyncGenerator%') {
+		var fn = doEval('%AsyncGeneratorFunction%');
+		if (fn) {
+			value = fn.prototype;
+		}
+	} else if (name === '%AsyncIteratorPrototype%') {
+		var gen = doEval('%AsyncGenerator%');
+		if (gen) {
+			value = getProto(gen.prototype);
+		}
+	}
+
+	INTRINSICS[name] = value;
+
+	return value;
+};
+
+var LEGACY_ALIASES = {
+	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
+	'%ArrayPrototype%': ['Array', 'prototype'],
+	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
+	'%ArrayProto_forEach%': ['Array', 'prototype', 'forEach'],
+	'%ArrayProto_keys%': ['Array', 'prototype', 'keys'],
+	'%ArrayProto_values%': ['Array', 'prototype', 'values'],
+	'%AsyncFunctionPrototype%': ['AsyncFunction', 'prototype'],
+	'%AsyncGenerator%': ['AsyncGeneratorFunction', 'prototype'],
+	'%AsyncGeneratorPrototype%': ['AsyncGeneratorFunction', 'prototype', 'prototype'],
+	'%BooleanPrototype%': ['Boolean', 'prototype'],
+	'%DataViewPrototype%': ['DataView', 'prototype'],
+	'%DatePrototype%': ['Date', 'prototype'],
+	'%ErrorPrototype%': ['Error', 'prototype'],
+	'%EvalErrorPrototype%': ['EvalError', 'prototype'],
+	'%Float32ArrayPrototype%': ['Float32Array', 'prototype'],
+	'%Float64ArrayPrototype%': ['Float64Array', 'prototype'],
+	'%FunctionPrototype%': ['Function', 'prototype'],
+	'%Generator%': ['GeneratorFunction', 'prototype'],
+	'%GeneratorPrototype%': ['GeneratorFunction', 'prototype', 'prototype'],
+	'%Int8ArrayPrototype%': ['Int8Array', 'prototype'],
+	'%Int16ArrayPrototype%': ['Int16Array', 'prototype'],
+	'%Int32ArrayPrototype%': ['Int32Array', 'prototype'],
+	'%JSONParse%': ['JSON', 'parse'],
+	'%JSONStringify%': ['JSON', 'stringify'],
+	'%MapPrototype%': ['Map', 'prototype'],
+	'%NumberPrototype%': ['Number', 'prototype'],
+	'%ObjectPrototype%': ['Object', 'prototype'],
+	'%ObjProto_toString%': ['Object', 'prototype', 'toString'],
+	'%ObjProto_valueOf%': ['Object', 'prototype', 'valueOf'],
+	'%PromisePrototype%': ['Promise', 'prototype'],
+	'%PromiseProto_then%': ['Promise', 'prototype', 'then'],
+	'%Promise_all%': ['Promise', 'all'],
+	'%Promise_reject%': ['Promise', 'reject'],
+	'%Promise_resolve%': ['Promise', 'resolve'],
+	'%RangeErrorPrototype%': ['RangeError', 'prototype'],
+	'%ReferenceErrorPrototype%': ['ReferenceError', 'prototype'],
+	'%RegExpPrototype%': ['RegExp', 'prototype'],
+	'%SetPrototype%': ['Set', 'prototype'],
+	'%SharedArrayBufferPrototype%': ['SharedArrayBuffer', 'prototype'],
+	'%StringPrototype%': ['String', 'prototype'],
+	'%SymbolPrototype%': ['Symbol', 'prototype'],
+	'%SyntaxErrorPrototype%': ['SyntaxError', 'prototype'],
+	'%TypedArrayPrototype%': ['TypedArray', 'prototype'],
+	'%TypeErrorPrototype%': ['TypeError', 'prototype'],
+	'%Uint8ArrayPrototype%': ['Uint8Array', 'prototype'],
+	'%Uint8ClampedArrayPrototype%': ['Uint8ClampedArray', 'prototype'],
+	'%Uint16ArrayPrototype%': ['Uint16Array', 'prototype'],
+	'%Uint32ArrayPrototype%': ['Uint32Array', 'prototype'],
+	'%URIErrorPrototype%': ['URIError', 'prototype'],
+	'%WeakMapPrototype%': ['WeakMap', 'prototype'],
+	'%WeakSetPrototype%': ['WeakSet', 'prototype']
+};
+
+var bind = require('function-bind');
+var hasOwn = require('has');
+var $concat = bind.call(Function.call, Array.prototype.concat);
+var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
+var $replace = bind.call(Function.call, String.prototype.replace);
+var $strSlice = bind.call(Function.call, String.prototype.slice);
+
+/* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
+var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
+var stringToPath = function stringToPath(string) {
+	var first = $strSlice(string, 0, 1);
+	var last = $strSlice(string, -1);
+	if (first === '%' && last !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected closing `%`');
+	} else if (last === '%' && first !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected opening `%`');
+	}
+	var result = [];
+	$replace(string, rePropName, function (match, number, quote, subString) {
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : number || match;
+	});
+	return result;
+};
+/* end adaptation */
+
+var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
+	var intrinsicName = name;
+	var alias;
+	if (hasOwn(LEGACY_ALIASES, intrinsicName)) {
+		alias = LEGACY_ALIASES[intrinsicName];
+		intrinsicName = '%' + alias[0] + '%';
+	}
+
+	if (hasOwn(INTRINSICS, intrinsicName)) {
+		var value = INTRINSICS[intrinsicName];
+		if (value === needsEval) {
+			value = doEval(intrinsicName);
+		}
+		if (typeof value === 'undefined' && !allowMissing) {
+			throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+		}
+
+		return {
+			alias: alias,
+			name: intrinsicName,
+			value: value
+		};
+	}
+
+	throw new $SyntaxError('intrinsic ' + name + ' does not exist!');
+};
+
+module.exports = function GetIntrinsic(name, allowMissing) {
+	if (typeof name !== 'string' || name.length === 0) {
+		throw new $TypeError('intrinsic name must be a non-empty string');
+	}
+	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+		throw new $TypeError('"allowMissing" argument must be a boolean');
+	}
+
+	var parts = stringToPath(name);
+	var intrinsicBaseName = parts.length > 0 ? parts[0] : '';
+
+	var intrinsic = getBaseIntrinsic('%' + intrinsicBaseName + '%', allowMissing);
+	var intrinsicRealName = intrinsic.name;
+	var value = intrinsic.value;
+	var skipFurtherCaching = false;
+
+	var alias = intrinsic.alias;
+	if (alias) {
+		intrinsicBaseName = alias[0];
+		$spliceApply(parts, $concat([0, 1], alias));
+	}
+
+	for (var i = 1, isOwn = true; i < parts.length; i += 1) {
+		var part = parts[i];
+		var first = $strSlice(part, 0, 1);
+		var last = $strSlice(part, -1);
+		if (
+			(
+				(first === '"' || first === "'" || first === '`')
+				|| (last === '"' || last === "'" || last === '`')
+			)
+			&& first !== last
+		) {
+			throw new $SyntaxError('property names with quotes must have matching quotes');
+		}
+		if (part === 'constructor' || !isOwn) {
+			skipFurtherCaching = true;
+		}
+
+		intrinsicBaseName += '.' + part;
+		intrinsicRealName = '%' + intrinsicBaseName + '%';
+
+		if (hasOwn(INTRINSICS, intrinsicRealName)) {
+			value = INTRINSICS[intrinsicRealName];
+		} else if (value != null) {
+			if (!(part in value)) {
+				if (!allowMissing) {
+					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
+				}
+				return void undefined;
+			}
+			if ($gOPD && (i + 1) >= parts.length) {
+				var desc = $gOPD(value, part);
+				isOwn = !!desc;
+
+				// By convention, when a data property is converted to an accessor
+				// property to emulate a data property that does not suffer from
+				// the override mistake, that accessor's getter is marked with
+				// an `originalValue` property. Here, when we detect this, we
+				// uphold the illusion by pretending to see that original data
+				// property, i.e., returning the value rather than the getter
+				// itself.
+				if (isOwn && 'get' in desc && !('originalValue' in desc.get)) {
+					value = desc.get;
+				} else {
+					value = value[part];
+				}
+			} else {
+				isOwn = hasOwn(value, part);
+				value = value[part];
+			}
+
+			if (isOwn && !skipFurtherCaching) {
+				INTRINSICS[intrinsicRealName] = value;
+			}
+		}
+	}
+	return value;
+};
+
+},{"function-bind":391,"has":395,"has-symbols":393}],393:[function(require,module,exports){
+'use strict';
+
+var origSymbol = typeof Symbol !== 'undefined' && Symbol;
+var hasSymbolSham = require('./shams');
+
+module.exports = function hasNativeSymbols() {
+	if (typeof origSymbol !== 'function') { return false; }
+	if (typeof Symbol !== 'function') { return false; }
+	if (typeof origSymbol('foo') !== 'symbol') { return false; }
+	if (typeof Symbol('bar') !== 'symbol') { return false; }
+
+	return hasSymbolSham();
+};
+
+},{"./shams":394}],394:[function(require,module,exports){
+'use strict';
+
+/* eslint complexity: [2, 18], max-statements: [2, 33] */
+module.exports = function hasSymbols() {
+	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
+	if (typeof Symbol.iterator === 'symbol') { return true; }
+
+	var obj = {};
+	var sym = Symbol('test');
+	var symObj = Object(sym);
+	if (typeof sym === 'string') { return false; }
+
+	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
+	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
+
+	// temp disabled per https://github.com/ljharb/object.assign/issues/17
+	// if (sym instanceof Symbol) { return false; }
+	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
+	// if (!(symObj instanceof Symbol)) { return false; }
+
+	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
+	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
+
+	var symVal = 42;
+	obj[sym] = symVal;
+	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax, no-unreachable-loop
+	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
+
+	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
+
+	var syms = Object.getOwnPropertySymbols(obj);
+	if (syms.length !== 1 || syms[0] !== sym) { return false; }
+
+	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
+
+	if (typeof Object.getOwnPropertyDescriptor === 'function') {
+		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
+		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
+	}
+
+	return true;
+};
+
+},{}],395:[function(require,module,exports){
+'use strict';
+
+var bind = require('function-bind');
+
+module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
+
+},{"function-bind":391}],396:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -58611,7 +60800,8 @@ function validateParams (params) {
   return params
 }
 
-},{"http":439,"url":447}],412:[function(require,module,exports){
+},{"http":425,"url":445}],397:[function(require,module,exports){
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -58697,9 +60887,44 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],413:[function(require,module,exports){
+},{}],398:[function(require,module,exports){
 arguments[4][121][0].apply(exports,arguments)
-},{"dup":121}],414:[function(require,module,exports){
+},{"dup":121}],399:[function(require,module,exports){
+'use strict';
+
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var callBound = require('call-bind/callBound');
+
+var $toString = callBound('Object.prototype.toString');
+
+var isStandardArguments = function isArguments(value) {
+	if (hasToStringTag && value && typeof value === 'object' && Symbol.toStringTag in value) {
+		return false;
+	}
+	return $toString(value) === '[object Arguments]';
+};
+
+var isLegacyArguments = function isArguments(value) {
+	if (isStandardArguments(value)) {
+		return true;
+	}
+	return value !== null &&
+		typeof value === 'object' &&
+		typeof value.length === 'number' &&
+		value.length >= 0 &&
+		$toString(value) !== '[object Array]' &&
+		$toString(value.callee) === '[object Function]';
+};
+
+var supportsStandardArguments = (function () {
+	return isStandardArguments(arguments);
+}());
+
+isStandardArguments.isLegacyArguments = isLegacyArguments; // for tests
+
+module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArguments;
+
+},{"call-bind/callBound":385}],400:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -58722,17 +60947,109 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],415:[function(require,module,exports){
-var toString = {}.toString;
+},{}],401:[function(require,module,exports){
+'use strict';
 
-module.exports = Array.isArray || function (arr) {
-  return toString.call(arr) == '[object Array]';
+var toStr = Object.prototype.toString;
+var fnToStr = Function.prototype.toString;
+var isFnRegex = /^\s*(?:function)?\*/;
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+var getProto = Object.getPrototypeOf;
+var getGeneratorFunc = function () { // eslint-disable-line consistent-return
+	if (!hasToStringTag) {
+		return false;
+	}
+	try {
+		return Function('return function*() {}')();
+	} catch (e) {
+	}
+};
+var generatorFunc = getGeneratorFunc();
+var GeneratorFunction = getProto && generatorFunc ? getProto(generatorFunc) : false;
+
+module.exports = function isGeneratorFunction(fn) {
+	if (typeof fn !== 'function') {
+		return false;
+	}
+	if (isFnRegex.test(fnToStr.call(fn))) {
+		return true;
+	}
+	if (!hasToStringTag) {
+		var str = toStr.call(fn);
+		return str === '[object GeneratorFunction]';
+	}
+	return getProto && getProto(fn) === GeneratorFunction;
 };
 
-},{}],416:[function(require,module,exports){
-(function (process){
-// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
-// backported and transplited with Babel, with backwards-compat fixes
+},{}],402:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var forEach = require('foreach');
+var availableTypedArrays = require('available-typed-arrays');
+var callBound = require('call-bind/callBound');
+
+var $toString = callBound('Object.prototype.toString');
+var hasSymbols = require('has-symbols')();
+var hasToStringTag = hasSymbols && typeof Symbol.toStringTag === 'symbol';
+
+var typedArrays = availableTypedArrays();
+
+var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
+	for (var i = 0; i < array.length; i += 1) {
+		if (array[i] === value) {
+			return i;
+		}
+	}
+	return -1;
+};
+var $slice = callBound('String.prototype.slice');
+var toStrTags = {};
+var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
+var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+if (hasToStringTag && gOPD && getPrototypeOf) {
+	forEach(typedArrays, function (typedArray) {
+		var arr = new global[typedArray]();
+		if (!(Symbol.toStringTag in arr)) {
+			throw new EvalError('this engine has support for Symbol.toStringTag, but ' + typedArray + ' does not have the property! Please report this.');
+		}
+		var proto = getPrototypeOf(arr);
+		var descriptor = gOPD(proto, Symbol.toStringTag);
+		if (!descriptor) {
+			var superProto = getPrototypeOf(proto);
+			descriptor = gOPD(superProto, Symbol.toStringTag);
+		}
+		toStrTags[typedArray] = descriptor.get;
+	});
+}
+
+var tryTypedArrays = function tryAllTypedArrays(value) {
+	var anyTrue = false;
+	forEach(toStrTags, function (getter, typedArray) {
+		if (!anyTrue) {
+			try {
+				anyTrue = getter.call(value) === typedArray;
+			} catch (e) { /**/ }
+		}
+	});
+	return anyTrue;
+};
+
+module.exports = function isTypedArray(value) {
+	if (!value || typeof value !== 'object') { return false; }
+	if (!hasToStringTag) {
+		var tag = $slice($toString(value), 8, -1);
+		return $indexOf(typedArrays, tag) > -1;
+	}
+	if (!gOPD) { return false; }
+	return tryTypedArrays(value);
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"available-typed-arrays":379,"call-bind/callBound":385,"es-abstract/helpers/getOwnPropertyDescriptor":387,"foreach":389,"has-symbols":393}],403:[function(require,module,exports){
+(function (process){(function (){
+// 'path' module extracted from Node.js v8.11.1 (only the posix part)
+// transplited with Babel
 
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -58755,336 +61072,514 @@ module.exports = Array.isArray || function (arr) {
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function (path) {
-  if (typeof path !== 'string') path = path + '';
-  if (path.length === 0) return '.';
-  var code = path.charCodeAt(0);
-  var hasRoot = code === 47 /*/*/;
-  var end = -1;
-  var matchedSlash = true;
-  for (var i = path.length - 1; i >= 1; --i) {
-    code = path.charCodeAt(i);
-    if (code === 47 /*/*/) {
-        if (!matchedSlash) {
-          end = i;
-          break;
-        }
-      } else {
-      // We saw the first non-path separator
-      matchedSlash = false;
-    }
-  }
-
-  if (end === -1) return hasRoot ? '/' : '.';
-  if (hasRoot && end === 1) {
-    // return '//';
-    // Backwards-compat fix:
-    return '/';
-  }
-  return path.slice(0, end);
-};
-
-function basename(path) {
-  if (typeof path !== 'string') path = path + '';
-
-  var start = 0;
-  var end = -1;
-  var matchedSlash = true;
-  var i;
-
-  for (i = path.length - 1; i >= 0; --i) {
-    if (path.charCodeAt(i) === 47 /*/*/) {
-        // If we reached a path separator that was not part of a set of path
-        // separators at the end of the string, stop now
-        if (!matchedSlash) {
-          start = i + 1;
-          break;
-        }
-      } else if (end === -1) {
-      // We saw the first non-path separator, mark this as the end of our
-      // path component
-      matchedSlash = false;
-      end = i + 1;
-    }
-  }
-
-  if (end === -1) return '';
-  return path.slice(start, end);
-}
-
-// Uses a mixed approach for backwards-compatibility, as ext behavior changed
-// in new Node.js versions, so only basename() above is backported here
-exports.basename = function (path, ext) {
-  var f = basename(path);
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-exports.extname = function (path) {
-  if (typeof path !== 'string') path = path + '';
-  var startDot = -1;
-  var startPart = 0;
-  var end = -1;
-  var matchedSlash = true;
-  // Track the state of characters (if any) we see before our first dot and
-  // after any path separator we find
-  var preDotState = 0;
-  for (var i = path.length - 1; i >= 0; --i) {
-    var code = path.charCodeAt(i);
-    if (code === 47 /*/*/) {
-        // If we reached a path separator that was not part of a set of path
-        // separators at the end of the string, stop now
-        if (!matchedSlash) {
-          startPart = i + 1;
-          break;
-        }
-        continue;
-      }
-    if (end === -1) {
-      // We saw the first non-path separator, mark this as the end of our
-      // extension
-      matchedSlash = false;
-      end = i + 1;
-    }
-    if (code === 46 /*.*/) {
-        // If this is our first dot, mark it as the start of our extension
-        if (startDot === -1)
-          startDot = i;
-        else if (preDotState !== 1)
-          preDotState = 1;
-    } else if (startDot !== -1) {
-      // We saw a non-dot and non-path separator before our dot, so we should
-      // have a good chance at having a non-empty extension
-      preDotState = -1;
-    }
-  }
-
-  if (startDot === -1 || end === -1 ||
-      // We saw a non-dot character immediately before the dot
-      preDotState === 0 ||
-      // The (right-most) trimmed path component is exactly '..'
-      preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
-    return '';
-  }
-  return path.slice(startDot, end);
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":418}],417:[function(require,module,exports){
-(function (process){
 'use strict';
 
-if (typeof process === 'undefined' ||
-    !process.version ||
-    process.version.indexOf('v0.') === 0 ||
-    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = { nextTick: nextTick };
-} else {
-  module.exports = process
+function assertPath(path) {
+  if (typeof path !== 'string') {
+    throw new TypeError('Path must be a string. Received ' + JSON.stringify(path));
+  }
 }
 
-function nextTick(fn, arg1, arg2, arg3) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('"callback" argument must be a function');
-  }
-  var len = arguments.length;
-  var args, i;
-  switch (len) {
-  case 0:
-  case 1:
-    return process.nextTick(fn);
-  case 2:
-    return process.nextTick(function afterTickOne() {
-      fn.call(null, arg1);
-    });
-  case 3:
-    return process.nextTick(function afterTickTwo() {
-      fn.call(null, arg1, arg2);
-    });
-  case 4:
-    return process.nextTick(function afterTickThree() {
-      fn.call(null, arg1, arg2, arg3);
-    });
-  default:
-    args = new Array(len - 1);
-    i = 0;
-    while (i < args.length) {
-      args[i++] = arguments[i];
+// Resolves . and .. elements in a path with directory names
+function normalizeStringPosix(path, allowAboveRoot) {
+  var res = '';
+  var lastSegmentLength = 0;
+  var lastSlash = -1;
+  var dots = 0;
+  var code;
+  for (var i = 0; i <= path.length; ++i) {
+    if (i < path.length)
+      code = path.charCodeAt(i);
+    else if (code === 47 /*/*/)
+      break;
+    else
+      code = 47 /*/*/;
+    if (code === 47 /*/*/) {
+      if (lastSlash === i - 1 || dots === 1) {
+        // NOOP
+      } else if (lastSlash !== i - 1 && dots === 2) {
+        if (res.length < 2 || lastSegmentLength !== 2 || res.charCodeAt(res.length - 1) !== 46 /*.*/ || res.charCodeAt(res.length - 2) !== 46 /*.*/) {
+          if (res.length > 2) {
+            var lastSlashIndex = res.lastIndexOf('/');
+            if (lastSlashIndex !== res.length - 1) {
+              if (lastSlashIndex === -1) {
+                res = '';
+                lastSegmentLength = 0;
+              } else {
+                res = res.slice(0, lastSlashIndex);
+                lastSegmentLength = res.length - 1 - res.lastIndexOf('/');
+              }
+              lastSlash = i;
+              dots = 0;
+              continue;
+            }
+          } else if (res.length === 2 || res.length === 1) {
+            res = '';
+            lastSegmentLength = 0;
+            lastSlash = i;
+            dots = 0;
+            continue;
+          }
+        }
+        if (allowAboveRoot) {
+          if (res.length > 0)
+            res += '/..';
+          else
+            res = '..';
+          lastSegmentLength = 2;
+        }
+      } else {
+        if (res.length > 0)
+          res += '/' + path.slice(lastSlash + 1, i);
+        else
+          res = path.slice(lastSlash + 1, i);
+        lastSegmentLength = i - lastSlash - 1;
+      }
+      lastSlash = i;
+      dots = 0;
+    } else if (code === 46 /*.*/ && dots !== -1) {
+      ++dots;
+    } else {
+      dots = -1;
     }
-    return process.nextTick(function afterTick() {
-      fn.apply(null, args);
-    });
   }
+  return res;
 }
 
+function _format(sep, pathObject) {
+  var dir = pathObject.dir || pathObject.root;
+  var base = pathObject.base || (pathObject.name || '') + (pathObject.ext || '');
+  if (!dir) {
+    return base;
+  }
+  if (dir === pathObject.root) {
+    return dir + base;
+  }
+  return dir + sep + base;
+}
 
-}).call(this,require('_process'))
-},{"_process":418}],418:[function(require,module,exports){
+var posix = {
+  // path.resolve([from ...], to)
+  resolve: function resolve() {
+    var resolvedPath = '';
+    var resolvedAbsolute = false;
+    var cwd;
+
+    for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+      var path;
+      if (i >= 0)
+        path = arguments[i];
+      else {
+        if (cwd === undefined)
+          cwd = process.cwd();
+        path = cwd;
+      }
+
+      assertPath(path);
+
+      // Skip empty entries
+      if (path.length === 0) {
+        continue;
+      }
+
+      resolvedPath = path + '/' + resolvedPath;
+      resolvedAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    }
+
+    // At this point the path should be resolved to a full absolute path, but
+    // handle relative paths to be safe (might happen when process.cwd() fails)
+
+    // Normalize the path
+    resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute);
+
+    if (resolvedAbsolute) {
+      if (resolvedPath.length > 0)
+        return '/' + resolvedPath;
+      else
+        return '/';
+    } else if (resolvedPath.length > 0) {
+      return resolvedPath;
+    } else {
+      return '.';
+    }
+  },
+
+  normalize: function normalize(path) {
+    assertPath(path);
+
+    if (path.length === 0) return '.';
+
+    var isAbsolute = path.charCodeAt(0) === 47 /*/*/;
+    var trailingSeparator = path.charCodeAt(path.length - 1) === 47 /*/*/;
+
+    // Normalize the path
+    path = normalizeStringPosix(path, !isAbsolute);
+
+    if (path.length === 0 && !isAbsolute) path = '.';
+    if (path.length > 0 && trailingSeparator) path += '/';
+
+    if (isAbsolute) return '/' + path;
+    return path;
+  },
+
+  isAbsolute: function isAbsolute(path) {
+    assertPath(path);
+    return path.length > 0 && path.charCodeAt(0) === 47 /*/*/;
+  },
+
+  join: function join() {
+    if (arguments.length === 0)
+      return '.';
+    var joined;
+    for (var i = 0; i < arguments.length; ++i) {
+      var arg = arguments[i];
+      assertPath(arg);
+      if (arg.length > 0) {
+        if (joined === undefined)
+          joined = arg;
+        else
+          joined += '/' + arg;
+      }
+    }
+    if (joined === undefined)
+      return '.';
+    return posix.normalize(joined);
+  },
+
+  relative: function relative(from, to) {
+    assertPath(from);
+    assertPath(to);
+
+    if (from === to) return '';
+
+    from = posix.resolve(from);
+    to = posix.resolve(to);
+
+    if (from === to) return '';
+
+    // Trim any leading backslashes
+    var fromStart = 1;
+    for (; fromStart < from.length; ++fromStart) {
+      if (from.charCodeAt(fromStart) !== 47 /*/*/)
+        break;
+    }
+    var fromEnd = from.length;
+    var fromLen = fromEnd - fromStart;
+
+    // Trim any leading backslashes
+    var toStart = 1;
+    for (; toStart < to.length; ++toStart) {
+      if (to.charCodeAt(toStart) !== 47 /*/*/)
+        break;
+    }
+    var toEnd = to.length;
+    var toLen = toEnd - toStart;
+
+    // Compare paths to find the longest common path from root
+    var length = fromLen < toLen ? fromLen : toLen;
+    var lastCommonSep = -1;
+    var i = 0;
+    for (; i <= length; ++i) {
+      if (i === length) {
+        if (toLen > length) {
+          if (to.charCodeAt(toStart + i) === 47 /*/*/) {
+            // We get here if `from` is the exact base path for `to`.
+            // For example: from='/foo/bar'; to='/foo/bar/baz'
+            return to.slice(toStart + i + 1);
+          } else if (i === 0) {
+            // We get here if `from` is the root
+            // For example: from='/'; to='/foo'
+            return to.slice(toStart + i);
+          }
+        } else if (fromLen > length) {
+          if (from.charCodeAt(fromStart + i) === 47 /*/*/) {
+            // We get here if `to` is the exact base path for `from`.
+            // For example: from='/foo/bar/baz'; to='/foo/bar'
+            lastCommonSep = i;
+          } else if (i === 0) {
+            // We get here if `to` is the root.
+            // For example: from='/foo'; to='/'
+            lastCommonSep = 0;
+          }
+        }
+        break;
+      }
+      var fromCode = from.charCodeAt(fromStart + i);
+      var toCode = to.charCodeAt(toStart + i);
+      if (fromCode !== toCode)
+        break;
+      else if (fromCode === 47 /*/*/)
+        lastCommonSep = i;
+    }
+
+    var out = '';
+    // Generate the relative path based on the path difference between `to`
+    // and `from`
+    for (i = fromStart + lastCommonSep + 1; i <= fromEnd; ++i) {
+      if (i === fromEnd || from.charCodeAt(i) === 47 /*/*/) {
+        if (out.length === 0)
+          out += '..';
+        else
+          out += '/..';
+      }
+    }
+
+    // Lastly, append the rest of the destination (`to`) path that comes after
+    // the common path parts
+    if (out.length > 0)
+      return out + to.slice(toStart + lastCommonSep);
+    else {
+      toStart += lastCommonSep;
+      if (to.charCodeAt(toStart) === 47 /*/*/)
+        ++toStart;
+      return to.slice(toStart);
+    }
+  },
+
+  _makeLong: function _makeLong(path) {
+    return path;
+  },
+
+  dirname: function dirname(path) {
+    assertPath(path);
+    if (path.length === 0) return '.';
+    var code = path.charCodeAt(0);
+    var hasRoot = code === 47 /*/*/;
+    var end = -1;
+    var matchedSlash = true;
+    for (var i = path.length - 1; i >= 1; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          if (!matchedSlash) {
+            end = i;
+            break;
+          }
+        } else {
+        // We saw the first non-path separator
+        matchedSlash = false;
+      }
+    }
+
+    if (end === -1) return hasRoot ? '/' : '.';
+    if (hasRoot && end === 1) return '//';
+    return path.slice(0, end);
+  },
+
+  basename: function basename(path, ext) {
+    if (ext !== undefined && typeof ext !== 'string') throw new TypeError('"ext" argument must be a string');
+    assertPath(path);
+
+    var start = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i;
+
+    if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
+      if (ext.length === path.length && ext === path) return '';
+      var extIdx = ext.length - 1;
+      var firstNonSlashEnd = -1;
+      for (i = path.length - 1; i >= 0; --i) {
+        var code = path.charCodeAt(i);
+        if (code === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else {
+          if (firstNonSlashEnd === -1) {
+            // We saw the first non-path separator, remember this index in case
+            // we need it if the extension ends up not matching
+            matchedSlash = false;
+            firstNonSlashEnd = i + 1;
+          }
+          if (extIdx >= 0) {
+            // Try to match the explicit extension
+            if (code === ext.charCodeAt(extIdx)) {
+              if (--extIdx === -1) {
+                // We matched the extension, so mark this as the end of our path
+                // component
+                end = i;
+              }
+            } else {
+              // Extension does not match, so our result is the entire path
+              // component
+              extIdx = -1;
+              end = firstNonSlashEnd;
+            }
+          }
+        }
+      }
+
+      if (start === end) end = firstNonSlashEnd;else if (end === -1) end = path.length;
+      return path.slice(start, end);
+    } else {
+      for (i = path.length - 1; i >= 0; --i) {
+        if (path.charCodeAt(i) === 47 /*/*/) {
+            // If we reached a path separator that was not part of a set of path
+            // separators at the end of the string, stop now
+            if (!matchedSlash) {
+              start = i + 1;
+              break;
+            }
+          } else if (end === -1) {
+          // We saw the first non-path separator, mark this as the end of our
+          // path component
+          matchedSlash = false;
+          end = i + 1;
+        }
+      }
+
+      if (end === -1) return '';
+      return path.slice(start, end);
+    }
+  },
+
+  extname: function extname(path) {
+    assertPath(path);
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+    for (var i = path.length - 1; i >= 0; --i) {
+      var code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1)
+            startDot = i;
+          else if (preDotState !== 1)
+            preDotState = 1;
+      } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+        // We saw a non-dot character immediately before the dot
+        preDotState === 0 ||
+        // The (right-most) trimmed path component is exactly '..'
+        preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      return '';
+    }
+    return path.slice(startDot, end);
+  },
+
+  format: function format(pathObject) {
+    if (pathObject === null || typeof pathObject !== 'object') {
+      throw new TypeError('The "pathObject" argument must be of type Object. Received type ' + typeof pathObject);
+    }
+    return _format('/', pathObject);
+  },
+
+  parse: function parse(path) {
+    assertPath(path);
+
+    var ret = { root: '', dir: '', base: '', ext: '', name: '' };
+    if (path.length === 0) return ret;
+    var code = path.charCodeAt(0);
+    var isAbsolute = code === 47 /*/*/;
+    var start;
+    if (isAbsolute) {
+      ret.root = '/';
+      start = 1;
+    } else {
+      start = 0;
+    }
+    var startDot = -1;
+    var startPart = 0;
+    var end = -1;
+    var matchedSlash = true;
+    var i = path.length - 1;
+
+    // Track the state of characters (if any) we see before our first dot and
+    // after any path separator we find
+    var preDotState = 0;
+
+    // Get non-dir info
+    for (; i >= start; --i) {
+      code = path.charCodeAt(i);
+      if (code === 47 /*/*/) {
+          // If we reached a path separator that was not part of a set of path
+          // separators at the end of the string, stop now
+          if (!matchedSlash) {
+            startPart = i + 1;
+            break;
+          }
+          continue;
+        }
+      if (end === -1) {
+        // We saw the first non-path separator, mark this as the end of our
+        // extension
+        matchedSlash = false;
+        end = i + 1;
+      }
+      if (code === 46 /*.*/) {
+          // If this is our first dot, mark it as the start of our extension
+          if (startDot === -1) startDot = i;else if (preDotState !== 1) preDotState = 1;
+        } else if (startDot !== -1) {
+        // We saw a non-dot and non-path separator before our dot, so we should
+        // have a good chance at having a non-empty extension
+        preDotState = -1;
+      }
+    }
+
+    if (startDot === -1 || end === -1 ||
+    // We saw a non-dot character immediately before the dot
+    preDotState === 0 ||
+    // The (right-most) trimmed path component is exactly '..'
+    preDotState === 1 && startDot === end - 1 && startDot === startPart + 1) {
+      if (end !== -1) {
+        if (startPart === 0 && isAbsolute) ret.base = ret.name = path.slice(1, end);else ret.base = ret.name = path.slice(startPart, end);
+      }
+    } else {
+      if (startPart === 0 && isAbsolute) {
+        ret.name = path.slice(1, startDot);
+        ret.base = path.slice(1, end);
+      } else {
+        ret.name = path.slice(startPart, startDot);
+        ret.base = path.slice(startPart, end);
+      }
+      ret.ext = path.slice(startDot, end);
+    }
+
+    if (startPart > 0) ret.dir = path.slice(0, startPart - 1);else if (isAbsolute) ret.dir = '/';
+
+    return ret;
+  },
+
+  sep: '/',
+  delimiter: ':',
+  win32: null,
+  posix: null
+};
+
+posix.posix = posix;
+
+module.exports = posix;
+
+}).call(this)}).call(this,require('_process'))
+},{"_process":404}],404:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -59270,8 +61765,8 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],419:[function(require,module,exports){
-(function (global){
+},{}],405:[function(require,module,exports){
+(function (global){(function (){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
 
@@ -59806,8 +62301,8 @@ process.umask = function() { return 0; };
 
 }(this));
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],420:[function(require,module,exports){
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],406:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -59893,7 +62388,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],421:[function(require,module,exports){
+},{}],407:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -59980,2281 +62475,14 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],422:[function(require,module,exports){
+},{}],408:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":420,"./encode":421}],423:[function(require,module,exports){
-module.exports = require('./lib/_stream_duplex.js');
-
-},{"./lib/_stream_duplex.js":424}],424:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// a duplex stream is just a stream that is both readable and writable.
-// Since JS doesn't have multiple prototypal inheritance, this class
-// prototypally inherits from Readable, and then parasitically from
-// Writable.
-
-'use strict';
-
-/*<replacement>*/
-
-var pna = require('process-nextick-args');
-/*</replacement>*/
-
-/*<replacement>*/
-var objectKeys = Object.keys || function (obj) {
-  var keys = [];
-  for (var key in obj) {
-    keys.push(key);
-  }return keys;
-};
-/*</replacement>*/
-
-module.exports = Duplex;
-
-/*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
-/*</replacement>*/
-
-var Readable = require('./_stream_readable');
-var Writable = require('./_stream_writable');
-
-util.inherits(Duplex, Readable);
-
-{
-  // avoid scope creep, the keys array can then be collected
-  var keys = objectKeys(Writable.prototype);
-  for (var v = 0; v < keys.length; v++) {
-    var method = keys[v];
-    if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
-  }
-}
-
-function Duplex(options) {
-  if (!(this instanceof Duplex)) return new Duplex(options);
-
-  Readable.call(this, options);
-  Writable.call(this, options);
-
-  if (options && options.readable === false) this.readable = false;
-
-  if (options && options.writable === false) this.writable = false;
-
-  this.allowHalfOpen = true;
-  if (options && options.allowHalfOpen === false) this.allowHalfOpen = false;
-
-  this.once('end', onend);
-}
-
-Object.defineProperty(Duplex.prototype, 'writableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function () {
-    return this._writableState.highWaterMark;
-  }
-});
-
-// the no-half-open enforcer
-function onend() {
-  // if we allow half-open state, or if the writable side ended,
-  // then we're ok.
-  if (this.allowHalfOpen || this._writableState.ended) return;
-
-  // no more data can be written.
-  // But allow more writes to happen in this tick.
-  pna.nextTick(onEndNT, this);
-}
-
-function onEndNT(self) {
-  self.end();
-}
-
-Object.defineProperty(Duplex.prototype, 'destroyed', {
-  get: function () {
-    if (this._readableState === undefined || this._writableState === undefined) {
-      return false;
-    }
-    return this._readableState.destroyed && this._writableState.destroyed;
-  },
-  set: function (value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (this._readableState === undefined || this._writableState === undefined) {
-      return;
-    }
-
-    // backward compatibility, the user is explicitly
-    // managing destroyed
-    this._readableState.destroyed = value;
-    this._writableState.destroyed = value;
-  }
-});
-
-Duplex.prototype._destroy = function (err, cb) {
-  this.push(null);
-  this.end();
-
-  pna.nextTick(cb, err);
-};
-},{"./_stream_readable":426,"./_stream_writable":428,"core-util-is":409,"inherits":413,"process-nextick-args":417}],425:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// a passthrough stream.
-// basically just the most minimal sort of Transform stream.
-// Every written chunk gets output as-is.
-
-'use strict';
-
-module.exports = PassThrough;
-
-var Transform = require('./_stream_transform');
-
-/*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
-/*</replacement>*/
-
-util.inherits(PassThrough, Transform);
-
-function PassThrough(options) {
-  if (!(this instanceof PassThrough)) return new PassThrough(options);
-
-  Transform.call(this, options);
-}
-
-PassThrough.prototype._transform = function (chunk, encoding, cb) {
-  cb(null, chunk);
-};
-},{"./_stream_transform":427,"core-util-is":409,"inherits":413}],426:[function(require,module,exports){
-(function (process,global){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-'use strict';
-
-/*<replacement>*/
-
-var pna = require('process-nextick-args');
-/*</replacement>*/
-
-module.exports = Readable;
-
-/*<replacement>*/
-var isArray = require('isarray');
-/*</replacement>*/
-
-/*<replacement>*/
-var Duplex;
-/*</replacement>*/
-
-Readable.ReadableState = ReadableState;
-
-/*<replacement>*/
-var EE = require('events').EventEmitter;
-
-var EElistenerCount = function (emitter, type) {
-  return emitter.listeners(type).length;
-};
-/*</replacement>*/
-
-/*<replacement>*/
-var Stream = require('./internal/streams/stream');
-/*</replacement>*/
-
-/*<replacement>*/
-
-var Buffer = require('safe-buffer').Buffer;
-var OurUint8Array = global.Uint8Array || function () {};
-function _uint8ArrayToBuffer(chunk) {
-  return Buffer.from(chunk);
-}
-function _isUint8Array(obj) {
-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
-}
-
-/*</replacement>*/
-
-/*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
-/*</replacement>*/
-
-/*<replacement>*/
-var debugUtil = require('util');
-var debug = void 0;
-if (debugUtil && debugUtil.debuglog) {
-  debug = debugUtil.debuglog('stream');
-} else {
-  debug = function () {};
-}
-/*</replacement>*/
-
-var BufferList = require('./internal/streams/BufferList');
-var destroyImpl = require('./internal/streams/destroy');
-var StringDecoder;
-
-util.inherits(Readable, Stream);
-
-var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
-
-function prependListener(emitter, event, fn) {
-  // Sadly this is not cacheable as some libraries bundle their own
-  // event emitter implementation with them.
-  if (typeof emitter.prependListener === 'function') return emitter.prependListener(event, fn);
-
-  // This is a hack to make sure that our error handler is attached before any
-  // userland ones.  NEVER DO THIS. This is here only because this code needs
-  // to continue to work with older versions of Node.js that do not include
-  // the prependListener() method. The goal is to eventually remove this hack.
-  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
-}
-
-function ReadableState(options, stream) {
-  Duplex = Duplex || require('./_stream_duplex');
-
-  options = options || {};
-
-  // Duplex streams are both readable and writable, but share
-  // the same options object.
-  // However, some cases require setting options to different
-  // values for the readable and the writable sides of the duplex stream.
-  // These options can be provided separately as readableXXX and writableXXX.
-  var isDuplex = stream instanceof Duplex;
-
-  // object stream flag. Used to make read(n) ignore n and to
-  // make all the buffer merging and length checks go away
-  this.objectMode = !!options.objectMode;
-
-  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode;
-
-  // the point at which it stops calling _read() to fill the buffer
-  // Note: 0 is a valid value, means "don't call _read preemptively ever"
-  var hwm = options.highWaterMark;
-  var readableHwm = options.readableHighWaterMark;
-  var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-
-  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (readableHwm || readableHwm === 0)) this.highWaterMark = readableHwm;else this.highWaterMark = defaultHwm;
-
-  // cast to ints.
-  this.highWaterMark = Math.floor(this.highWaterMark);
-
-  // A linked list is used to store data chunks instead of an array because the
-  // linked list can remove elements from the beginning faster than
-  // array.shift()
-  this.buffer = new BufferList();
-  this.length = 0;
-  this.pipes = null;
-  this.pipesCount = 0;
-  this.flowing = null;
-  this.ended = false;
-  this.endEmitted = false;
-  this.reading = false;
-
-  // a flag to be able to tell if the event 'readable'/'data' is emitted
-  // immediately, or on a later tick.  We set this to true at first, because
-  // any actions that shouldn't happen until "later" should generally also
-  // not happen before the first read call.
-  this.sync = true;
-
-  // whenever we return null, then we set a flag to say
-  // that we're awaiting a 'readable' event emission.
-  this.needReadable = false;
-  this.emittedReadable = false;
-  this.readableListening = false;
-  this.resumeScheduled = false;
-
-  // has it been destroyed
-  this.destroyed = false;
-
-  // Crypto is kind of old and crusty.  Historically, its default string
-  // encoding is 'binary' so we have to make this configurable.
-  // Everything else in the universe uses 'utf8', though.
-  this.defaultEncoding = options.defaultEncoding || 'utf8';
-
-  // the number of writers that are awaiting a drain event in .pipe()s
-  this.awaitDrain = 0;
-
-  // if true, a maybeReadMore has been scheduled
-  this.readingMore = false;
-
-  this.decoder = null;
-  this.encoding = null;
-  if (options.encoding) {
-    if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
-    this.decoder = new StringDecoder(options.encoding);
-    this.encoding = options.encoding;
-  }
-}
-
-function Readable(options) {
-  Duplex = Duplex || require('./_stream_duplex');
-
-  if (!(this instanceof Readable)) return new Readable(options);
-
-  this._readableState = new ReadableState(options, this);
-
-  // legacy
-  this.readable = true;
-
-  if (options) {
-    if (typeof options.read === 'function') this._read = options.read;
-
-    if (typeof options.destroy === 'function') this._destroy = options.destroy;
-  }
-
-  Stream.call(this);
-}
-
-Object.defineProperty(Readable.prototype, 'destroyed', {
-  get: function () {
-    if (this._readableState === undefined) {
-      return false;
-    }
-    return this._readableState.destroyed;
-  },
-  set: function (value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (!this._readableState) {
-      return;
-    }
-
-    // backward compatibility, the user is explicitly
-    // managing destroyed
-    this._readableState.destroyed = value;
-  }
-});
-
-Readable.prototype.destroy = destroyImpl.destroy;
-Readable.prototype._undestroy = destroyImpl.undestroy;
-Readable.prototype._destroy = function (err, cb) {
-  this.push(null);
-  cb(err);
-};
-
-// Manually shove something into the read() buffer.
-// This returns true if the highWaterMark has not been hit yet,
-// similar to how Writable.write() returns true if you should
-// write() some more.
-Readable.prototype.push = function (chunk, encoding) {
-  var state = this._readableState;
-  var skipChunkCheck;
-
-  if (!state.objectMode) {
-    if (typeof chunk === 'string') {
-      encoding = encoding || state.defaultEncoding;
-      if (encoding !== state.encoding) {
-        chunk = Buffer.from(chunk, encoding);
-        encoding = '';
-      }
-      skipChunkCheck = true;
-    }
-  } else {
-    skipChunkCheck = true;
-  }
-
-  return readableAddChunk(this, chunk, encoding, false, skipChunkCheck);
-};
-
-// Unshift should *always* be something directly out of read()
-Readable.prototype.unshift = function (chunk) {
-  return readableAddChunk(this, chunk, null, true, false);
-};
-
-function readableAddChunk(stream, chunk, encoding, addToFront, skipChunkCheck) {
-  var state = stream._readableState;
-  if (chunk === null) {
-    state.reading = false;
-    onEofChunk(stream, state);
-  } else {
-    var er;
-    if (!skipChunkCheck) er = chunkInvalid(state, chunk);
-    if (er) {
-      stream.emit('error', er);
-    } else if (state.objectMode || chunk && chunk.length > 0) {
-      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer.prototype) {
-        chunk = _uint8ArrayToBuffer(chunk);
-      }
-
-      if (addToFront) {
-        if (state.endEmitted) stream.emit('error', new Error('stream.unshift() after end event'));else addChunk(stream, state, chunk, true);
-      } else if (state.ended) {
-        stream.emit('error', new Error('stream.push() after EOF'));
-      } else {
-        state.reading = false;
-        if (state.decoder && !encoding) {
-          chunk = state.decoder.write(chunk);
-          if (state.objectMode || chunk.length !== 0) addChunk(stream, state, chunk, false);else maybeReadMore(stream, state);
-        } else {
-          addChunk(stream, state, chunk, false);
-        }
-      }
-    } else if (!addToFront) {
-      state.reading = false;
-    }
-  }
-
-  return needMoreData(state);
-}
-
-function addChunk(stream, state, chunk, addToFront) {
-  if (state.flowing && state.length === 0 && !state.sync) {
-    stream.emit('data', chunk);
-    stream.read(0);
-  } else {
-    // update the buffer info.
-    state.length += state.objectMode ? 1 : chunk.length;
-    if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
-
-    if (state.needReadable) emitReadable(stream);
-  }
-  maybeReadMore(stream, state);
-}
-
-function chunkInvalid(state, chunk) {
-  var er;
-  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
-    er = new TypeError('Invalid non-string/buffer chunk');
-  }
-  return er;
-}
-
-// if it's past the high water mark, we can push in some more.
-// Also, if we have no data yet, we can stand some
-// more bytes.  This is to work around cases where hwm=0,
-// such as the repl.  Also, if the push() triggered a
-// readable event, and the user called read(largeNumber) such that
-// needReadable was set, then we ought to push more, so that another
-// 'readable' event will be triggered.
-function needMoreData(state) {
-  return !state.ended && (state.needReadable || state.length < state.highWaterMark || state.length === 0);
-}
-
-Readable.prototype.isPaused = function () {
-  return this._readableState.flowing === false;
-};
-
-// backwards compatibility.
-Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
-  this._readableState.decoder = new StringDecoder(enc);
-  this._readableState.encoding = enc;
-  return this;
-};
-
-// Don't raise the hwm > 8MB
-var MAX_HWM = 0x800000;
-function computeNewHighWaterMark(n) {
-  if (n >= MAX_HWM) {
-    n = MAX_HWM;
-  } else {
-    // Get the next highest power of 2 to prevent increasing hwm excessively in
-    // tiny amounts
-    n--;
-    n |= n >>> 1;
-    n |= n >>> 2;
-    n |= n >>> 4;
-    n |= n >>> 8;
-    n |= n >>> 16;
-    n++;
-  }
-  return n;
-}
-
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-function howMuchToRead(n, state) {
-  if (n <= 0 || state.length === 0 && state.ended) return 0;
-  if (state.objectMode) return 1;
-  if (n !== n) {
-    // Only flow one buffer at a time
-    if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
-  }
-  // If we're asking for more than the current hwm, then raise the hwm.
-  if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
-  if (n <= state.length) return n;
-  // Don't have enough
-  if (!state.ended) {
-    state.needReadable = true;
-    return 0;
-  }
-  return state.length;
-}
-
-// you can override either this method, or the async _read(n) below.
-Readable.prototype.read = function (n) {
-  debug('read', n);
-  n = parseInt(n, 10);
-  var state = this._readableState;
-  var nOrig = n;
-
-  if (n !== 0) state.emittedReadable = false;
-
-  // if we're doing read(0) to trigger a readable event, but we
-  // already have a bunch of data in the buffer, then just trigger
-  // the 'readable' event and move on.
-  if (n === 0 && state.needReadable && (state.length >= state.highWaterMark || state.ended)) {
-    debug('read: emitReadable', state.length, state.ended);
-    if (state.length === 0 && state.ended) endReadable(this);else emitReadable(this);
-    return null;
-  }
-
-  n = howMuchToRead(n, state);
-
-  // if we've ended, and we're now clear, then finish it up.
-  if (n === 0 && state.ended) {
-    if (state.length === 0) endReadable(this);
-    return null;
-  }
-
-  // All the actual chunk generation logic needs to be
-  // *below* the call to _read.  The reason is that in certain
-  // synthetic stream cases, such as passthrough streams, _read
-  // may be a completely synchronous operation which may change
-  // the state of the read buffer, providing enough data when
-  // before there was *not* enough.
-  //
-  // So, the steps are:
-  // 1. Figure out what the state of things will be after we do
-  // a read from the buffer.
-  //
-  // 2. If that resulting state will trigger a _read, then call _read.
-  // Note that this may be asynchronous, or synchronous.  Yes, it is
-  // deeply ugly to write APIs this way, but that still doesn't mean
-  // that the Readable class should behave improperly, as streams are
-  // designed to be sync/async agnostic.
-  // Take note if the _read call is sync or async (ie, if the read call
-  // has returned yet), so that we know whether or not it's safe to emit
-  // 'readable' etc.
-  //
-  // 3. Actually pull the requested chunks out of the buffer and return.
-
-  // if we need a readable event, then we need to do some reading.
-  var doRead = state.needReadable;
-  debug('need readable', doRead);
-
-  // if we currently have less than the highWaterMark, then also read some
-  if (state.length === 0 || state.length - n < state.highWaterMark) {
-    doRead = true;
-    debug('length less than watermark', doRead);
-  }
-
-  // however, if we've ended, then there's no point, and if we're already
-  // reading, then it's unnecessary.
-  if (state.ended || state.reading) {
-    doRead = false;
-    debug('reading or ended', doRead);
-  } else if (doRead) {
-    debug('do read');
-    state.reading = true;
-    state.sync = true;
-    // if the length is currently zero, then we *need* a readable event.
-    if (state.length === 0) state.needReadable = true;
-    // call internal read method
-    this._read(state.highWaterMark);
-    state.sync = false;
-    // If _read pushed data synchronously, then `reading` will be false,
-    // and we need to re-evaluate how much data we can return to the user.
-    if (!state.reading) n = howMuchToRead(nOrig, state);
-  }
-
-  var ret;
-  if (n > 0) ret = fromList(n, state);else ret = null;
-
-  if (ret === null) {
-    state.needReadable = true;
-    n = 0;
-  } else {
-    state.length -= n;
-  }
-
-  if (state.length === 0) {
-    // If we have nothing in the buffer, then we want to know
-    // as soon as we *do* get something into the buffer.
-    if (!state.ended) state.needReadable = true;
-
-    // If we tried to read() past the EOF, then emit end on the next tick.
-    if (nOrig !== n && state.ended) endReadable(this);
-  }
-
-  if (ret !== null) this.emit('data', ret);
-
-  return ret;
-};
-
-function onEofChunk(stream, state) {
-  if (state.ended) return;
-  if (state.decoder) {
-    var chunk = state.decoder.end();
-    if (chunk && chunk.length) {
-      state.buffer.push(chunk);
-      state.length += state.objectMode ? 1 : chunk.length;
-    }
-  }
-  state.ended = true;
-
-  // emit 'readable' now to make sure it gets picked up.
-  emitReadable(stream);
-}
-
-// Don't emit readable right away in sync mode, because this can trigger
-// another read() call => stack overflow.  This way, it might trigger
-// a nextTick recursion warning, but that's not so bad.
-function emitReadable(stream) {
-  var state = stream._readableState;
-  state.needReadable = false;
-  if (!state.emittedReadable) {
-    debug('emitReadable', state.flowing);
-    state.emittedReadable = true;
-    if (state.sync) pna.nextTick(emitReadable_, stream);else emitReadable_(stream);
-  }
-}
-
-function emitReadable_(stream) {
-  debug('emit readable');
-  stream.emit('readable');
-  flow(stream);
-}
-
-// at this point, the user has presumably seen the 'readable' event,
-// and called read() to consume some data.  that may have triggered
-// in turn another _read(n) call, in which case reading = true if
-// it's in progress.
-// However, if we're not ended, or reading, and the length < hwm,
-// then go ahead and try to read some more preemptively.
-function maybeReadMore(stream, state) {
-  if (!state.readingMore) {
-    state.readingMore = true;
-    pna.nextTick(maybeReadMore_, stream, state);
-  }
-}
-
-function maybeReadMore_(stream, state) {
-  var len = state.length;
-  while (!state.reading && !state.flowing && !state.ended && state.length < state.highWaterMark) {
-    debug('maybeReadMore read 0');
-    stream.read(0);
-    if (len === state.length)
-      // didn't get any data, stop spinning.
-      break;else len = state.length;
-  }
-  state.readingMore = false;
-}
-
-// abstract method.  to be overridden in specific implementation classes.
-// call cb(er, data) where data is <= n in length.
-// for virtual (non-string, non-buffer) streams, "length" is somewhat
-// arbitrary, and perhaps not very meaningful.
-Readable.prototype._read = function (n) {
-  this.emit('error', new Error('_read() is not implemented'));
-};
-
-Readable.prototype.pipe = function (dest, pipeOpts) {
-  var src = this;
-  var state = this._readableState;
-
-  switch (state.pipesCount) {
-    case 0:
-      state.pipes = dest;
-      break;
-    case 1:
-      state.pipes = [state.pipes, dest];
-      break;
-    default:
-      state.pipes.push(dest);
-      break;
-  }
-  state.pipesCount += 1;
-  debug('pipe count=%d opts=%j', state.pipesCount, pipeOpts);
-
-  var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
-
-  var endFn = doEnd ? onend : unpipe;
-  if (state.endEmitted) pna.nextTick(endFn);else src.once('end', endFn);
-
-  dest.on('unpipe', onunpipe);
-  function onunpipe(readable, unpipeInfo) {
-    debug('onunpipe');
-    if (readable === src) {
-      if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
-        unpipeInfo.hasUnpiped = true;
-        cleanup();
-      }
-    }
-  }
-
-  function onend() {
-    debug('onend');
-    dest.end();
-  }
-
-  // when the dest drains, it reduces the awaitDrain counter
-  // on the source.  This would be more elegant with a .once()
-  // handler in flow(), but adding and removing repeatedly is
-  // too slow.
-  var ondrain = pipeOnDrain(src);
-  dest.on('drain', ondrain);
-
-  var cleanedUp = false;
-  function cleanup() {
-    debug('cleanup');
-    // cleanup event handlers once the pipe is broken
-    dest.removeListener('close', onclose);
-    dest.removeListener('finish', onfinish);
-    dest.removeListener('drain', ondrain);
-    dest.removeListener('error', onerror);
-    dest.removeListener('unpipe', onunpipe);
-    src.removeListener('end', onend);
-    src.removeListener('end', unpipe);
-    src.removeListener('data', ondata);
-
-    cleanedUp = true;
-
-    // if the reader is waiting for a drain event from this
-    // specific writer, then it would cause it to never start
-    // flowing again.
-    // So, if this is awaiting a drain, then we just call it now.
-    // If we don't know, then assume that we are waiting for one.
-    if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
-  }
-
-  // If the user pushes more data while we're writing to dest then we'll end up
-  // in ondata again. However, we only want to increase awaitDrain once because
-  // dest will only emit one 'drain' event for the multiple writes.
-  // => Introduce a guard on increasing awaitDrain.
-  var increasedAwaitDrain = false;
-  src.on('data', ondata);
-  function ondata(chunk) {
-    debug('ondata');
-    increasedAwaitDrain = false;
-    var ret = dest.write(chunk);
-    if (false === ret && !increasedAwaitDrain) {
-      // If the user unpiped during `dest.write()`, it is possible
-      // to get stuck in a permanently paused state if that write
-      // also returned false.
-      // => Check whether `dest` is still a piping destination.
-      if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
-        debug('false write response, pause', src._readableState.awaitDrain);
-        src._readableState.awaitDrain++;
-        increasedAwaitDrain = true;
-      }
-      src.pause();
-    }
-  }
-
-  // if the dest has an error, then stop piping into it.
-  // however, don't suppress the throwing behavior for this.
-  function onerror(er) {
-    debug('onerror', er);
-    unpipe();
-    dest.removeListener('error', onerror);
-    if (EElistenerCount(dest, 'error') === 0) dest.emit('error', er);
-  }
-
-  // Make sure our error handler is attached before userland ones.
-  prependListener(dest, 'error', onerror);
-
-  // Both close and finish should trigger unpipe, but only once.
-  function onclose() {
-    dest.removeListener('finish', onfinish);
-    unpipe();
-  }
-  dest.once('close', onclose);
-  function onfinish() {
-    debug('onfinish');
-    dest.removeListener('close', onclose);
-    unpipe();
-  }
-  dest.once('finish', onfinish);
-
-  function unpipe() {
-    debug('unpipe');
-    src.unpipe(dest);
-  }
-
-  // tell the dest that it's being piped to
-  dest.emit('pipe', src);
-
-  // start the flow if it hasn't been started already.
-  if (!state.flowing) {
-    debug('pipe resume');
-    src.resume();
-  }
-
-  return dest;
-};
-
-function pipeOnDrain(src) {
-  return function () {
-    var state = src._readableState;
-    debug('pipeOnDrain', state.awaitDrain);
-    if (state.awaitDrain) state.awaitDrain--;
-    if (state.awaitDrain === 0 && EElistenerCount(src, 'data')) {
-      state.flowing = true;
-      flow(src);
-    }
-  };
-}
-
-Readable.prototype.unpipe = function (dest) {
-  var state = this._readableState;
-  var unpipeInfo = { hasUnpiped: false };
-
-  // if we're not piping anywhere, then do nothing.
-  if (state.pipesCount === 0) return this;
-
-  // just one destination.  most common case.
-  if (state.pipesCount === 1) {
-    // passed in one, but it's not the right one.
-    if (dest && dest !== state.pipes) return this;
-
-    if (!dest) dest = state.pipes;
-
-    // got a match.
-    state.pipes = null;
-    state.pipesCount = 0;
-    state.flowing = false;
-    if (dest) dest.emit('unpipe', this, unpipeInfo);
-    return this;
-  }
-
-  // slow case. multiple pipe destinations.
-
-  if (!dest) {
-    // remove all.
-    var dests = state.pipes;
-    var len = state.pipesCount;
-    state.pipes = null;
-    state.pipesCount = 0;
-    state.flowing = false;
-
-    for (var i = 0; i < len; i++) {
-      dests[i].emit('unpipe', this, unpipeInfo);
-    }return this;
-  }
-
-  // try to find the right one.
-  var index = indexOf(state.pipes, dest);
-  if (index === -1) return this;
-
-  state.pipes.splice(index, 1);
-  state.pipesCount -= 1;
-  if (state.pipesCount === 1) state.pipes = state.pipes[0];
-
-  dest.emit('unpipe', this, unpipeInfo);
-
-  return this;
-};
-
-// set up data events if they are asked for
-// Ensure readable listeners eventually get something
-Readable.prototype.on = function (ev, fn) {
-  var res = Stream.prototype.on.call(this, ev, fn);
-
-  if (ev === 'data') {
-    // Start flowing on next tick if stream isn't explicitly paused
-    if (this._readableState.flowing !== false) this.resume();
-  } else if (ev === 'readable') {
-    var state = this._readableState;
-    if (!state.endEmitted && !state.readableListening) {
-      state.readableListening = state.needReadable = true;
-      state.emittedReadable = false;
-      if (!state.reading) {
-        pna.nextTick(nReadingNextTick, this);
-      } else if (state.length) {
-        emitReadable(this);
-      }
-    }
-  }
-
-  return res;
-};
-Readable.prototype.addListener = Readable.prototype.on;
-
-function nReadingNextTick(self) {
-  debug('readable nexttick read 0');
-  self.read(0);
-}
-
-// pause() and resume() are remnants of the legacy readable stream API
-// If the user uses them, then switch into old mode.
-Readable.prototype.resume = function () {
-  var state = this._readableState;
-  if (!state.flowing) {
-    debug('resume');
-    state.flowing = true;
-    resume(this, state);
-  }
-  return this;
-};
-
-function resume(stream, state) {
-  if (!state.resumeScheduled) {
-    state.resumeScheduled = true;
-    pna.nextTick(resume_, stream, state);
-  }
-}
-
-function resume_(stream, state) {
-  if (!state.reading) {
-    debug('resume read 0');
-    stream.read(0);
-  }
-
-  state.resumeScheduled = false;
-  state.awaitDrain = 0;
-  stream.emit('resume');
-  flow(stream);
-  if (state.flowing && !state.reading) stream.read(0);
-}
-
-Readable.prototype.pause = function () {
-  debug('call pause flowing=%j', this._readableState.flowing);
-  if (false !== this._readableState.flowing) {
-    debug('pause');
-    this._readableState.flowing = false;
-    this.emit('pause');
-  }
-  return this;
-};
-
-function flow(stream) {
-  var state = stream._readableState;
-  debug('flow', state.flowing);
-  while (state.flowing && stream.read() !== null) {}
-}
-
-// wrap an old-style stream as the async data source.
-// This is *not* part of the readable stream interface.
-// It is an ugly unfortunate mess of history.
-Readable.prototype.wrap = function (stream) {
-  var _this = this;
-
-  var state = this._readableState;
-  var paused = false;
-
-  stream.on('end', function () {
-    debug('wrapped end');
-    if (state.decoder && !state.ended) {
-      var chunk = state.decoder.end();
-      if (chunk && chunk.length) _this.push(chunk);
-    }
-
-    _this.push(null);
-  });
-
-  stream.on('data', function (chunk) {
-    debug('wrapped data');
-    if (state.decoder) chunk = state.decoder.write(chunk);
-
-    // don't skip over falsy values in objectMode
-    if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
-
-    var ret = _this.push(chunk);
-    if (!ret) {
-      paused = true;
-      stream.pause();
-    }
-  });
-
-  // proxy all the other methods.
-  // important when wrapping filters and duplexes.
-  for (var i in stream) {
-    if (this[i] === undefined && typeof stream[i] === 'function') {
-      this[i] = function (method) {
-        return function () {
-          return stream[method].apply(stream, arguments);
-        };
-      }(i);
-    }
-  }
-
-  // proxy certain important events.
-  for (var n = 0; n < kProxyEvents.length; n++) {
-    stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
-  }
-
-  // when we try to consume some more bytes, simply unpause the
-  // underlying stream.
-  this._read = function (n) {
-    debug('wrapped _read', n);
-    if (paused) {
-      paused = false;
-      stream.resume();
-    }
-  };
-
-  return this;
-};
-
-Object.defineProperty(Readable.prototype, 'readableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function () {
-    return this._readableState.highWaterMark;
-  }
-});
-
-// exposed for testing purposes only.
-Readable._fromList = fromList;
-
-// Pluck off n bytes from an array of buffers.
-// Length is the combined lengths of all the buffers in the list.
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-function fromList(n, state) {
-  // nothing buffered
-  if (state.length === 0) return null;
-
-  var ret;
-  if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
-    // read it all, truncate the list
-    if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.head.data;else ret = state.buffer.concat(state.length);
-    state.buffer.clear();
-  } else {
-    // read part of list
-    ret = fromListPartial(n, state.buffer, state.decoder);
-  }
-
-  return ret;
-}
-
-// Extracts only enough buffered data to satisfy the amount requested.
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-function fromListPartial(n, list, hasStrings) {
-  var ret;
-  if (n < list.head.data.length) {
-    // slice is the same for buffers and strings
-    ret = list.head.data.slice(0, n);
-    list.head.data = list.head.data.slice(n);
-  } else if (n === list.head.data.length) {
-    // first chunk is a perfect match
-    ret = list.shift();
-  } else {
-    // result spans more than one buffer
-    ret = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);
-  }
-  return ret;
-}
-
-// Copies a specified amount of characters from the list of buffered data
-// chunks.
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-function copyFromBufferString(n, list) {
-  var p = list.head;
-  var c = 1;
-  var ret = p.data;
-  n -= ret.length;
-  while (p = p.next) {
-    var str = p.data;
-    var nb = n > str.length ? str.length : n;
-    if (nb === str.length) ret += str;else ret += str.slice(0, n);
-    n -= nb;
-    if (n === 0) {
-      if (nb === str.length) {
-        ++c;
-        if (p.next) list.head = p.next;else list.head = list.tail = null;
-      } else {
-        list.head = p;
-        p.data = str.slice(nb);
-      }
-      break;
-    }
-    ++c;
-  }
-  list.length -= c;
-  return ret;
-}
-
-// Copies a specified amount of bytes from the list of buffered data chunks.
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-function copyFromBuffer(n, list) {
-  var ret = Buffer.allocUnsafe(n);
-  var p = list.head;
-  var c = 1;
-  p.data.copy(ret);
-  n -= p.data.length;
-  while (p = p.next) {
-    var buf = p.data;
-    var nb = n > buf.length ? buf.length : n;
-    buf.copy(ret, ret.length - n, 0, nb);
-    n -= nb;
-    if (n === 0) {
-      if (nb === buf.length) {
-        ++c;
-        if (p.next) list.head = p.next;else list.head = list.tail = null;
-      } else {
-        list.head = p;
-        p.data = buf.slice(nb);
-      }
-      break;
-    }
-    ++c;
-  }
-  list.length -= c;
-  return ret;
-}
-
-function endReadable(stream) {
-  var state = stream._readableState;
-
-  // If we get here before consuming all the bytes, then that is a
-  // bug in node.  Should never happen.
-  if (state.length > 0) throw new Error('"endReadable()" called on non-empty stream');
-
-  if (!state.endEmitted) {
-    state.ended = true;
-    pna.nextTick(endReadableNT, state, stream);
-  }
-}
-
-function endReadableNT(state, stream) {
-  // Check that we didn't get one last unshift.
-  if (!state.endEmitted && state.length === 0) {
-    state.endEmitted = true;
-    stream.readable = false;
-    stream.emit('end');
-  }
-}
-
-function indexOf(xs, x) {
-  for (var i = 0, l = xs.length; i < l; i++) {
-    if (xs[i] === x) return i;
-  }
-  return -1;
-}
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":424,"./internal/streams/BufferList":429,"./internal/streams/destroy":430,"./internal/streams/stream":431,"_process":418,"core-util-is":409,"events":410,"inherits":413,"isarray":415,"process-nextick-args":417,"safe-buffer":432,"string_decoder/":433,"util":405}],427:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// a transform stream is a readable/writable stream where you do
-// something with the data.  Sometimes it's called a "filter",
-// but that's not a great name for it, since that implies a thing where
-// some bits pass through, and others are simply ignored.  (That would
-// be a valid example of a transform, of course.)
-//
-// While the output is causally related to the input, it's not a
-// necessarily symmetric or synchronous transformation.  For example,
-// a zlib stream might take multiple plain-text writes(), and then
-// emit a single compressed chunk some time in the future.
-//
-// Here's how this works:
-//
-// The Transform stream has all the aspects of the readable and writable
-// stream classes.  When you write(chunk), that calls _write(chunk,cb)
-// internally, and returns false if there's a lot of pending writes
-// buffered up.  When you call read(), that calls _read(n) until
-// there's enough pending readable data buffered up.
-//
-// In a transform stream, the written data is placed in a buffer.  When
-// _read(n) is called, it transforms the queued up data, calling the
-// buffered _write cb's as it consumes chunks.  If consuming a single
-// written chunk would result in multiple output chunks, then the first
-// outputted bit calls the readcb, and subsequent chunks just go into
-// the read buffer, and will cause it to emit 'readable' if necessary.
-//
-// This way, back-pressure is actually determined by the reading side,
-// since _read has to be called to start processing a new chunk.  However,
-// a pathological inflate type of transform can cause excessive buffering
-// here.  For example, imagine a stream where every byte of input is
-// interpreted as an integer from 0-255, and then results in that many
-// bytes of output.  Writing the 4 bytes {ff,ff,ff,ff} would result in
-// 1kb of data being output.  In this case, you could write a very small
-// amount of input, and end up with a very large amount of output.  In
-// such a pathological inflating mechanism, there'd be no way to tell
-// the system to stop doing the transform.  A single 4MB write could
-// cause the system to run out of memory.
-//
-// However, even in such a pathological case, only a single written chunk
-// would be consumed, and then the rest would wait (un-transformed) until
-// the results of the previous transformed chunk were consumed.
-
-'use strict';
-
-module.exports = Transform;
-
-var Duplex = require('./_stream_duplex');
-
-/*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
-/*</replacement>*/
-
-util.inherits(Transform, Duplex);
-
-function afterTransform(er, data) {
-  var ts = this._transformState;
-  ts.transforming = false;
-
-  var cb = ts.writecb;
-
-  if (!cb) {
-    return this.emit('error', new Error('write callback called multiple times'));
-  }
-
-  ts.writechunk = null;
-  ts.writecb = null;
-
-  if (data != null) // single equals check for both `null` and `undefined`
-    this.push(data);
-
-  cb(er);
-
-  var rs = this._readableState;
-  rs.reading = false;
-  if (rs.needReadable || rs.length < rs.highWaterMark) {
-    this._read(rs.highWaterMark);
-  }
-}
-
-function Transform(options) {
-  if (!(this instanceof Transform)) return new Transform(options);
-
-  Duplex.call(this, options);
-
-  this._transformState = {
-    afterTransform: afterTransform.bind(this),
-    needTransform: false,
-    transforming: false,
-    writecb: null,
-    writechunk: null,
-    writeencoding: null
-  };
-
-  // start out asking for a readable event once data is transformed.
-  this._readableState.needReadable = true;
-
-  // we have implemented the _read method, and done the other things
-  // that Readable wants before the first _read call, so unset the
-  // sync guard flag.
-  this._readableState.sync = false;
-
-  if (options) {
-    if (typeof options.transform === 'function') this._transform = options.transform;
-
-    if (typeof options.flush === 'function') this._flush = options.flush;
-  }
-
-  // When the writable side finishes, then flush out anything remaining.
-  this.on('prefinish', prefinish);
-}
-
-function prefinish() {
-  var _this = this;
-
-  if (typeof this._flush === 'function') {
-    this._flush(function (er, data) {
-      done(_this, er, data);
-    });
-  } else {
-    done(this, null, null);
-  }
-}
-
-Transform.prototype.push = function (chunk, encoding) {
-  this._transformState.needTransform = false;
-  return Duplex.prototype.push.call(this, chunk, encoding);
-};
-
-// This is the part where you do stuff!
-// override this function in implementation classes.
-// 'chunk' is an input chunk.
-//
-// Call `push(newChunk)` to pass along transformed output
-// to the readable side.  You may call 'push' zero or more times.
-//
-// Call `cb(err)` when you are done with this chunk.  If you pass
-// an error, then that'll put the hurt on the whole operation.  If you
-// never call cb(), then you'll never get another chunk.
-Transform.prototype._transform = function (chunk, encoding, cb) {
-  throw new Error('_transform() is not implemented');
-};
-
-Transform.prototype._write = function (chunk, encoding, cb) {
-  var ts = this._transformState;
-  ts.writecb = cb;
-  ts.writechunk = chunk;
-  ts.writeencoding = encoding;
-  if (!ts.transforming) {
-    var rs = this._readableState;
-    if (ts.needTransform || rs.needReadable || rs.length < rs.highWaterMark) this._read(rs.highWaterMark);
-  }
-};
-
-// Doesn't matter what the args are here.
-// _transform does all the work.
-// That we got here means that the readable side wants more data.
-Transform.prototype._read = function (n) {
-  var ts = this._transformState;
-
-  if (ts.writechunk !== null && ts.writecb && !ts.transforming) {
-    ts.transforming = true;
-    this._transform(ts.writechunk, ts.writeencoding, ts.afterTransform);
-  } else {
-    // mark that we need a transform, so that any data that comes in
-    // will get processed, now that we've asked for it.
-    ts.needTransform = true;
-  }
-};
-
-Transform.prototype._destroy = function (err, cb) {
-  var _this2 = this;
-
-  Duplex.prototype._destroy.call(this, err, function (err2) {
-    cb(err2);
-    _this2.emit('close');
-  });
-};
-
-function done(stream, er, data) {
-  if (er) return stream.emit('error', er);
-
-  if (data != null) // single equals check for both `null` and `undefined`
-    stream.push(data);
-
-  // if there's nothing in the write buffer, then that means
-  // that nothing more will ever be provided
-  if (stream._writableState.length) throw new Error('Calling transform done when ws.length != 0');
-
-  if (stream._transformState.transforming) throw new Error('Calling transform done when still transforming');
-
-  return stream.push(null);
-}
-},{"./_stream_duplex":424,"core-util-is":409,"inherits":413}],428:[function(require,module,exports){
-(function (process,global,setImmediate){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// A bit simpler than readable streams.
-// Implement an async ._write(chunk, encoding, cb), and it'll handle all
-// the drain event emission and buffering.
-
-'use strict';
-
-/*<replacement>*/
-
-var pna = require('process-nextick-args');
-/*</replacement>*/
-
-module.exports = Writable;
-
-/* <replacement> */
-function WriteReq(chunk, encoding, cb) {
-  this.chunk = chunk;
-  this.encoding = encoding;
-  this.callback = cb;
-  this.next = null;
-}
-
-// It seems a linked list but it is not
-// there will be only 2 of these for each stream
-function CorkedRequest(state) {
-  var _this = this;
-
-  this.next = null;
-  this.entry = null;
-  this.finish = function () {
-    onCorkedFinish(_this, state);
-  };
-}
-/* </replacement> */
-
-/*<replacement>*/
-var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : pna.nextTick;
-/*</replacement>*/
-
-/*<replacement>*/
-var Duplex;
-/*</replacement>*/
-
-Writable.WritableState = WritableState;
-
-/*<replacement>*/
-var util = require('core-util-is');
-util.inherits = require('inherits');
-/*</replacement>*/
-
-/*<replacement>*/
-var internalUtil = {
-  deprecate: require('util-deprecate')
-};
-/*</replacement>*/
-
-/*<replacement>*/
-var Stream = require('./internal/streams/stream');
-/*</replacement>*/
-
-/*<replacement>*/
-
-var Buffer = require('safe-buffer').Buffer;
-var OurUint8Array = global.Uint8Array || function () {};
-function _uint8ArrayToBuffer(chunk) {
-  return Buffer.from(chunk);
-}
-function _isUint8Array(obj) {
-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
-}
-
-/*</replacement>*/
-
-var destroyImpl = require('./internal/streams/destroy');
-
-util.inherits(Writable, Stream);
-
-function nop() {}
-
-function WritableState(options, stream) {
-  Duplex = Duplex || require('./_stream_duplex');
-
-  options = options || {};
-
-  // Duplex streams are both readable and writable, but share
-  // the same options object.
-  // However, some cases require setting options to different
-  // values for the readable and the writable sides of the duplex stream.
-  // These options can be provided separately as readableXXX and writableXXX.
-  var isDuplex = stream instanceof Duplex;
-
-  // object stream flag to indicate whether or not this stream
-  // contains buffers or objects.
-  this.objectMode = !!options.objectMode;
-
-  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode;
-
-  // the point at which write() starts returning false
-  // Note: 0 is a valid value, means that we always return false if
-  // the entire buffer is not flushed immediately on write()
-  var hwm = options.highWaterMark;
-  var writableHwm = options.writableHighWaterMark;
-  var defaultHwm = this.objectMode ? 16 : 16 * 1024;
-
-  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (writableHwm || writableHwm === 0)) this.highWaterMark = writableHwm;else this.highWaterMark = defaultHwm;
-
-  // cast to ints.
-  this.highWaterMark = Math.floor(this.highWaterMark);
-
-  // if _final has been called
-  this.finalCalled = false;
-
-  // drain event flag.
-  this.needDrain = false;
-  // at the start of calling end()
-  this.ending = false;
-  // when end() has been called, and returned
-  this.ended = false;
-  // when 'finish' is emitted
-  this.finished = false;
-
-  // has it been destroyed
-  this.destroyed = false;
-
-  // should we decode strings into buffers before passing to _write?
-  // this is here so that some node-core streams can optimize string
-  // handling at a lower level.
-  var noDecode = options.decodeStrings === false;
-  this.decodeStrings = !noDecode;
-
-  // Crypto is kind of old and crusty.  Historically, its default string
-  // encoding is 'binary' so we have to make this configurable.
-  // Everything else in the universe uses 'utf8', though.
-  this.defaultEncoding = options.defaultEncoding || 'utf8';
-
-  // not an actual buffer we keep track of, but a measurement
-  // of how much we're waiting to get pushed to some underlying
-  // socket or file.
-  this.length = 0;
-
-  // a flag to see when we're in the middle of a write.
-  this.writing = false;
-
-  // when true all writes will be buffered until .uncork() call
-  this.corked = 0;
-
-  // a flag to be able to tell if the onwrite cb is called immediately,
-  // or on a later tick.  We set this to true at first, because any
-  // actions that shouldn't happen until "later" should generally also
-  // not happen before the first write call.
-  this.sync = true;
-
-  // a flag to know if we're processing previously buffered items, which
-  // may call the _write() callback in the same tick, so that we don't
-  // end up in an overlapped onwrite situation.
-  this.bufferProcessing = false;
-
-  // the callback that's passed to _write(chunk,cb)
-  this.onwrite = function (er) {
-    onwrite(stream, er);
-  };
-
-  // the callback that the user supplies to write(chunk,encoding,cb)
-  this.writecb = null;
-
-  // the amount that is being written when _write is called.
-  this.writelen = 0;
-
-  this.bufferedRequest = null;
-  this.lastBufferedRequest = null;
-
-  // number of pending user-supplied write callbacks
-  // this must be 0 before 'finish' can be emitted
-  this.pendingcb = 0;
-
-  // emit prefinish if the only thing we're waiting for is _write cbs
-  // This is relevant for synchronous Transform streams
-  this.prefinished = false;
-
-  // True if the error was already emitted and should not be thrown again
-  this.errorEmitted = false;
-
-  // count buffered requests
-  this.bufferedRequestCount = 0;
-
-  // allocate the first CorkedRequest, there is always
-  // one allocated and free to use, and we maintain at most two
-  this.corkedRequestsFree = new CorkedRequest(this);
-}
-
-WritableState.prototype.getBuffer = function getBuffer() {
-  var current = this.bufferedRequest;
-  var out = [];
-  while (current) {
-    out.push(current);
-    current = current.next;
-  }
-  return out;
-};
-
-(function () {
-  try {
-    Object.defineProperty(WritableState.prototype, 'buffer', {
-      get: internalUtil.deprecate(function () {
-        return this.getBuffer();
-      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
-    });
-  } catch (_) {}
-})();
-
-// Test _writableState for inheritance to account for Duplex streams,
-// whose prototype chain only points to Readable.
-var realHasInstance;
-if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
-  realHasInstance = Function.prototype[Symbol.hasInstance];
-  Object.defineProperty(Writable, Symbol.hasInstance, {
-    value: function (object) {
-      if (realHasInstance.call(this, object)) return true;
-      if (this !== Writable) return false;
-
-      return object && object._writableState instanceof WritableState;
-    }
-  });
-} else {
-  realHasInstance = function (object) {
-    return object instanceof this;
-  };
-}
-
-function Writable(options) {
-  Duplex = Duplex || require('./_stream_duplex');
-
-  // Writable ctor is applied to Duplexes, too.
-  // `realHasInstance` is necessary because using plain `instanceof`
-  // would return false, as no `_writableState` property is attached.
-
-  // Trying to use the custom `instanceof` for Writable here will also break the
-  // Node.js LazyTransform implementation, which has a non-trivial getter for
-  // `_writableState` that would lead to infinite recursion.
-  if (!realHasInstance.call(Writable, this) && !(this instanceof Duplex)) {
-    return new Writable(options);
-  }
-
-  this._writableState = new WritableState(options, this);
-
-  // legacy.
-  this.writable = true;
-
-  if (options) {
-    if (typeof options.write === 'function') this._write = options.write;
-
-    if (typeof options.writev === 'function') this._writev = options.writev;
-
-    if (typeof options.destroy === 'function') this._destroy = options.destroy;
-
-    if (typeof options.final === 'function') this._final = options.final;
-  }
-
-  Stream.call(this);
-}
-
-// Otherwise people can pipe Writable streams, which is just wrong.
-Writable.prototype.pipe = function () {
-  this.emit('error', new Error('Cannot pipe, not readable'));
-};
-
-function writeAfterEnd(stream, cb) {
-  var er = new Error('write after end');
-  // TODO: defer error events consistently everywhere, not just the cb
-  stream.emit('error', er);
-  pna.nextTick(cb, er);
-}
-
-// Checks that a user-supplied chunk is valid, especially for the particular
-// mode the stream is in. Currently this means that `null` is never accepted
-// and undefined/non-string values are only allowed in object mode.
-function validChunk(stream, state, chunk, cb) {
-  var valid = true;
-  var er = false;
-
-  if (chunk === null) {
-    er = new TypeError('May not write null values to stream');
-  } else if (typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
-    er = new TypeError('Invalid non-string/buffer chunk');
-  }
-  if (er) {
-    stream.emit('error', er);
-    pna.nextTick(cb, er);
-    valid = false;
-  }
-  return valid;
-}
-
-Writable.prototype.write = function (chunk, encoding, cb) {
-  var state = this._writableState;
-  var ret = false;
-  var isBuf = !state.objectMode && _isUint8Array(chunk);
-
-  if (isBuf && !Buffer.isBuffer(chunk)) {
-    chunk = _uint8ArrayToBuffer(chunk);
-  }
-
-  if (typeof encoding === 'function') {
-    cb = encoding;
-    encoding = null;
-  }
-
-  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
-
-  if (typeof cb !== 'function') cb = nop;
-
-  if (state.ended) writeAfterEnd(this, cb);else if (isBuf || validChunk(this, state, chunk, cb)) {
-    state.pendingcb++;
-    ret = writeOrBuffer(this, state, isBuf, chunk, encoding, cb);
-  }
-
-  return ret;
-};
-
-Writable.prototype.cork = function () {
-  var state = this._writableState;
-
-  state.corked++;
-};
-
-Writable.prototype.uncork = function () {
-  var state = this._writableState;
-
-  if (state.corked) {
-    state.corked--;
-
-    if (!state.writing && !state.corked && !state.finished && !state.bufferProcessing && state.bufferedRequest) clearBuffer(this, state);
-  }
-};
-
-Writable.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
-  // node::ParseEncoding() requires lower case.
-  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
-  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new TypeError('Unknown encoding: ' + encoding);
-  this._writableState.defaultEncoding = encoding;
-  return this;
-};
-
-function decodeChunk(state, chunk, encoding) {
-  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
-    chunk = Buffer.from(chunk, encoding);
-  }
-  return chunk;
-}
-
-Object.defineProperty(Writable.prototype, 'writableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function () {
-    return this._writableState.highWaterMark;
-  }
-});
-
-// if we're already writing something, then just put this
-// in the queue, and wait our turn.  Otherwise, call _write
-// If we return false, then we need a drain event, so set that flag.
-function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
-  if (!isBuf) {
-    var newChunk = decodeChunk(state, chunk, encoding);
-    if (chunk !== newChunk) {
-      isBuf = true;
-      encoding = 'buffer';
-      chunk = newChunk;
-    }
-  }
-  var len = state.objectMode ? 1 : chunk.length;
-
-  state.length += len;
-
-  var ret = state.length < state.highWaterMark;
-  // we must ensure that previous needDrain will not be reset to false.
-  if (!ret) state.needDrain = true;
-
-  if (state.writing || state.corked) {
-    var last = state.lastBufferedRequest;
-    state.lastBufferedRequest = {
-      chunk: chunk,
-      encoding: encoding,
-      isBuf: isBuf,
-      callback: cb,
-      next: null
-    };
-    if (last) {
-      last.next = state.lastBufferedRequest;
-    } else {
-      state.bufferedRequest = state.lastBufferedRequest;
-    }
-    state.bufferedRequestCount += 1;
-  } else {
-    doWrite(stream, state, false, len, chunk, encoding, cb);
-  }
-
-  return ret;
-}
-
-function doWrite(stream, state, writev, len, chunk, encoding, cb) {
-  state.writelen = len;
-  state.writecb = cb;
-  state.writing = true;
-  state.sync = true;
-  if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
-  state.sync = false;
-}
-
-function onwriteError(stream, state, sync, er, cb) {
-  --state.pendingcb;
-
-  if (sync) {
-    // defer the callback if we are being called synchronously
-    // to avoid piling up things on the stack
-    pna.nextTick(cb, er);
-    // this can emit finish, and it will always happen
-    // after error
-    pna.nextTick(finishMaybe, stream, state);
-    stream._writableState.errorEmitted = true;
-    stream.emit('error', er);
-  } else {
-    // the caller expect this to happen before if
-    // it is async
-    cb(er);
-    stream._writableState.errorEmitted = true;
-    stream.emit('error', er);
-    // this can emit finish, but finish must
-    // always follow error
-    finishMaybe(stream, state);
-  }
-}
-
-function onwriteStateUpdate(state) {
-  state.writing = false;
-  state.writecb = null;
-  state.length -= state.writelen;
-  state.writelen = 0;
-}
-
-function onwrite(stream, er) {
-  var state = stream._writableState;
-  var sync = state.sync;
-  var cb = state.writecb;
-
-  onwriteStateUpdate(state);
-
-  if (er) onwriteError(stream, state, sync, er, cb);else {
-    // Check if we're actually ready to finish, but don't emit yet
-    var finished = needFinish(state);
-
-    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
-      clearBuffer(stream, state);
-    }
-
-    if (sync) {
-      /*<replacement>*/
-      asyncWrite(afterWrite, stream, state, finished, cb);
-      /*</replacement>*/
-    } else {
-      afterWrite(stream, state, finished, cb);
-    }
-  }
-}
-
-function afterWrite(stream, state, finished, cb) {
-  if (!finished) onwriteDrain(stream, state);
-  state.pendingcb--;
-  cb();
-  finishMaybe(stream, state);
-}
-
-// Must force callback to be called on nextTick, so that we don't
-// emit 'drain' before the write() consumer gets the 'false' return
-// value, and has a chance to attach a 'drain' listener.
-function onwriteDrain(stream, state) {
-  if (state.length === 0 && state.needDrain) {
-    state.needDrain = false;
-    stream.emit('drain');
-  }
-}
-
-// if there's something in the buffer waiting, then process it
-function clearBuffer(stream, state) {
-  state.bufferProcessing = true;
-  var entry = state.bufferedRequest;
-
-  if (stream._writev && entry && entry.next) {
-    // Fast case, write everything using _writev()
-    var l = state.bufferedRequestCount;
-    var buffer = new Array(l);
-    var holder = state.corkedRequestsFree;
-    holder.entry = entry;
-
-    var count = 0;
-    var allBuffers = true;
-    while (entry) {
-      buffer[count] = entry;
-      if (!entry.isBuf) allBuffers = false;
-      entry = entry.next;
-      count += 1;
-    }
-    buffer.allBuffers = allBuffers;
-
-    doWrite(stream, state, true, state.length, buffer, '', holder.finish);
-
-    // doWrite is almost always async, defer these to save a bit of time
-    // as the hot path ends with doWrite
-    state.pendingcb++;
-    state.lastBufferedRequest = null;
-    if (holder.next) {
-      state.corkedRequestsFree = holder.next;
-      holder.next = null;
-    } else {
-      state.corkedRequestsFree = new CorkedRequest(state);
-    }
-    state.bufferedRequestCount = 0;
-  } else {
-    // Slow case, write chunks one-by-one
-    while (entry) {
-      var chunk = entry.chunk;
-      var encoding = entry.encoding;
-      var cb = entry.callback;
-      var len = state.objectMode ? 1 : chunk.length;
-
-      doWrite(stream, state, false, len, chunk, encoding, cb);
-      entry = entry.next;
-      state.bufferedRequestCount--;
-      // if we didn't call the onwrite immediately, then
-      // it means that we need to wait until it does.
-      // also, that means that the chunk and cb are currently
-      // being processed, so move the buffer counter past them.
-      if (state.writing) {
-        break;
-      }
-    }
-
-    if (entry === null) state.lastBufferedRequest = null;
-  }
-
-  state.bufferedRequest = entry;
-  state.bufferProcessing = false;
-}
-
-Writable.prototype._write = function (chunk, encoding, cb) {
-  cb(new Error('_write() is not implemented'));
-};
-
-Writable.prototype._writev = null;
-
-Writable.prototype.end = function (chunk, encoding, cb) {
-  var state = this._writableState;
-
-  if (typeof chunk === 'function') {
-    cb = chunk;
-    chunk = null;
-    encoding = null;
-  } else if (typeof encoding === 'function') {
-    cb = encoding;
-    encoding = null;
-  }
-
-  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding);
-
-  // .end() fully uncorks
-  if (state.corked) {
-    state.corked = 1;
-    this.uncork();
-  }
-
-  // ignore unnecessary end() calls.
-  if (!state.ending && !state.finished) endWritable(this, state, cb);
-};
-
-function needFinish(state) {
-  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
-}
-function callFinal(stream, state) {
-  stream._final(function (err) {
-    state.pendingcb--;
-    if (err) {
-      stream.emit('error', err);
-    }
-    state.prefinished = true;
-    stream.emit('prefinish');
-    finishMaybe(stream, state);
-  });
-}
-function prefinish(stream, state) {
-  if (!state.prefinished && !state.finalCalled) {
-    if (typeof stream._final === 'function') {
-      state.pendingcb++;
-      state.finalCalled = true;
-      pna.nextTick(callFinal, stream, state);
-    } else {
-      state.prefinished = true;
-      stream.emit('prefinish');
-    }
-  }
-}
-
-function finishMaybe(stream, state) {
-  var need = needFinish(state);
-  if (need) {
-    prefinish(stream, state);
-    if (state.pendingcb === 0) {
-      state.finished = true;
-      stream.emit('finish');
-    }
-  }
-  return need;
-}
-
-function endWritable(stream, state, cb) {
-  state.ending = true;
-  finishMaybe(stream, state);
-  if (cb) {
-    if (state.finished) pna.nextTick(cb);else stream.once('finish', cb);
-  }
-  state.ended = true;
-  stream.writable = false;
-}
-
-function onCorkedFinish(corkReq, state, err) {
-  var entry = corkReq.entry;
-  corkReq.entry = null;
-  while (entry) {
-    var cb = entry.callback;
-    state.pendingcb--;
-    cb(err);
-    entry = entry.next;
-  }
-  if (state.corkedRequestsFree) {
-    state.corkedRequestsFree.next = corkReq;
-  } else {
-    state.corkedRequestsFree = corkReq;
-  }
-}
-
-Object.defineProperty(Writable.prototype, 'destroyed', {
-  get: function () {
-    if (this._writableState === undefined) {
-      return false;
-    }
-    return this._writableState.destroyed;
-  },
-  set: function (value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (!this._writableState) {
-      return;
-    }
-
-    // backward compatibility, the user is explicitly
-    // managing destroyed
-    this._writableState.destroyed = value;
-  }
-});
-
-Writable.prototype.destroy = destroyImpl.destroy;
-Writable.prototype._undestroy = destroyImpl.undestroy;
-Writable.prototype._destroy = function (err, cb) {
-  this.end();
-  cb(err);
-};
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":424,"./internal/streams/destroy":430,"./internal/streams/stream":431,"_process":418,"core-util-is":409,"inherits":413,"process-nextick-args":417,"safe-buffer":432,"timers":445,"util-deprecate":449}],429:[function(require,module,exports){
-'use strict';
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Buffer = require('safe-buffer').Buffer;
-var util = require('util');
-
-function copyBuffer(src, target, offset) {
-  src.copy(target, offset);
-}
-
-module.exports = function () {
-  function BufferList() {
-    _classCallCheck(this, BufferList);
-
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
-  }
-
-  BufferList.prototype.push = function push(v) {
-    var entry = { data: v, next: null };
-    if (this.length > 0) this.tail.next = entry;else this.head = entry;
-    this.tail = entry;
-    ++this.length;
-  };
-
-  BufferList.prototype.unshift = function unshift(v) {
-    var entry = { data: v, next: this.head };
-    if (this.length === 0) this.tail = entry;
-    this.head = entry;
-    ++this.length;
-  };
-
-  BufferList.prototype.shift = function shift() {
-    if (this.length === 0) return;
-    var ret = this.head.data;
-    if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
-    --this.length;
-    return ret;
-  };
-
-  BufferList.prototype.clear = function clear() {
-    this.head = this.tail = null;
-    this.length = 0;
-  };
-
-  BufferList.prototype.join = function join(s) {
-    if (this.length === 0) return '';
-    var p = this.head;
-    var ret = '' + p.data;
-    while (p = p.next) {
-      ret += s + p.data;
-    }return ret;
-  };
-
-  BufferList.prototype.concat = function concat(n) {
-    if (this.length === 0) return Buffer.alloc(0);
-    if (this.length === 1) return this.head.data;
-    var ret = Buffer.allocUnsafe(n >>> 0);
-    var p = this.head;
-    var i = 0;
-    while (p) {
-      copyBuffer(p.data, ret, i);
-      i += p.data.length;
-      p = p.next;
-    }
-    return ret;
-  };
-
-  return BufferList;
-}();
-
-if (util && util.inspect && util.inspect.custom) {
-  module.exports.prototype[util.inspect.custom] = function () {
-    var obj = util.inspect({ length: this.length });
-    return this.constructor.name + ' ' + obj;
-  };
-}
-},{"safe-buffer":432,"util":405}],430:[function(require,module,exports){
-'use strict';
-
-/*<replacement>*/
-
-var pna = require('process-nextick-args');
-/*</replacement>*/
-
-// undocumented cb() API, needed for core, not for public API
-function destroy(err, cb) {
-  var _this = this;
-
-  var readableDestroyed = this._readableState && this._readableState.destroyed;
-  var writableDestroyed = this._writableState && this._writableState.destroyed;
-
-  if (readableDestroyed || writableDestroyed) {
-    if (cb) {
-      cb(err);
-    } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
-      pna.nextTick(emitErrorNT, this, err);
-    }
-    return this;
-  }
-
-  // we set destroyed to true before firing error callbacks in order
-  // to make it re-entrance safe in case destroy() is called within callbacks
-
-  if (this._readableState) {
-    this._readableState.destroyed = true;
-  }
-
-  // if this is a duplex stream mark the writable part as destroyed as well
-  if (this._writableState) {
-    this._writableState.destroyed = true;
-  }
-
-  this._destroy(err || null, function (err) {
-    if (!cb && err) {
-      pna.nextTick(emitErrorNT, _this, err);
-      if (_this._writableState) {
-        _this._writableState.errorEmitted = true;
-      }
-    } else if (cb) {
-      cb(err);
-    }
-  });
-
-  return this;
-}
-
-function undestroy() {
-  if (this._readableState) {
-    this._readableState.destroyed = false;
-    this._readableState.reading = false;
-    this._readableState.ended = false;
-    this._readableState.endEmitted = false;
-  }
-
-  if (this._writableState) {
-    this._writableState.destroyed = false;
-    this._writableState.ended = false;
-    this._writableState.ending = false;
-    this._writableState.finished = false;
-    this._writableState.errorEmitted = false;
-  }
-}
-
-function emitErrorNT(self, err) {
-  self.emit('error', err);
-}
-
-module.exports = {
-  destroy: destroy,
-  undestroy: undestroy
-};
-},{"process-nextick-args":417}],431:[function(require,module,exports){
-module.exports = require('events').EventEmitter;
-
-},{"events":410}],432:[function(require,module,exports){
+},{"./decode":406,"./encode":407}],409:[function(require,module,exports){
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -62276,6 +62504,8 @@ if (Buffer.from && Buffer.alloc && Buffer.allocUnsafe && Buffer.allocUnsafeSlow)
 function SafeBuffer (arg, encodingOrOffset, length) {
   return Buffer(arg, encodingOrOffset, length)
 }
+
+SafeBuffer.prototype = Object.create(Buffer.prototype)
 
 // Copy static methods from Buffer
 copyProps(Buffer, SafeBuffer)
@@ -62318,7 +62548,4007 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":407}],433:[function(require,module,exports){
+},{"buffer":383}],410:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+module.exports = Stream;
+
+var EE = require('events').EventEmitter;
+var inherits = require('inherits');
+
+inherits(Stream, EE);
+Stream.Readable = require('readable-stream/lib/_stream_readable.js');
+Stream.Writable = require('readable-stream/lib/_stream_writable.js');
+Stream.Duplex = require('readable-stream/lib/_stream_duplex.js');
+Stream.Transform = require('readable-stream/lib/_stream_transform.js');
+Stream.PassThrough = require('readable-stream/lib/_stream_passthrough.js');
+Stream.finished = require('readable-stream/lib/internal/streams/end-of-stream.js')
+Stream.pipeline = require('readable-stream/lib/internal/streams/pipeline.js')
+
+// Backwards-compat with node 0.4.x
+Stream.Stream = Stream;
+
+
+
+// old-style streams.  Note that the pipe method (the only relevant
+// part of this class) is overridden in the Readable class.
+
+function Stream() {
+  EE.call(this);
+}
+
+Stream.prototype.pipe = function(dest, options) {
+  var source = this;
+
+  function ondata(chunk) {
+    if (dest.writable) {
+      if (false === dest.write(chunk) && source.pause) {
+        source.pause();
+      }
+    }
+  }
+
+  source.on('data', ondata);
+
+  function ondrain() {
+    if (source.readable && source.resume) {
+      source.resume();
+    }
+  }
+
+  dest.on('drain', ondrain);
+
+  // If the 'end' option is not supplied, dest.end() will be called when
+  // source gets the 'end' or 'close' events.  Only dest.end() once.
+  if (!dest._isStdio && (!options || options.end !== false)) {
+    source.on('end', onend);
+    source.on('close', onclose);
+  }
+
+  var didOnEnd = false;
+  function onend() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    dest.end();
+  }
+
+
+  function onclose() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    if (typeof dest.destroy === 'function') dest.destroy();
+  }
+
+  // don't leave dangling pipes when there are errors.
+  function onerror(er) {
+    cleanup();
+    if (EE.listenerCount(this, 'error') === 0) {
+      throw er; // Unhandled stream error in pipe.
+    }
+  }
+
+  source.on('error', onerror);
+  dest.on('error', onerror);
+
+  // remove all the event listeners that were added.
+  function cleanup() {
+    source.removeListener('data', ondata);
+    dest.removeListener('drain', ondrain);
+
+    source.removeListener('end', onend);
+    source.removeListener('close', onclose);
+
+    source.removeListener('error', onerror);
+    dest.removeListener('error', onerror);
+
+    source.removeListener('end', cleanup);
+    source.removeListener('close', cleanup);
+
+    dest.removeListener('close', cleanup);
+  }
+
+  source.on('end', cleanup);
+  source.on('close', cleanup);
+
+  dest.on('close', cleanup);
+
+  dest.emit('pipe', source);
+
+  // Allow for unix-like usage: A.pipe(B).pipe(C)
+  return dest;
+};
+
+},{"events":388,"inherits":398,"readable-stream/lib/_stream_duplex.js":412,"readable-stream/lib/_stream_passthrough.js":413,"readable-stream/lib/_stream_readable.js":414,"readable-stream/lib/_stream_transform.js":415,"readable-stream/lib/_stream_writable.js":416,"readable-stream/lib/internal/streams/end-of-stream.js":420,"readable-stream/lib/internal/streams/pipeline.js":422}],411:[function(require,module,exports){
+'use strict';
+
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+
+var codes = {};
+
+function createErrorType(code, message, Base) {
+  if (!Base) {
+    Base = Error;
+  }
+
+  function getMessage(arg1, arg2, arg3) {
+    if (typeof message === 'string') {
+      return message;
+    } else {
+      return message(arg1, arg2, arg3);
+    }
+  }
+
+  var NodeError =
+  /*#__PURE__*/
+  function (_Base) {
+    _inheritsLoose(NodeError, _Base);
+
+    function NodeError(arg1, arg2, arg3) {
+      return _Base.call(this, getMessage(arg1, arg2, arg3)) || this;
+    }
+
+    return NodeError;
+  }(Base);
+
+  NodeError.prototype.name = Base.name;
+  NodeError.prototype.code = code;
+  codes[code] = NodeError;
+} // https://github.com/nodejs/node/blob/v10.8.0/lib/internal/errors.js
+
+
+function oneOf(expected, thing) {
+  if (Array.isArray(expected)) {
+    var len = expected.length;
+    expected = expected.map(function (i) {
+      return String(i);
+    });
+
+    if (len > 2) {
+      return "one of ".concat(thing, " ").concat(expected.slice(0, len - 1).join(', '), ", or ") + expected[len - 1];
+    } else if (len === 2) {
+      return "one of ".concat(thing, " ").concat(expected[0], " or ").concat(expected[1]);
+    } else {
+      return "of ".concat(thing, " ").concat(expected[0]);
+    }
+  } else {
+    return "of ".concat(thing, " ").concat(String(expected));
+  }
+} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+
+
+function startsWith(str, search, pos) {
+  return str.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+
+
+function endsWith(str, search, this_len) {
+  if (this_len === undefined || this_len > str.length) {
+    this_len = str.length;
+  }
+
+  return str.substring(this_len - search.length, this_len) === search;
+} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
+
+
+function includes(str, search, start) {
+  if (typeof start !== 'number') {
+    start = 0;
+  }
+
+  if (start + search.length > str.length) {
+    return false;
+  } else {
+    return str.indexOf(search, start) !== -1;
+  }
+}
+
+createErrorType('ERR_INVALID_OPT_VALUE', function (name, value) {
+  return 'The value "' + value + '" is invalid for option "' + name + '"';
+}, TypeError);
+createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
+  // determiner: 'must be' or 'must not be'
+  var determiner;
+
+  if (typeof expected === 'string' && startsWith(expected, 'not ')) {
+    determiner = 'must not be';
+    expected = expected.replace(/^not /, '');
+  } else {
+    determiner = 'must be';
+  }
+
+  var msg;
+
+  if (endsWith(name, ' argument')) {
+    // For cases like 'first argument'
+    msg = "The ".concat(name, " ").concat(determiner, " ").concat(oneOf(expected, 'type'));
+  } else {
+    var type = includes(name, '.') ? 'property' : 'argument';
+    msg = "The \"".concat(name, "\" ").concat(type, " ").concat(determiner, " ").concat(oneOf(expected, 'type'));
+  }
+
+  msg += ". Received type ".concat(typeof actual);
+  return msg;
+}, TypeError);
+createErrorType('ERR_STREAM_PUSH_AFTER_EOF', 'stream.push() after EOF');
+createErrorType('ERR_METHOD_NOT_IMPLEMENTED', function (name) {
+  return 'The ' + name + ' method is not implemented';
+});
+createErrorType('ERR_STREAM_PREMATURE_CLOSE', 'Premature close');
+createErrorType('ERR_STREAM_DESTROYED', function (name) {
+  return 'Cannot call ' + name + ' after a stream was destroyed';
+});
+createErrorType('ERR_MULTIPLE_CALLBACK', 'Callback called multiple times');
+createErrorType('ERR_STREAM_CANNOT_PIPE', 'Cannot pipe, not readable');
+createErrorType('ERR_STREAM_WRITE_AFTER_END', 'write after end');
+createErrorType('ERR_STREAM_NULL_VALUES', 'May not write null values to stream', TypeError);
+createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
+  return 'Unknown encoding: ' + arg;
+}, TypeError);
+createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
+module.exports.codes = codes;
+
+},{}],412:[function(require,module,exports){
+(function (process){(function (){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+// a duplex stream is just a stream that is both readable and writable.
+// Since JS doesn't have multiple prototypal inheritance, this class
+// prototypally inherits from Readable, and then parasitically from
+// Writable.
+'use strict';
+/*<replacement>*/
+
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+
+  for (var key in obj) {
+    keys.push(key);
+  }
+
+  return keys;
+};
+/*</replacement>*/
+
+
+module.exports = Duplex;
+
+var Readable = require('./_stream_readable');
+
+var Writable = require('./_stream_writable');
+
+require('inherits')(Duplex, Readable);
+
+{
+  // Allow the keys array to be GC'ed.
+  var keys = objectKeys(Writable.prototype);
+
+  for (var v = 0; v < keys.length; v++) {
+    var method = keys[v];
+    if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
+  }
+}
+
+function Duplex(options) {
+  if (!(this instanceof Duplex)) return new Duplex(options);
+  Readable.call(this, options);
+  Writable.call(this, options);
+  this.allowHalfOpen = true;
+
+  if (options) {
+    if (options.readable === false) this.readable = false;
+    if (options.writable === false) this.writable = false;
+
+    if (options.allowHalfOpen === false) {
+      this.allowHalfOpen = false;
+      this.once('end', onend);
+    }
+  }
+}
+
+Object.defineProperty(Duplex.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState.highWaterMark;
+  }
+});
+Object.defineProperty(Duplex.prototype, 'writableBuffer', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState && this._writableState.getBuffer();
+  }
+});
+Object.defineProperty(Duplex.prototype, 'writableLength', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState.length;
+  }
+}); // the no-half-open enforcer
+
+function onend() {
+  // If the writable side ended, then we're ok.
+  if (this._writableState.ended) return; // no more data can be written.
+  // But allow more writes to happen in this tick.
+
+  process.nextTick(onEndNT, this);
+}
+
+function onEndNT(self) {
+  self.end();
+}
+
+Object.defineProperty(Duplex.prototype, 'destroyed', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return false;
+    }
+
+    return this._readableState.destroyed && this._writableState.destroyed;
+  },
+  set: function set(value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return;
+    } // backward compatibility, the user is explicitly
+    // managing destroyed
+
+
+    this._readableState.destroyed = value;
+    this._writableState.destroyed = value;
+  }
+});
+}).call(this)}).call(this,require('_process'))
+},{"./_stream_readable":414,"./_stream_writable":416,"_process":404,"inherits":398}],413:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+// a passthrough stream.
+// basically just the most minimal sort of Transform stream.
+// Every written chunk gets output as-is.
+'use strict';
+
+module.exports = PassThrough;
+
+var Transform = require('./_stream_transform');
+
+require('inherits')(PassThrough, Transform);
+
+function PassThrough(options) {
+  if (!(this instanceof PassThrough)) return new PassThrough(options);
+  Transform.call(this, options);
+}
+
+PassThrough.prototype._transform = function (chunk, encoding, cb) {
+  cb(null, chunk);
+};
+},{"./_stream_transform":415,"inherits":398}],414:[function(require,module,exports){
+(function (process,global){(function (){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+'use strict';
+
+module.exports = Readable;
+/*<replacement>*/
+
+var Duplex;
+/*</replacement>*/
+
+Readable.ReadableState = ReadableState;
+/*<replacement>*/
+
+var EE = require('events').EventEmitter;
+
+var EElistenerCount = function EElistenerCount(emitter, type) {
+  return emitter.listeners(type).length;
+};
+/*</replacement>*/
+
+/*<replacement>*/
+
+
+var Stream = require('./internal/streams/stream');
+/*</replacement>*/
+
+
+var Buffer = require('buffer').Buffer;
+
+var OurUint8Array = global.Uint8Array || function () {};
+
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
+/*<replacement>*/
+
+
+var debugUtil = require('util');
+
+var debug;
+
+if (debugUtil && debugUtil.debuglog) {
+  debug = debugUtil.debuglog('stream');
+} else {
+  debug = function debug() {};
+}
+/*</replacement>*/
+
+
+var BufferList = require('./internal/streams/buffer_list');
+
+var destroyImpl = require('./internal/streams/destroy');
+
+var _require = require('./internal/streams/state'),
+    getHighWaterMark = _require.getHighWaterMark;
+
+var _require$codes = require('../errors').codes,
+    ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
+    ERR_STREAM_PUSH_AFTER_EOF = _require$codes.ERR_STREAM_PUSH_AFTER_EOF,
+    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
+    ERR_STREAM_UNSHIFT_AFTER_END_EVENT = _require$codes.ERR_STREAM_UNSHIFT_AFTER_END_EVENT; // Lazy loaded to improve the startup performance.
+
+
+var StringDecoder;
+var createReadableStreamAsyncIterator;
+var from;
+
+require('inherits')(Readable, Stream);
+
+var errorOrDestroy = destroyImpl.errorOrDestroy;
+var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
+
+function prependListener(emitter, event, fn) {
+  // Sadly this is not cacheable as some libraries bundle their own
+  // event emitter implementation with them.
+  if (typeof emitter.prependListener === 'function') return emitter.prependListener(event, fn); // This is a hack to make sure that our error handler is attached before any
+  // userland ones.  NEVER DO THIS. This is here only because this code needs
+  // to continue to work with older versions of Node.js that do not include
+  // the prependListener() method. The goal is to eventually remove this hack.
+
+  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (Array.isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
+}
+
+function ReadableState(options, stream, isDuplex) {
+  Duplex = Duplex || require('./_stream_duplex');
+  options = options || {}; // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream.
+  // These options can be provided separately as readableXXX and writableXXX.
+
+  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag. Used to make read(n) ignore n and to
+  // make all the buffer merging and length checks go away
+
+  this.objectMode = !!options.objectMode;
+  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
+  // Note: 0 is a valid value, means "don't call _read preemptively ever"
+
+  this.highWaterMark = getHighWaterMark(this, options, 'readableHighWaterMark', isDuplex); // A linked list is used to store data chunks instead of an array because the
+  // linked list can remove elements from the beginning faster than
+  // array.shift()
+
+  this.buffer = new BufferList();
+  this.length = 0;
+  this.pipes = null;
+  this.pipesCount = 0;
+  this.flowing = null;
+  this.ended = false;
+  this.endEmitted = false;
+  this.reading = false; // a flag to be able to tell if the event 'readable'/'data' is emitted
+  // immediately, or on a later tick.  We set this to true at first, because
+  // any actions that shouldn't happen until "later" should generally also
+  // not happen before the first read call.
+
+  this.sync = true; // whenever we return null, then we set a flag to say
+  // that we're awaiting a 'readable' event emission.
+
+  this.needReadable = false;
+  this.emittedReadable = false;
+  this.readableListening = false;
+  this.resumeScheduled = false;
+  this.paused = true; // Should close be emitted on destroy. Defaults to true.
+
+  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'end' (and potentially 'finish')
+
+  this.autoDestroy = !!options.autoDestroy; // has it been destroyed
+
+  this.destroyed = false; // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+
+  this.defaultEncoding = options.defaultEncoding || 'utf8'; // the number of writers that are awaiting a drain event in .pipe()s
+
+  this.awaitDrain = 0; // if true, a maybeReadMore has been scheduled
+
+  this.readingMore = false;
+  this.decoder = null;
+  this.encoding = null;
+
+  if (options.encoding) {
+    if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
+    this.decoder = new StringDecoder(options.encoding);
+    this.encoding = options.encoding;
+  }
+}
+
+function Readable(options) {
+  Duplex = Duplex || require('./_stream_duplex');
+  if (!(this instanceof Readable)) return new Readable(options); // Checking for a Stream.Duplex instance is faster here instead of inside
+  // the ReadableState constructor, at least with V8 6.5
+
+  var isDuplex = this instanceof Duplex;
+  this._readableState = new ReadableState(options, this, isDuplex); // legacy
+
+  this.readable = true;
+
+  if (options) {
+    if (typeof options.read === 'function') this._read = options.read;
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+  }
+
+  Stream.call(this);
+}
+
+Object.defineProperty(Readable.prototype, 'destroyed', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    if (this._readableState === undefined) {
+      return false;
+    }
+
+    return this._readableState.destroyed;
+  },
+  set: function set(value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._readableState) {
+      return;
+    } // backward compatibility, the user is explicitly
+    // managing destroyed
+
+
+    this._readableState.destroyed = value;
+  }
+});
+Readable.prototype.destroy = destroyImpl.destroy;
+Readable.prototype._undestroy = destroyImpl.undestroy;
+
+Readable.prototype._destroy = function (err, cb) {
+  cb(err);
+}; // Manually shove something into the read() buffer.
+// This returns true if the highWaterMark has not been hit yet,
+// similar to how Writable.write() returns true if you should
+// write() some more.
+
+
+Readable.prototype.push = function (chunk, encoding) {
+  var state = this._readableState;
+  var skipChunkCheck;
+
+  if (!state.objectMode) {
+    if (typeof chunk === 'string') {
+      encoding = encoding || state.defaultEncoding;
+
+      if (encoding !== state.encoding) {
+        chunk = Buffer.from(chunk, encoding);
+        encoding = '';
+      }
+
+      skipChunkCheck = true;
+    }
+  } else {
+    skipChunkCheck = true;
+  }
+
+  return readableAddChunk(this, chunk, encoding, false, skipChunkCheck);
+}; // Unshift should *always* be something directly out of read()
+
+
+Readable.prototype.unshift = function (chunk) {
+  return readableAddChunk(this, chunk, null, true, false);
+};
+
+function readableAddChunk(stream, chunk, encoding, addToFront, skipChunkCheck) {
+  debug('readableAddChunk', chunk);
+  var state = stream._readableState;
+
+  if (chunk === null) {
+    state.reading = false;
+    onEofChunk(stream, state);
+  } else {
+    var er;
+    if (!skipChunkCheck) er = chunkInvalid(state, chunk);
+
+    if (er) {
+      errorOrDestroy(stream, er);
+    } else if (state.objectMode || chunk && chunk.length > 0) {
+      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer.prototype) {
+        chunk = _uint8ArrayToBuffer(chunk);
+      }
+
+      if (addToFront) {
+        if (state.endEmitted) errorOrDestroy(stream, new ERR_STREAM_UNSHIFT_AFTER_END_EVENT());else addChunk(stream, state, chunk, true);
+      } else if (state.ended) {
+        errorOrDestroy(stream, new ERR_STREAM_PUSH_AFTER_EOF());
+      } else if (state.destroyed) {
+        return false;
+      } else {
+        state.reading = false;
+
+        if (state.decoder && !encoding) {
+          chunk = state.decoder.write(chunk);
+          if (state.objectMode || chunk.length !== 0) addChunk(stream, state, chunk, false);else maybeReadMore(stream, state);
+        } else {
+          addChunk(stream, state, chunk, false);
+        }
+      }
+    } else if (!addToFront) {
+      state.reading = false;
+      maybeReadMore(stream, state);
+    }
+  } // We can push more data if we are below the highWaterMark.
+  // Also, if we have no data yet, we can stand some more bytes.
+  // This is to work around cases where hwm=0, such as the repl.
+
+
+  return !state.ended && (state.length < state.highWaterMark || state.length === 0);
+}
+
+function addChunk(stream, state, chunk, addToFront) {
+  if (state.flowing && state.length === 0 && !state.sync) {
+    state.awaitDrain = 0;
+    stream.emit('data', chunk);
+  } else {
+    // update the buffer info.
+    state.length += state.objectMode ? 1 : chunk.length;
+    if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
+    if (state.needReadable) emitReadable(stream);
+  }
+
+  maybeReadMore(stream, state);
+}
+
+function chunkInvalid(state, chunk) {
+  var er;
+
+  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
+    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer', 'Uint8Array'], chunk);
+  }
+
+  return er;
+}
+
+Readable.prototype.isPaused = function () {
+  return this._readableState.flowing === false;
+}; // backwards compatibility.
+
+
+Readable.prototype.setEncoding = function (enc) {
+  if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
+  var decoder = new StringDecoder(enc);
+  this._readableState.decoder = decoder; // If setEncoding(null), decoder.encoding equals utf8
+
+  this._readableState.encoding = this._readableState.decoder.encoding; // Iterate over current buffer to convert already stored Buffers:
+
+  var p = this._readableState.buffer.head;
+  var content = '';
+
+  while (p !== null) {
+    content += decoder.write(p.data);
+    p = p.next;
+  }
+
+  this._readableState.buffer.clear();
+
+  if (content !== '') this._readableState.buffer.push(content);
+  this._readableState.length = content.length;
+  return this;
+}; // Don't raise the hwm > 1GB
+
+
+var MAX_HWM = 0x40000000;
+
+function computeNewHighWaterMark(n) {
+  if (n >= MAX_HWM) {
+    // TODO(ronag): Throw ERR_VALUE_OUT_OF_RANGE.
+    n = MAX_HWM;
+  } else {
+    // Get the next highest power of 2 to prevent increasing hwm excessively in
+    // tiny amounts
+    n--;
+    n |= n >>> 1;
+    n |= n >>> 2;
+    n |= n >>> 4;
+    n |= n >>> 8;
+    n |= n >>> 16;
+    n++;
+  }
+
+  return n;
+} // This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+
+
+function howMuchToRead(n, state) {
+  if (n <= 0 || state.length === 0 && state.ended) return 0;
+  if (state.objectMode) return 1;
+
+  if (n !== n) {
+    // Only flow one buffer at a time
+    if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
+  } // If we're asking for more than the current hwm, then raise the hwm.
+
+
+  if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
+  if (n <= state.length) return n; // Don't have enough
+
+  if (!state.ended) {
+    state.needReadable = true;
+    return 0;
+  }
+
+  return state.length;
+} // you can override either this method, or the async _read(n) below.
+
+
+Readable.prototype.read = function (n) {
+  debug('read', n);
+  n = parseInt(n, 10);
+  var state = this._readableState;
+  var nOrig = n;
+  if (n !== 0) state.emittedReadable = false; // if we're doing read(0) to trigger a readable event, but we
+  // already have a bunch of data in the buffer, then just trigger
+  // the 'readable' event and move on.
+
+  if (n === 0 && state.needReadable && ((state.highWaterMark !== 0 ? state.length >= state.highWaterMark : state.length > 0) || state.ended)) {
+    debug('read: emitReadable', state.length, state.ended);
+    if (state.length === 0 && state.ended) endReadable(this);else emitReadable(this);
+    return null;
+  }
+
+  n = howMuchToRead(n, state); // if we've ended, and we're now clear, then finish it up.
+
+  if (n === 0 && state.ended) {
+    if (state.length === 0) endReadable(this);
+    return null;
+  } // All the actual chunk generation logic needs to be
+  // *below* the call to _read.  The reason is that in certain
+  // synthetic stream cases, such as passthrough streams, _read
+  // may be a completely synchronous operation which may change
+  // the state of the read buffer, providing enough data when
+  // before there was *not* enough.
+  //
+  // So, the steps are:
+  // 1. Figure out what the state of things will be after we do
+  // a read from the buffer.
+  //
+  // 2. If that resulting state will trigger a _read, then call _read.
+  // Note that this may be asynchronous, or synchronous.  Yes, it is
+  // deeply ugly to write APIs this way, but that still doesn't mean
+  // that the Readable class should behave improperly, as streams are
+  // designed to be sync/async agnostic.
+  // Take note if the _read call is sync or async (ie, if the read call
+  // has returned yet), so that we know whether or not it's safe to emit
+  // 'readable' etc.
+  //
+  // 3. Actually pull the requested chunks out of the buffer and return.
+  // if we need a readable event, then we need to do some reading.
+
+
+  var doRead = state.needReadable;
+  debug('need readable', doRead); // if we currently have less than the highWaterMark, then also read some
+
+  if (state.length === 0 || state.length - n < state.highWaterMark) {
+    doRead = true;
+    debug('length less than watermark', doRead);
+  } // however, if we've ended, then there's no point, and if we're already
+  // reading, then it's unnecessary.
+
+
+  if (state.ended || state.reading) {
+    doRead = false;
+    debug('reading or ended', doRead);
+  } else if (doRead) {
+    debug('do read');
+    state.reading = true;
+    state.sync = true; // if the length is currently zero, then we *need* a readable event.
+
+    if (state.length === 0) state.needReadable = true; // call internal read method
+
+    this._read(state.highWaterMark);
+
+    state.sync = false; // If _read pushed data synchronously, then `reading` will be false,
+    // and we need to re-evaluate how much data we can return to the user.
+
+    if (!state.reading) n = howMuchToRead(nOrig, state);
+  }
+
+  var ret;
+  if (n > 0) ret = fromList(n, state);else ret = null;
+
+  if (ret === null) {
+    state.needReadable = state.length <= state.highWaterMark;
+    n = 0;
+  } else {
+    state.length -= n;
+    state.awaitDrain = 0;
+  }
+
+  if (state.length === 0) {
+    // If we have nothing in the buffer, then we want to know
+    // as soon as we *do* get something into the buffer.
+    if (!state.ended) state.needReadable = true; // If we tried to read() past the EOF, then emit end on the next tick.
+
+    if (nOrig !== n && state.ended) endReadable(this);
+  }
+
+  if (ret !== null) this.emit('data', ret);
+  return ret;
+};
+
+function onEofChunk(stream, state) {
+  debug('onEofChunk');
+  if (state.ended) return;
+
+  if (state.decoder) {
+    var chunk = state.decoder.end();
+
+    if (chunk && chunk.length) {
+      state.buffer.push(chunk);
+      state.length += state.objectMode ? 1 : chunk.length;
+    }
+  }
+
+  state.ended = true;
+
+  if (state.sync) {
+    // if we are sync, wait until next tick to emit the data.
+    // Otherwise we risk emitting data in the flow()
+    // the readable code triggers during a read() call
+    emitReadable(stream);
+  } else {
+    // emit 'readable' now to make sure it gets picked up.
+    state.needReadable = false;
+
+    if (!state.emittedReadable) {
+      state.emittedReadable = true;
+      emitReadable_(stream);
+    }
+  }
+} // Don't emit readable right away in sync mode, because this can trigger
+// another read() call => stack overflow.  This way, it might trigger
+// a nextTick recursion warning, but that's not so bad.
+
+
+function emitReadable(stream) {
+  var state = stream._readableState;
+  debug('emitReadable', state.needReadable, state.emittedReadable);
+  state.needReadable = false;
+
+  if (!state.emittedReadable) {
+    debug('emitReadable', state.flowing);
+    state.emittedReadable = true;
+    process.nextTick(emitReadable_, stream);
+  }
+}
+
+function emitReadable_(stream) {
+  var state = stream._readableState;
+  debug('emitReadable_', state.destroyed, state.length, state.ended);
+
+  if (!state.destroyed && (state.length || state.ended)) {
+    stream.emit('readable');
+    state.emittedReadable = false;
+  } // The stream needs another readable event if
+  // 1. It is not flowing, as the flow mechanism will take
+  //    care of it.
+  // 2. It is not ended.
+  // 3. It is below the highWaterMark, so we can schedule
+  //    another readable later.
+
+
+  state.needReadable = !state.flowing && !state.ended && state.length <= state.highWaterMark;
+  flow(stream);
+} // at this point, the user has presumably seen the 'readable' event,
+// and called read() to consume some data.  that may have triggered
+// in turn another _read(n) call, in which case reading = true if
+// it's in progress.
+// However, if we're not ended, or reading, and the length < hwm,
+// then go ahead and try to read some more preemptively.
+
+
+function maybeReadMore(stream, state) {
+  if (!state.readingMore) {
+    state.readingMore = true;
+    process.nextTick(maybeReadMore_, stream, state);
+  }
+}
+
+function maybeReadMore_(stream, state) {
+  // Attempt to read more data if we should.
+  //
+  // The conditions for reading more data are (one of):
+  // - Not enough data buffered (state.length < state.highWaterMark). The loop
+  //   is responsible for filling the buffer with enough data if such data
+  //   is available. If highWaterMark is 0 and we are not in the flowing mode
+  //   we should _not_ attempt to buffer any extra data. We'll get more data
+  //   when the stream consumer calls read() instead.
+  // - No data in the buffer, and the stream is in flowing mode. In this mode
+  //   the loop below is responsible for ensuring read() is called. Failing to
+  //   call read here would abort the flow and there's no other mechanism for
+  //   continuing the flow if the stream consumer has just subscribed to the
+  //   'data' event.
+  //
+  // In addition to the above conditions to keep reading data, the following
+  // conditions prevent the data from being read:
+  // - The stream has ended (state.ended).
+  // - There is already a pending 'read' operation (state.reading). This is a
+  //   case where the the stream has called the implementation defined _read()
+  //   method, but they are processing the call asynchronously and have _not_
+  //   called push() with new data. In this case we skip performing more
+  //   read()s. The execution ends in this method again after the _read() ends
+  //   up calling push() with more data.
+  while (!state.reading && !state.ended && (state.length < state.highWaterMark || state.flowing && state.length === 0)) {
+    var len = state.length;
+    debug('maybeReadMore read 0');
+    stream.read(0);
+    if (len === state.length) // didn't get any data, stop spinning.
+      break;
+  }
+
+  state.readingMore = false;
+} // abstract method.  to be overridden in specific implementation classes.
+// call cb(er, data) where data is <= n in length.
+// for virtual (non-string, non-buffer) streams, "length" is somewhat
+// arbitrary, and perhaps not very meaningful.
+
+
+Readable.prototype._read = function (n) {
+  errorOrDestroy(this, new ERR_METHOD_NOT_IMPLEMENTED('_read()'));
+};
+
+Readable.prototype.pipe = function (dest, pipeOpts) {
+  var src = this;
+  var state = this._readableState;
+
+  switch (state.pipesCount) {
+    case 0:
+      state.pipes = dest;
+      break;
+
+    case 1:
+      state.pipes = [state.pipes, dest];
+      break;
+
+    default:
+      state.pipes.push(dest);
+      break;
+  }
+
+  state.pipesCount += 1;
+  debug('pipe count=%d opts=%j', state.pipesCount, pipeOpts);
+  var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
+  var endFn = doEnd ? onend : unpipe;
+  if (state.endEmitted) process.nextTick(endFn);else src.once('end', endFn);
+  dest.on('unpipe', onunpipe);
+
+  function onunpipe(readable, unpipeInfo) {
+    debug('onunpipe');
+
+    if (readable === src) {
+      if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
+        unpipeInfo.hasUnpiped = true;
+        cleanup();
+      }
+    }
+  }
+
+  function onend() {
+    debug('onend');
+    dest.end();
+  } // when the dest drains, it reduces the awaitDrain counter
+  // on the source.  This would be more elegant with a .once()
+  // handler in flow(), but adding and removing repeatedly is
+  // too slow.
+
+
+  var ondrain = pipeOnDrain(src);
+  dest.on('drain', ondrain);
+  var cleanedUp = false;
+
+  function cleanup() {
+    debug('cleanup'); // cleanup event handlers once the pipe is broken
+
+    dest.removeListener('close', onclose);
+    dest.removeListener('finish', onfinish);
+    dest.removeListener('drain', ondrain);
+    dest.removeListener('error', onerror);
+    dest.removeListener('unpipe', onunpipe);
+    src.removeListener('end', onend);
+    src.removeListener('end', unpipe);
+    src.removeListener('data', ondata);
+    cleanedUp = true; // if the reader is waiting for a drain event from this
+    // specific writer, then it would cause it to never start
+    // flowing again.
+    // So, if this is awaiting a drain, then we just call it now.
+    // If we don't know, then assume that we are waiting for one.
+
+    if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
+  }
+
+  src.on('data', ondata);
+
+  function ondata(chunk) {
+    debug('ondata');
+    var ret = dest.write(chunk);
+    debug('dest.write', ret);
+
+    if (ret === false) {
+      // If the user unpiped during `dest.write()`, it is possible
+      // to get stuck in a permanently paused state if that write
+      // also returned false.
+      // => Check whether `dest` is still a piping destination.
+      if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
+        debug('false write response, pause', state.awaitDrain);
+        state.awaitDrain++;
+      }
+
+      src.pause();
+    }
+  } // if the dest has an error, then stop piping into it.
+  // however, don't suppress the throwing behavior for this.
+
+
+  function onerror(er) {
+    debug('onerror', er);
+    unpipe();
+    dest.removeListener('error', onerror);
+    if (EElistenerCount(dest, 'error') === 0) errorOrDestroy(dest, er);
+  } // Make sure our error handler is attached before userland ones.
+
+
+  prependListener(dest, 'error', onerror); // Both close and finish should trigger unpipe, but only once.
+
+  function onclose() {
+    dest.removeListener('finish', onfinish);
+    unpipe();
+  }
+
+  dest.once('close', onclose);
+
+  function onfinish() {
+    debug('onfinish');
+    dest.removeListener('close', onclose);
+    unpipe();
+  }
+
+  dest.once('finish', onfinish);
+
+  function unpipe() {
+    debug('unpipe');
+    src.unpipe(dest);
+  } // tell the dest that it's being piped to
+
+
+  dest.emit('pipe', src); // start the flow if it hasn't been started already.
+
+  if (!state.flowing) {
+    debug('pipe resume');
+    src.resume();
+  }
+
+  return dest;
+};
+
+function pipeOnDrain(src) {
+  return function pipeOnDrainFunctionResult() {
+    var state = src._readableState;
+    debug('pipeOnDrain', state.awaitDrain);
+    if (state.awaitDrain) state.awaitDrain--;
+
+    if (state.awaitDrain === 0 && EElistenerCount(src, 'data')) {
+      state.flowing = true;
+      flow(src);
+    }
+  };
+}
+
+Readable.prototype.unpipe = function (dest) {
+  var state = this._readableState;
+  var unpipeInfo = {
+    hasUnpiped: false
+  }; // if we're not piping anywhere, then do nothing.
+
+  if (state.pipesCount === 0) return this; // just one destination.  most common case.
+
+  if (state.pipesCount === 1) {
+    // passed in one, but it's not the right one.
+    if (dest && dest !== state.pipes) return this;
+    if (!dest) dest = state.pipes; // got a match.
+
+    state.pipes = null;
+    state.pipesCount = 0;
+    state.flowing = false;
+    if (dest) dest.emit('unpipe', this, unpipeInfo);
+    return this;
+  } // slow case. multiple pipe destinations.
+
+
+  if (!dest) {
+    // remove all.
+    var dests = state.pipes;
+    var len = state.pipesCount;
+    state.pipes = null;
+    state.pipesCount = 0;
+    state.flowing = false;
+
+    for (var i = 0; i < len; i++) {
+      dests[i].emit('unpipe', this, {
+        hasUnpiped: false
+      });
+    }
+
+    return this;
+  } // try to find the right one.
+
+
+  var index = indexOf(state.pipes, dest);
+  if (index === -1) return this;
+  state.pipes.splice(index, 1);
+  state.pipesCount -= 1;
+  if (state.pipesCount === 1) state.pipes = state.pipes[0];
+  dest.emit('unpipe', this, unpipeInfo);
+  return this;
+}; // set up data events if they are asked for
+// Ensure readable listeners eventually get something
+
+
+Readable.prototype.on = function (ev, fn) {
+  var res = Stream.prototype.on.call(this, ev, fn);
+  var state = this._readableState;
+
+  if (ev === 'data') {
+    // update readableListening so that resume() may be a no-op
+    // a few lines down. This is needed to support once('readable').
+    state.readableListening = this.listenerCount('readable') > 0; // Try start flowing on next tick if stream isn't explicitly paused
+
+    if (state.flowing !== false) this.resume();
+  } else if (ev === 'readable') {
+    if (!state.endEmitted && !state.readableListening) {
+      state.readableListening = state.needReadable = true;
+      state.flowing = false;
+      state.emittedReadable = false;
+      debug('on readable', state.length, state.reading);
+
+      if (state.length) {
+        emitReadable(this);
+      } else if (!state.reading) {
+        process.nextTick(nReadingNextTick, this);
+      }
+    }
+  }
+
+  return res;
+};
+
+Readable.prototype.addListener = Readable.prototype.on;
+
+Readable.prototype.removeListener = function (ev, fn) {
+  var res = Stream.prototype.removeListener.call(this, ev, fn);
+
+  if (ev === 'readable') {
+    // We need to check if there is someone still listening to
+    // readable and reset the state. However this needs to happen
+    // after readable has been emitted but before I/O (nextTick) to
+    // support once('readable', fn) cycles. This means that calling
+    // resume within the same tick will have no
+    // effect.
+    process.nextTick(updateReadableListening, this);
+  }
+
+  return res;
+};
+
+Readable.prototype.removeAllListeners = function (ev) {
+  var res = Stream.prototype.removeAllListeners.apply(this, arguments);
+
+  if (ev === 'readable' || ev === undefined) {
+    // We need to check if there is someone still listening to
+    // readable and reset the state. However this needs to happen
+    // after readable has been emitted but before I/O (nextTick) to
+    // support once('readable', fn) cycles. This means that calling
+    // resume within the same tick will have no
+    // effect.
+    process.nextTick(updateReadableListening, this);
+  }
+
+  return res;
+};
+
+function updateReadableListening(self) {
+  var state = self._readableState;
+  state.readableListening = self.listenerCount('readable') > 0;
+
+  if (state.resumeScheduled && !state.paused) {
+    // flowing needs to be set to true now, otherwise
+    // the upcoming resume will not flow.
+    state.flowing = true; // crude way to check if we should resume
+  } else if (self.listenerCount('data') > 0) {
+    self.resume();
+  }
+}
+
+function nReadingNextTick(self) {
+  debug('readable nexttick read 0');
+  self.read(0);
+} // pause() and resume() are remnants of the legacy readable stream API
+// If the user uses them, then switch into old mode.
+
+
+Readable.prototype.resume = function () {
+  var state = this._readableState;
+
+  if (!state.flowing) {
+    debug('resume'); // we flow only if there is no one listening
+    // for readable, but we still have to call
+    // resume()
+
+    state.flowing = !state.readableListening;
+    resume(this, state);
+  }
+
+  state.paused = false;
+  return this;
+};
+
+function resume(stream, state) {
+  if (!state.resumeScheduled) {
+    state.resumeScheduled = true;
+    process.nextTick(resume_, stream, state);
+  }
+}
+
+function resume_(stream, state) {
+  debug('resume', state.reading);
+
+  if (!state.reading) {
+    stream.read(0);
+  }
+
+  state.resumeScheduled = false;
+  stream.emit('resume');
+  flow(stream);
+  if (state.flowing && !state.reading) stream.read(0);
+}
+
+Readable.prototype.pause = function () {
+  debug('call pause flowing=%j', this._readableState.flowing);
+
+  if (this._readableState.flowing !== false) {
+    debug('pause');
+    this._readableState.flowing = false;
+    this.emit('pause');
+  }
+
+  this._readableState.paused = true;
+  return this;
+};
+
+function flow(stream) {
+  var state = stream._readableState;
+  debug('flow', state.flowing);
+
+  while (state.flowing && stream.read() !== null) {
+    ;
+  }
+} // wrap an old-style stream as the async data source.
+// This is *not* part of the readable stream interface.
+// It is an ugly unfortunate mess of history.
+
+
+Readable.prototype.wrap = function (stream) {
+  var _this = this;
+
+  var state = this._readableState;
+  var paused = false;
+  stream.on('end', function () {
+    debug('wrapped end');
+
+    if (state.decoder && !state.ended) {
+      var chunk = state.decoder.end();
+      if (chunk && chunk.length) _this.push(chunk);
+    }
+
+    _this.push(null);
+  });
+  stream.on('data', function (chunk) {
+    debug('wrapped data');
+    if (state.decoder) chunk = state.decoder.write(chunk); // don't skip over falsy values in objectMode
+
+    if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
+
+    var ret = _this.push(chunk);
+
+    if (!ret) {
+      paused = true;
+      stream.pause();
+    }
+  }); // proxy all the other methods.
+  // important when wrapping filters and duplexes.
+
+  for (var i in stream) {
+    if (this[i] === undefined && typeof stream[i] === 'function') {
+      this[i] = function methodWrap(method) {
+        return function methodWrapReturnFunction() {
+          return stream[method].apply(stream, arguments);
+        };
+      }(i);
+    }
+  } // proxy certain important events.
+
+
+  for (var n = 0; n < kProxyEvents.length; n++) {
+    stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
+  } // when we try to consume some more bytes, simply unpause the
+  // underlying stream.
+
+
+  this._read = function (n) {
+    debug('wrapped _read', n);
+
+    if (paused) {
+      paused = false;
+      stream.resume();
+    }
+  };
+
+  return this;
+};
+
+if (typeof Symbol === 'function') {
+  Readable.prototype[Symbol.asyncIterator] = function () {
+    if (createReadableStreamAsyncIterator === undefined) {
+      createReadableStreamAsyncIterator = require('./internal/streams/async_iterator');
+    }
+
+    return createReadableStreamAsyncIterator(this);
+  };
+}
+
+Object.defineProperty(Readable.prototype, 'readableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._readableState.highWaterMark;
+  }
+});
+Object.defineProperty(Readable.prototype, 'readableBuffer', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._readableState && this._readableState.buffer;
+  }
+});
+Object.defineProperty(Readable.prototype, 'readableFlowing', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._readableState.flowing;
+  },
+  set: function set(state) {
+    if (this._readableState) {
+      this._readableState.flowing = state;
+    }
+  }
+}); // exposed for testing purposes only.
+
+Readable._fromList = fromList;
+Object.defineProperty(Readable.prototype, 'readableLength', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._readableState.length;
+  }
+}); // Pluck off n bytes from an array of buffers.
+// Length is the combined lengths of all the buffers in the list.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+
+function fromList(n, state) {
+  // nothing buffered
+  if (state.length === 0) return null;
+  var ret;
+  if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
+    // read it all, truncate the list
+    if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.first();else ret = state.buffer.concat(state.length);
+    state.buffer.clear();
+  } else {
+    // read part of list
+    ret = state.buffer.consume(n, state.decoder);
+  }
+  return ret;
+}
+
+function endReadable(stream) {
+  var state = stream._readableState;
+  debug('endReadable', state.endEmitted);
+
+  if (!state.endEmitted) {
+    state.ended = true;
+    process.nextTick(endReadableNT, state, stream);
+  }
+}
+
+function endReadableNT(state, stream) {
+  debug('endReadableNT', state.endEmitted, state.length); // Check that we didn't get one last unshift.
+
+  if (!state.endEmitted && state.length === 0) {
+    state.endEmitted = true;
+    stream.readable = false;
+    stream.emit('end');
+
+    if (state.autoDestroy) {
+      // In case of duplex streams we need a way to detect
+      // if the writable side is ready for autoDestroy as well
+      var wState = stream._writableState;
+
+      if (!wState || wState.autoDestroy && wState.finished) {
+        stream.destroy();
+      }
+    }
+  }
+}
+
+if (typeof Symbol === 'function') {
+  Readable.from = function (iterable, opts) {
+    if (from === undefined) {
+      from = require('./internal/streams/from');
+    }
+
+    return from(Readable, iterable, opts);
+  };
+}
+
+function indexOf(xs, x) {
+  for (var i = 0, l = xs.length; i < l; i++) {
+    if (xs[i] === x) return i;
+  }
+
+  return -1;
+}
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../errors":411,"./_stream_duplex":412,"./internal/streams/async_iterator":417,"./internal/streams/buffer_list":418,"./internal/streams/destroy":419,"./internal/streams/from":421,"./internal/streams/state":423,"./internal/streams/stream":424,"_process":404,"buffer":383,"events":388,"inherits":398,"string_decoder/":444,"util":381}],415:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+// a transform stream is a readable/writable stream where you do
+// something with the data.  Sometimes it's called a "filter",
+// but that's not a great name for it, since that implies a thing where
+// some bits pass through, and others are simply ignored.  (That would
+// be a valid example of a transform, of course.)
+//
+// While the output is causally related to the input, it's not a
+// necessarily symmetric or synchronous transformation.  For example,
+// a zlib stream might take multiple plain-text writes(), and then
+// emit a single compressed chunk some time in the future.
+//
+// Here's how this works:
+//
+// The Transform stream has all the aspects of the readable and writable
+// stream classes.  When you write(chunk), that calls _write(chunk,cb)
+// internally, and returns false if there's a lot of pending writes
+// buffered up.  When you call read(), that calls _read(n) until
+// there's enough pending readable data buffered up.
+//
+// In a transform stream, the written data is placed in a buffer.  When
+// _read(n) is called, it transforms the queued up data, calling the
+// buffered _write cb's as it consumes chunks.  If consuming a single
+// written chunk would result in multiple output chunks, then the first
+// outputted bit calls the readcb, and subsequent chunks just go into
+// the read buffer, and will cause it to emit 'readable' if necessary.
+//
+// This way, back-pressure is actually determined by the reading side,
+// since _read has to be called to start processing a new chunk.  However,
+// a pathological inflate type of transform can cause excessive buffering
+// here.  For example, imagine a stream where every byte of input is
+// interpreted as an integer from 0-255, and then results in that many
+// bytes of output.  Writing the 4 bytes {ff,ff,ff,ff} would result in
+// 1kb of data being output.  In this case, you could write a very small
+// amount of input, and end up with a very large amount of output.  In
+// such a pathological inflating mechanism, there'd be no way to tell
+// the system to stop doing the transform.  A single 4MB write could
+// cause the system to run out of memory.
+//
+// However, even in such a pathological case, only a single written chunk
+// would be consumed, and then the rest would wait (un-transformed) until
+// the results of the previous transformed chunk were consumed.
+'use strict';
+
+module.exports = Transform;
+
+var _require$codes = require('../errors').codes,
+    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
+    ERR_MULTIPLE_CALLBACK = _require$codes.ERR_MULTIPLE_CALLBACK,
+    ERR_TRANSFORM_ALREADY_TRANSFORMING = _require$codes.ERR_TRANSFORM_ALREADY_TRANSFORMING,
+    ERR_TRANSFORM_WITH_LENGTH_0 = _require$codes.ERR_TRANSFORM_WITH_LENGTH_0;
+
+var Duplex = require('./_stream_duplex');
+
+require('inherits')(Transform, Duplex);
+
+function afterTransform(er, data) {
+  var ts = this._transformState;
+  ts.transforming = false;
+  var cb = ts.writecb;
+
+  if (cb === null) {
+    return this.emit('error', new ERR_MULTIPLE_CALLBACK());
+  }
+
+  ts.writechunk = null;
+  ts.writecb = null;
+  if (data != null) // single equals check for both `null` and `undefined`
+    this.push(data);
+  cb(er);
+  var rs = this._readableState;
+  rs.reading = false;
+
+  if (rs.needReadable || rs.length < rs.highWaterMark) {
+    this._read(rs.highWaterMark);
+  }
+}
+
+function Transform(options) {
+  if (!(this instanceof Transform)) return new Transform(options);
+  Duplex.call(this, options);
+  this._transformState = {
+    afterTransform: afterTransform.bind(this),
+    needTransform: false,
+    transforming: false,
+    writecb: null,
+    writechunk: null,
+    writeencoding: null
+  }; // start out asking for a readable event once data is transformed.
+
+  this._readableState.needReadable = true; // we have implemented the _read method, and done the other things
+  // that Readable wants before the first _read call, so unset the
+  // sync guard flag.
+
+  this._readableState.sync = false;
+
+  if (options) {
+    if (typeof options.transform === 'function') this._transform = options.transform;
+    if (typeof options.flush === 'function') this._flush = options.flush;
+  } // When the writable side finishes, then flush out anything remaining.
+
+
+  this.on('prefinish', prefinish);
+}
+
+function prefinish() {
+  var _this = this;
+
+  if (typeof this._flush === 'function' && !this._readableState.destroyed) {
+    this._flush(function (er, data) {
+      done(_this, er, data);
+    });
+  } else {
+    done(this, null, null);
+  }
+}
+
+Transform.prototype.push = function (chunk, encoding) {
+  this._transformState.needTransform = false;
+  return Duplex.prototype.push.call(this, chunk, encoding);
+}; // This is the part where you do stuff!
+// override this function in implementation classes.
+// 'chunk' is an input chunk.
+//
+// Call `push(newChunk)` to pass along transformed output
+// to the readable side.  You may call 'push' zero or more times.
+//
+// Call `cb(err)` when you are done with this chunk.  If you pass
+// an error, then that'll put the hurt on the whole operation.  If you
+// never call cb(), then you'll never get another chunk.
+
+
+Transform.prototype._transform = function (chunk, encoding, cb) {
+  cb(new ERR_METHOD_NOT_IMPLEMENTED('_transform()'));
+};
+
+Transform.prototype._write = function (chunk, encoding, cb) {
+  var ts = this._transformState;
+  ts.writecb = cb;
+  ts.writechunk = chunk;
+  ts.writeencoding = encoding;
+
+  if (!ts.transforming) {
+    var rs = this._readableState;
+    if (ts.needTransform || rs.needReadable || rs.length < rs.highWaterMark) this._read(rs.highWaterMark);
+  }
+}; // Doesn't matter what the args are here.
+// _transform does all the work.
+// That we got here means that the readable side wants more data.
+
+
+Transform.prototype._read = function (n) {
+  var ts = this._transformState;
+
+  if (ts.writechunk !== null && !ts.transforming) {
+    ts.transforming = true;
+
+    this._transform(ts.writechunk, ts.writeencoding, ts.afterTransform);
+  } else {
+    // mark that we need a transform, so that any data that comes in
+    // will get processed, now that we've asked for it.
+    ts.needTransform = true;
+  }
+};
+
+Transform.prototype._destroy = function (err, cb) {
+  Duplex.prototype._destroy.call(this, err, function (err2) {
+    cb(err2);
+  });
+};
+
+function done(stream, er, data) {
+  if (er) return stream.emit('error', er);
+  if (data != null) // single equals check for both `null` and `undefined`
+    stream.push(data); // TODO(BridgeAR): Write a test for these two error cases
+  // if there's nothing in the write buffer, then that means
+  // that nothing more will ever be provided
+
+  if (stream._writableState.length) throw new ERR_TRANSFORM_WITH_LENGTH_0();
+  if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
+  return stream.push(null);
+}
+},{"../errors":411,"./_stream_duplex":412,"inherits":398}],416:[function(require,module,exports){
+(function (process,global){(function (){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+// A bit simpler than readable streams.
+// Implement an async ._write(chunk, encoding, cb), and it'll handle all
+// the drain event emission and buffering.
+'use strict';
+
+module.exports = Writable;
+/* <replacement> */
+
+function WriteReq(chunk, encoding, cb) {
+  this.chunk = chunk;
+  this.encoding = encoding;
+  this.callback = cb;
+  this.next = null;
+} // It seems a linked list but it is not
+// there will be only 2 of these for each stream
+
+
+function CorkedRequest(state) {
+  var _this = this;
+
+  this.next = null;
+  this.entry = null;
+
+  this.finish = function () {
+    onCorkedFinish(_this, state);
+  };
+}
+/* </replacement> */
+
+/*<replacement>*/
+
+
+var Duplex;
+/*</replacement>*/
+
+Writable.WritableState = WritableState;
+/*<replacement>*/
+
+var internalUtil = {
+  deprecate: require('util-deprecate')
+};
+/*</replacement>*/
+
+/*<replacement>*/
+
+var Stream = require('./internal/streams/stream');
+/*</replacement>*/
+
+
+var Buffer = require('buffer').Buffer;
+
+var OurUint8Array = global.Uint8Array || function () {};
+
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
+
+var destroyImpl = require('./internal/streams/destroy');
+
+var _require = require('./internal/streams/state'),
+    getHighWaterMark = _require.getHighWaterMark;
+
+var _require$codes = require('../errors').codes,
+    ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
+    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
+    ERR_MULTIPLE_CALLBACK = _require$codes.ERR_MULTIPLE_CALLBACK,
+    ERR_STREAM_CANNOT_PIPE = _require$codes.ERR_STREAM_CANNOT_PIPE,
+    ERR_STREAM_DESTROYED = _require$codes.ERR_STREAM_DESTROYED,
+    ERR_STREAM_NULL_VALUES = _require$codes.ERR_STREAM_NULL_VALUES,
+    ERR_STREAM_WRITE_AFTER_END = _require$codes.ERR_STREAM_WRITE_AFTER_END,
+    ERR_UNKNOWN_ENCODING = _require$codes.ERR_UNKNOWN_ENCODING;
+
+var errorOrDestroy = destroyImpl.errorOrDestroy;
+
+require('inherits')(Writable, Stream);
+
+function nop() {}
+
+function WritableState(options, stream, isDuplex) {
+  Duplex = Duplex || require('./_stream_duplex');
+  options = options || {}; // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream,
+  // e.g. options.readableObjectMode vs. options.writableObjectMode, etc.
+
+  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag to indicate whether or not this stream
+  // contains buffers or objects.
+
+  this.objectMode = !!options.objectMode;
+  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
+  // Note: 0 is a valid value, means that we always return false if
+  // the entire buffer is not flushed immediately on write()
+
+  this.highWaterMark = getHighWaterMark(this, options, 'writableHighWaterMark', isDuplex); // if _final has been called
+
+  this.finalCalled = false; // drain event flag.
+
+  this.needDrain = false; // at the start of calling end()
+
+  this.ending = false; // when end() has been called, and returned
+
+  this.ended = false; // when 'finish' is emitted
+
+  this.finished = false; // has it been destroyed
+
+  this.destroyed = false; // should we decode strings into buffers before passing to _write?
+  // this is here so that some node-core streams can optimize string
+  // handling at a lower level.
+
+  var noDecode = options.decodeStrings === false;
+  this.decodeStrings = !noDecode; // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+
+  this.defaultEncoding = options.defaultEncoding || 'utf8'; // not an actual buffer we keep track of, but a measurement
+  // of how much we're waiting to get pushed to some underlying
+  // socket or file.
+
+  this.length = 0; // a flag to see when we're in the middle of a write.
+
+  this.writing = false; // when true all writes will be buffered until .uncork() call
+
+  this.corked = 0; // a flag to be able to tell if the onwrite cb is called immediately,
+  // or on a later tick.  We set this to true at first, because any
+  // actions that shouldn't happen until "later" should generally also
+  // not happen before the first write call.
+
+  this.sync = true; // a flag to know if we're processing previously buffered items, which
+  // may call the _write() callback in the same tick, so that we don't
+  // end up in an overlapped onwrite situation.
+
+  this.bufferProcessing = false; // the callback that's passed to _write(chunk,cb)
+
+  this.onwrite = function (er) {
+    onwrite(stream, er);
+  }; // the callback that the user supplies to write(chunk,encoding,cb)
+
+
+  this.writecb = null; // the amount that is being written when _write is called.
+
+  this.writelen = 0;
+  this.bufferedRequest = null;
+  this.lastBufferedRequest = null; // number of pending user-supplied write callbacks
+  // this must be 0 before 'finish' can be emitted
+
+  this.pendingcb = 0; // emit prefinish if the only thing we're waiting for is _write cbs
+  // This is relevant for synchronous Transform streams
+
+  this.prefinished = false; // True if the error was already emitted and should not be thrown again
+
+  this.errorEmitted = false; // Should close be emitted on destroy. Defaults to true.
+
+  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'finish' (and potentially 'end')
+
+  this.autoDestroy = !!options.autoDestroy; // count buffered requests
+
+  this.bufferedRequestCount = 0; // allocate the first CorkedRequest, there is always
+  // one allocated and free to use, and we maintain at most two
+
+  this.corkedRequestsFree = new CorkedRequest(this);
+}
+
+WritableState.prototype.getBuffer = function getBuffer() {
+  var current = this.bufferedRequest;
+  var out = [];
+
+  while (current) {
+    out.push(current);
+    current = current.next;
+  }
+
+  return out;
+};
+
+(function () {
+  try {
+    Object.defineProperty(WritableState.prototype, 'buffer', {
+      get: internalUtil.deprecate(function writableStateBufferGetter() {
+        return this.getBuffer();
+      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
+    });
+  } catch (_) {}
+})(); // Test _writableState for inheritance to account for Duplex streams,
+// whose prototype chain only points to Readable.
+
+
+var realHasInstance;
+
+if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
+  realHasInstance = Function.prototype[Symbol.hasInstance];
+  Object.defineProperty(Writable, Symbol.hasInstance, {
+    value: function value(object) {
+      if (realHasInstance.call(this, object)) return true;
+      if (this !== Writable) return false;
+      return object && object._writableState instanceof WritableState;
+    }
+  });
+} else {
+  realHasInstance = function realHasInstance(object) {
+    return object instanceof this;
+  };
+}
+
+function Writable(options) {
+  Duplex = Duplex || require('./_stream_duplex'); // Writable ctor is applied to Duplexes, too.
+  // `realHasInstance` is necessary because using plain `instanceof`
+  // would return false, as no `_writableState` property is attached.
+  // Trying to use the custom `instanceof` for Writable here will also break the
+  // Node.js LazyTransform implementation, which has a non-trivial getter for
+  // `_writableState` that would lead to infinite recursion.
+  // Checking for a Stream.Duplex instance is faster here instead of inside
+  // the WritableState constructor, at least with V8 6.5
+
+  var isDuplex = this instanceof Duplex;
+  if (!isDuplex && !realHasInstance.call(Writable, this)) return new Writable(options);
+  this._writableState = new WritableState(options, this, isDuplex); // legacy.
+
+  this.writable = true;
+
+  if (options) {
+    if (typeof options.write === 'function') this._write = options.write;
+    if (typeof options.writev === 'function') this._writev = options.writev;
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+    if (typeof options.final === 'function') this._final = options.final;
+  }
+
+  Stream.call(this);
+} // Otherwise people can pipe Writable streams, which is just wrong.
+
+
+Writable.prototype.pipe = function () {
+  errorOrDestroy(this, new ERR_STREAM_CANNOT_PIPE());
+};
+
+function writeAfterEnd(stream, cb) {
+  var er = new ERR_STREAM_WRITE_AFTER_END(); // TODO: defer error events consistently everywhere, not just the cb
+
+  errorOrDestroy(stream, er);
+  process.nextTick(cb, er);
+} // Checks that a user-supplied chunk is valid, especially for the particular
+// mode the stream is in. Currently this means that `null` is never accepted
+// and undefined/non-string values are only allowed in object mode.
+
+
+function validChunk(stream, state, chunk, cb) {
+  var er;
+
+  if (chunk === null) {
+    er = new ERR_STREAM_NULL_VALUES();
+  } else if (typeof chunk !== 'string' && !state.objectMode) {
+    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer'], chunk);
+  }
+
+  if (er) {
+    errorOrDestroy(stream, er);
+    process.nextTick(cb, er);
+    return false;
+  }
+
+  return true;
+}
+
+Writable.prototype.write = function (chunk, encoding, cb) {
+  var state = this._writableState;
+  var ret = false;
+
+  var isBuf = !state.objectMode && _isUint8Array(chunk);
+
+  if (isBuf && !Buffer.isBuffer(chunk)) {
+    chunk = _uint8ArrayToBuffer(chunk);
+  }
+
+  if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
+  if (typeof cb !== 'function') cb = nop;
+  if (state.ending) writeAfterEnd(this, cb);else if (isBuf || validChunk(this, state, chunk, cb)) {
+    state.pendingcb++;
+    ret = writeOrBuffer(this, state, isBuf, chunk, encoding, cb);
+  }
+  return ret;
+};
+
+Writable.prototype.cork = function () {
+  this._writableState.corked++;
+};
+
+Writable.prototype.uncork = function () {
+  var state = this._writableState;
+
+  if (state.corked) {
+    state.corked--;
+    if (!state.writing && !state.corked && !state.bufferProcessing && state.bufferedRequest) clearBuffer(this, state);
+  }
+};
+
+Writable.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
+  // node::ParseEncoding() requires lower case.
+  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
+  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new ERR_UNKNOWN_ENCODING(encoding);
+  this._writableState.defaultEncoding = encoding;
+  return this;
+};
+
+Object.defineProperty(Writable.prototype, 'writableBuffer', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState && this._writableState.getBuffer();
+  }
+});
+
+function decodeChunk(state, chunk, encoding) {
+  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
+    chunk = Buffer.from(chunk, encoding);
+  }
+
+  return chunk;
+}
+
+Object.defineProperty(Writable.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState.highWaterMark;
+  }
+}); // if we're already writing something, then just put this
+// in the queue, and wait our turn.  Otherwise, call _write
+// If we return false, then we need a drain event, so set that flag.
+
+function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
+  if (!isBuf) {
+    var newChunk = decodeChunk(state, chunk, encoding);
+
+    if (chunk !== newChunk) {
+      isBuf = true;
+      encoding = 'buffer';
+      chunk = newChunk;
+    }
+  }
+
+  var len = state.objectMode ? 1 : chunk.length;
+  state.length += len;
+  var ret = state.length < state.highWaterMark; // we must ensure that previous needDrain will not be reset to false.
+
+  if (!ret) state.needDrain = true;
+
+  if (state.writing || state.corked) {
+    var last = state.lastBufferedRequest;
+    state.lastBufferedRequest = {
+      chunk: chunk,
+      encoding: encoding,
+      isBuf: isBuf,
+      callback: cb,
+      next: null
+    };
+
+    if (last) {
+      last.next = state.lastBufferedRequest;
+    } else {
+      state.bufferedRequest = state.lastBufferedRequest;
+    }
+
+    state.bufferedRequestCount += 1;
+  } else {
+    doWrite(stream, state, false, len, chunk, encoding, cb);
+  }
+
+  return ret;
+}
+
+function doWrite(stream, state, writev, len, chunk, encoding, cb) {
+  state.writelen = len;
+  state.writecb = cb;
+  state.writing = true;
+  state.sync = true;
+  if (state.destroyed) state.onwrite(new ERR_STREAM_DESTROYED('write'));else if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
+  state.sync = false;
+}
+
+function onwriteError(stream, state, sync, er, cb) {
+  --state.pendingcb;
+
+  if (sync) {
+    // defer the callback if we are being called synchronously
+    // to avoid piling up things on the stack
+    process.nextTick(cb, er); // this can emit finish, and it will always happen
+    // after error
+
+    process.nextTick(finishMaybe, stream, state);
+    stream._writableState.errorEmitted = true;
+    errorOrDestroy(stream, er);
+  } else {
+    // the caller expect this to happen before if
+    // it is async
+    cb(er);
+    stream._writableState.errorEmitted = true;
+    errorOrDestroy(stream, er); // this can emit finish, but finish must
+    // always follow error
+
+    finishMaybe(stream, state);
+  }
+}
+
+function onwriteStateUpdate(state) {
+  state.writing = false;
+  state.writecb = null;
+  state.length -= state.writelen;
+  state.writelen = 0;
+}
+
+function onwrite(stream, er) {
+  var state = stream._writableState;
+  var sync = state.sync;
+  var cb = state.writecb;
+  if (typeof cb !== 'function') throw new ERR_MULTIPLE_CALLBACK();
+  onwriteStateUpdate(state);
+  if (er) onwriteError(stream, state, sync, er, cb);else {
+    // Check if we're actually ready to finish, but don't emit yet
+    var finished = needFinish(state) || stream.destroyed;
+
+    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
+      clearBuffer(stream, state);
+    }
+
+    if (sync) {
+      process.nextTick(afterWrite, stream, state, finished, cb);
+    } else {
+      afterWrite(stream, state, finished, cb);
+    }
+  }
+}
+
+function afterWrite(stream, state, finished, cb) {
+  if (!finished) onwriteDrain(stream, state);
+  state.pendingcb--;
+  cb();
+  finishMaybe(stream, state);
+} // Must force callback to be called on nextTick, so that we don't
+// emit 'drain' before the write() consumer gets the 'false' return
+// value, and has a chance to attach a 'drain' listener.
+
+
+function onwriteDrain(stream, state) {
+  if (state.length === 0 && state.needDrain) {
+    state.needDrain = false;
+    stream.emit('drain');
+  }
+} // if there's something in the buffer waiting, then process it
+
+
+function clearBuffer(stream, state) {
+  state.bufferProcessing = true;
+  var entry = state.bufferedRequest;
+
+  if (stream._writev && entry && entry.next) {
+    // Fast case, write everything using _writev()
+    var l = state.bufferedRequestCount;
+    var buffer = new Array(l);
+    var holder = state.corkedRequestsFree;
+    holder.entry = entry;
+    var count = 0;
+    var allBuffers = true;
+
+    while (entry) {
+      buffer[count] = entry;
+      if (!entry.isBuf) allBuffers = false;
+      entry = entry.next;
+      count += 1;
+    }
+
+    buffer.allBuffers = allBuffers;
+    doWrite(stream, state, true, state.length, buffer, '', holder.finish); // doWrite is almost always async, defer these to save a bit of time
+    // as the hot path ends with doWrite
+
+    state.pendingcb++;
+    state.lastBufferedRequest = null;
+
+    if (holder.next) {
+      state.corkedRequestsFree = holder.next;
+      holder.next = null;
+    } else {
+      state.corkedRequestsFree = new CorkedRequest(state);
+    }
+
+    state.bufferedRequestCount = 0;
+  } else {
+    // Slow case, write chunks one-by-one
+    while (entry) {
+      var chunk = entry.chunk;
+      var encoding = entry.encoding;
+      var cb = entry.callback;
+      var len = state.objectMode ? 1 : chunk.length;
+      doWrite(stream, state, false, len, chunk, encoding, cb);
+      entry = entry.next;
+      state.bufferedRequestCount--; // if we didn't call the onwrite immediately, then
+      // it means that we need to wait until it does.
+      // also, that means that the chunk and cb are currently
+      // being processed, so move the buffer counter past them.
+
+      if (state.writing) {
+        break;
+      }
+    }
+
+    if (entry === null) state.lastBufferedRequest = null;
+  }
+
+  state.bufferedRequest = entry;
+  state.bufferProcessing = false;
+}
+
+Writable.prototype._write = function (chunk, encoding, cb) {
+  cb(new ERR_METHOD_NOT_IMPLEMENTED('_write()'));
+};
+
+Writable.prototype._writev = null;
+
+Writable.prototype.end = function (chunk, encoding, cb) {
+  var state = this._writableState;
+
+  if (typeof chunk === 'function') {
+    cb = chunk;
+    chunk = null;
+    encoding = null;
+  } else if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding); // .end() fully uncorks
+
+  if (state.corked) {
+    state.corked = 1;
+    this.uncork();
+  } // ignore unnecessary end() calls.
+
+
+  if (!state.ending) endWritable(this, state, cb);
+  return this;
+};
+
+Object.defineProperty(Writable.prototype, 'writableLength', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    return this._writableState.length;
+  }
+});
+
+function needFinish(state) {
+  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
+}
+
+function callFinal(stream, state) {
+  stream._final(function (err) {
+    state.pendingcb--;
+
+    if (err) {
+      errorOrDestroy(stream, err);
+    }
+
+    state.prefinished = true;
+    stream.emit('prefinish');
+    finishMaybe(stream, state);
+  });
+}
+
+function prefinish(stream, state) {
+  if (!state.prefinished && !state.finalCalled) {
+    if (typeof stream._final === 'function' && !state.destroyed) {
+      state.pendingcb++;
+      state.finalCalled = true;
+      process.nextTick(callFinal, stream, state);
+    } else {
+      state.prefinished = true;
+      stream.emit('prefinish');
+    }
+  }
+}
+
+function finishMaybe(stream, state) {
+  var need = needFinish(state);
+
+  if (need) {
+    prefinish(stream, state);
+
+    if (state.pendingcb === 0) {
+      state.finished = true;
+      stream.emit('finish');
+
+      if (state.autoDestroy) {
+        // In case of duplex streams we need a way to detect
+        // if the readable side is ready for autoDestroy as well
+        var rState = stream._readableState;
+
+        if (!rState || rState.autoDestroy && rState.endEmitted) {
+          stream.destroy();
+        }
+      }
+    }
+  }
+
+  return need;
+}
+
+function endWritable(stream, state, cb) {
+  state.ending = true;
+  finishMaybe(stream, state);
+
+  if (cb) {
+    if (state.finished) process.nextTick(cb);else stream.once('finish', cb);
+  }
+
+  state.ended = true;
+  stream.writable = false;
+}
+
+function onCorkedFinish(corkReq, state, err) {
+  var entry = corkReq.entry;
+  corkReq.entry = null;
+
+  while (entry) {
+    var cb = entry.callback;
+    state.pendingcb--;
+    cb(err);
+    entry = entry.next;
+  } // reuse the free corkReq.
+
+
+  state.corkedRequestsFree.next = corkReq;
+}
+
+Object.defineProperty(Writable.prototype, 'destroyed', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function get() {
+    if (this._writableState === undefined) {
+      return false;
+    }
+
+    return this._writableState.destroyed;
+  },
+  set: function set(value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._writableState) {
+      return;
+    } // backward compatibility, the user is explicitly
+    // managing destroyed
+
+
+    this._writableState.destroyed = value;
+  }
+});
+Writable.prototype.destroy = destroyImpl.destroy;
+Writable.prototype._undestroy = destroyImpl.undestroy;
+
+Writable.prototype._destroy = function (err, cb) {
+  cb(err);
+};
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../errors":411,"./_stream_duplex":412,"./internal/streams/destroy":419,"./internal/streams/state":423,"./internal/streams/stream":424,"_process":404,"buffer":383,"inherits":398,"util-deprecate":447}],417:[function(require,module,exports){
+(function (process){(function (){
+'use strict';
+
+var _Object$setPrototypeO;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var finished = require('./end-of-stream');
+
+var kLastResolve = Symbol('lastResolve');
+var kLastReject = Symbol('lastReject');
+var kError = Symbol('error');
+var kEnded = Symbol('ended');
+var kLastPromise = Symbol('lastPromise');
+var kHandlePromise = Symbol('handlePromise');
+var kStream = Symbol('stream');
+
+function createIterResult(value, done) {
+  return {
+    value: value,
+    done: done
+  };
+}
+
+function readAndResolve(iter) {
+  var resolve = iter[kLastResolve];
+
+  if (resolve !== null) {
+    var data = iter[kStream].read(); // we defer if data is null
+    // we can be expecting either 'end' or
+    // 'error'
+
+    if (data !== null) {
+      iter[kLastPromise] = null;
+      iter[kLastResolve] = null;
+      iter[kLastReject] = null;
+      resolve(createIterResult(data, false));
+    }
+  }
+}
+
+function onReadable(iter) {
+  // we wait for the next tick, because it might
+  // emit an error with process.nextTick
+  process.nextTick(readAndResolve, iter);
+}
+
+function wrapForNext(lastPromise, iter) {
+  return function (resolve, reject) {
+    lastPromise.then(function () {
+      if (iter[kEnded]) {
+        resolve(createIterResult(undefined, true));
+        return;
+      }
+
+      iter[kHandlePromise](resolve, reject);
+    }, reject);
+  };
+}
+
+var AsyncIteratorPrototype = Object.getPrototypeOf(function () {});
+var ReadableStreamAsyncIteratorPrototype = Object.setPrototypeOf((_Object$setPrototypeO = {
+  get stream() {
+    return this[kStream];
+  },
+
+  next: function next() {
+    var _this = this;
+
+    // if we have detected an error in the meanwhile
+    // reject straight away
+    var error = this[kError];
+
+    if (error !== null) {
+      return Promise.reject(error);
+    }
+
+    if (this[kEnded]) {
+      return Promise.resolve(createIterResult(undefined, true));
+    }
+
+    if (this[kStream].destroyed) {
+      // We need to defer via nextTick because if .destroy(err) is
+      // called, the error will be emitted via nextTick, and
+      // we cannot guarantee that there is no error lingering around
+      // waiting to be emitted.
+      return new Promise(function (resolve, reject) {
+        process.nextTick(function () {
+          if (_this[kError]) {
+            reject(_this[kError]);
+          } else {
+            resolve(createIterResult(undefined, true));
+          }
+        });
+      });
+    } // if we have multiple next() calls
+    // we will wait for the previous Promise to finish
+    // this logic is optimized to support for await loops,
+    // where next() is only called once at a time
+
+
+    var lastPromise = this[kLastPromise];
+    var promise;
+
+    if (lastPromise) {
+      promise = new Promise(wrapForNext(lastPromise, this));
+    } else {
+      // fast path needed to support multiple this.push()
+      // without triggering the next() queue
+      var data = this[kStream].read();
+
+      if (data !== null) {
+        return Promise.resolve(createIterResult(data, false));
+      }
+
+      promise = new Promise(this[kHandlePromise]);
+    }
+
+    this[kLastPromise] = promise;
+    return promise;
+  }
+}, _defineProperty(_Object$setPrototypeO, Symbol.asyncIterator, function () {
+  return this;
+}), _defineProperty(_Object$setPrototypeO, "return", function _return() {
+  var _this2 = this;
+
+  // destroy(err, cb) is a private API
+  // we can guarantee we have that here, because we control the
+  // Readable class this is attached to
+  return new Promise(function (resolve, reject) {
+    _this2[kStream].destroy(null, function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve(createIterResult(undefined, true));
+    });
+  });
+}), _Object$setPrototypeO), AsyncIteratorPrototype);
+
+var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterator(stream) {
+  var _Object$create;
+
+  var iterator = Object.create(ReadableStreamAsyncIteratorPrototype, (_Object$create = {}, _defineProperty(_Object$create, kStream, {
+    value: stream,
+    writable: true
+  }), _defineProperty(_Object$create, kLastResolve, {
+    value: null,
+    writable: true
+  }), _defineProperty(_Object$create, kLastReject, {
+    value: null,
+    writable: true
+  }), _defineProperty(_Object$create, kError, {
+    value: null,
+    writable: true
+  }), _defineProperty(_Object$create, kEnded, {
+    value: stream._readableState.endEmitted,
+    writable: true
+  }), _defineProperty(_Object$create, kHandlePromise, {
+    value: function value(resolve, reject) {
+      var data = iterator[kStream].read();
+
+      if (data) {
+        iterator[kLastPromise] = null;
+        iterator[kLastResolve] = null;
+        iterator[kLastReject] = null;
+        resolve(createIterResult(data, false));
+      } else {
+        iterator[kLastResolve] = resolve;
+        iterator[kLastReject] = reject;
+      }
+    },
+    writable: true
+  }), _Object$create));
+  iterator[kLastPromise] = null;
+  finished(stream, function (err) {
+    if (err && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
+      var reject = iterator[kLastReject]; // reject if we are waiting for data in the Promise
+      // returned by next() and store the error
+
+      if (reject !== null) {
+        iterator[kLastPromise] = null;
+        iterator[kLastResolve] = null;
+        iterator[kLastReject] = null;
+        reject(err);
+      }
+
+      iterator[kError] = err;
+      return;
+    }
+
+    var resolve = iterator[kLastResolve];
+
+    if (resolve !== null) {
+      iterator[kLastPromise] = null;
+      iterator[kLastResolve] = null;
+      iterator[kLastReject] = null;
+      resolve(createIterResult(undefined, true));
+    }
+
+    iterator[kEnded] = true;
+  });
+  stream.on('readable', onReadable.bind(null, iterator));
+  return iterator;
+};
+
+module.exports = createReadableStreamAsyncIterator;
+}).call(this)}).call(this,require('_process'))
+},{"./end-of-stream":420,"_process":404}],418:[function(require,module,exports){
+'use strict';
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var _require = require('buffer'),
+    Buffer = _require.Buffer;
+
+var _require2 = require('util'),
+    inspect = _require2.inspect;
+
+var custom = inspect && inspect.custom || 'inspect';
+
+function copyBuffer(src, target, offset) {
+  Buffer.prototype.copy.call(src, target, offset);
+}
+
+module.exports =
+/*#__PURE__*/
+function () {
+  function BufferList() {
+    _classCallCheck(this, BufferList);
+
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  _createClass(BufferList, [{
+    key: "push",
+    value: function push(v) {
+      var entry = {
+        data: v,
+        next: null
+      };
+      if (this.length > 0) this.tail.next = entry;else this.head = entry;
+      this.tail = entry;
+      ++this.length;
+    }
+  }, {
+    key: "unshift",
+    value: function unshift(v) {
+      var entry = {
+        data: v,
+        next: this.head
+      };
+      if (this.length === 0) this.tail = entry;
+      this.head = entry;
+      ++this.length;
+    }
+  }, {
+    key: "shift",
+    value: function shift() {
+      if (this.length === 0) return;
+      var ret = this.head.data;
+      if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
+      --this.length;
+      return ret;
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.head = this.tail = null;
+      this.length = 0;
+    }
+  }, {
+    key: "join",
+    value: function join(s) {
+      if (this.length === 0) return '';
+      var p = this.head;
+      var ret = '' + p.data;
+
+      while (p = p.next) {
+        ret += s + p.data;
+      }
+
+      return ret;
+    }
+  }, {
+    key: "concat",
+    value: function concat(n) {
+      if (this.length === 0) return Buffer.alloc(0);
+      var ret = Buffer.allocUnsafe(n >>> 0);
+      var p = this.head;
+      var i = 0;
+
+      while (p) {
+        copyBuffer(p.data, ret, i);
+        i += p.data.length;
+        p = p.next;
+      }
+
+      return ret;
+    } // Consumes a specified amount of bytes or characters from the buffered data.
+
+  }, {
+    key: "consume",
+    value: function consume(n, hasStrings) {
+      var ret;
+
+      if (n < this.head.data.length) {
+        // `slice` is the same for buffers and strings.
+        ret = this.head.data.slice(0, n);
+        this.head.data = this.head.data.slice(n);
+      } else if (n === this.head.data.length) {
+        // First chunk is a perfect match.
+        ret = this.shift();
+      } else {
+        // Result spans more than one buffer.
+        ret = hasStrings ? this._getString(n) : this._getBuffer(n);
+      }
+
+      return ret;
+    }
+  }, {
+    key: "first",
+    value: function first() {
+      return this.head.data;
+    } // Consumes a specified amount of characters from the buffered data.
+
+  }, {
+    key: "_getString",
+    value: function _getString(n) {
+      var p = this.head;
+      var c = 1;
+      var ret = p.data;
+      n -= ret.length;
+
+      while (p = p.next) {
+        var str = p.data;
+        var nb = n > str.length ? str.length : n;
+        if (nb === str.length) ret += str;else ret += str.slice(0, n);
+        n -= nb;
+
+        if (n === 0) {
+          if (nb === str.length) {
+            ++c;
+            if (p.next) this.head = p.next;else this.head = this.tail = null;
+          } else {
+            this.head = p;
+            p.data = str.slice(nb);
+          }
+
+          break;
+        }
+
+        ++c;
+      }
+
+      this.length -= c;
+      return ret;
+    } // Consumes a specified amount of bytes from the buffered data.
+
+  }, {
+    key: "_getBuffer",
+    value: function _getBuffer(n) {
+      var ret = Buffer.allocUnsafe(n);
+      var p = this.head;
+      var c = 1;
+      p.data.copy(ret);
+      n -= p.data.length;
+
+      while (p = p.next) {
+        var buf = p.data;
+        var nb = n > buf.length ? buf.length : n;
+        buf.copy(ret, ret.length - n, 0, nb);
+        n -= nb;
+
+        if (n === 0) {
+          if (nb === buf.length) {
+            ++c;
+            if (p.next) this.head = p.next;else this.head = this.tail = null;
+          } else {
+            this.head = p;
+            p.data = buf.slice(nb);
+          }
+
+          break;
+        }
+
+        ++c;
+      }
+
+      this.length -= c;
+      return ret;
+    } // Make sure the linked list only shows the minimal necessary information.
+
+  }, {
+    key: custom,
+    value: function value(_, options) {
+      return inspect(this, _objectSpread({}, options, {
+        // Only inspect one level.
+        depth: 0,
+        // It should not recurse.
+        customInspect: false
+      }));
+    }
+  }]);
+
+  return BufferList;
+}();
+},{"buffer":383,"util":381}],419:[function(require,module,exports){
+(function (process){(function (){
+'use strict'; // undocumented cb() API, needed for core, not for public API
+
+function destroy(err, cb) {
+  var _this = this;
+
+  var readableDestroyed = this._readableState && this._readableState.destroyed;
+  var writableDestroyed = this._writableState && this._writableState.destroyed;
+
+  if (readableDestroyed || writableDestroyed) {
+    if (cb) {
+      cb(err);
+    } else if (err) {
+      if (!this._writableState) {
+        process.nextTick(emitErrorNT, this, err);
+      } else if (!this._writableState.errorEmitted) {
+        this._writableState.errorEmitted = true;
+        process.nextTick(emitErrorNT, this, err);
+      }
+    }
+
+    return this;
+  } // we set destroyed to true before firing error callbacks in order
+  // to make it re-entrance safe in case destroy() is called within callbacks
+
+
+  if (this._readableState) {
+    this._readableState.destroyed = true;
+  } // if this is a duplex stream mark the writable part as destroyed as well
+
+
+  if (this._writableState) {
+    this._writableState.destroyed = true;
+  }
+
+  this._destroy(err || null, function (err) {
+    if (!cb && err) {
+      if (!_this._writableState) {
+        process.nextTick(emitErrorAndCloseNT, _this, err);
+      } else if (!_this._writableState.errorEmitted) {
+        _this._writableState.errorEmitted = true;
+        process.nextTick(emitErrorAndCloseNT, _this, err);
+      } else {
+        process.nextTick(emitCloseNT, _this);
+      }
+    } else if (cb) {
+      process.nextTick(emitCloseNT, _this);
+      cb(err);
+    } else {
+      process.nextTick(emitCloseNT, _this);
+    }
+  });
+
+  return this;
+}
+
+function emitErrorAndCloseNT(self, err) {
+  emitErrorNT(self, err);
+  emitCloseNT(self);
+}
+
+function emitCloseNT(self) {
+  if (self._writableState && !self._writableState.emitClose) return;
+  if (self._readableState && !self._readableState.emitClose) return;
+  self.emit('close');
+}
+
+function undestroy() {
+  if (this._readableState) {
+    this._readableState.destroyed = false;
+    this._readableState.reading = false;
+    this._readableState.ended = false;
+    this._readableState.endEmitted = false;
+  }
+
+  if (this._writableState) {
+    this._writableState.destroyed = false;
+    this._writableState.ended = false;
+    this._writableState.ending = false;
+    this._writableState.finalCalled = false;
+    this._writableState.prefinished = false;
+    this._writableState.finished = false;
+    this._writableState.errorEmitted = false;
+  }
+}
+
+function emitErrorNT(self, err) {
+  self.emit('error', err);
+}
+
+function errorOrDestroy(stream, err) {
+  // We have tests that rely on errors being emitted
+  // in the same tick, so changing this is semver major.
+  // For now when you opt-in to autoDestroy we allow
+  // the error to be emitted nextTick. In a future
+  // semver major update we should change the default to this.
+  var rState = stream._readableState;
+  var wState = stream._writableState;
+  if (rState && rState.autoDestroy || wState && wState.autoDestroy) stream.destroy(err);else stream.emit('error', err);
+}
+
+module.exports = {
+  destroy: destroy,
+  undestroy: undestroy,
+  errorOrDestroy: errorOrDestroy
+};
+}).call(this)}).call(this,require('_process'))
+},{"_process":404}],420:[function(require,module,exports){
+// Ported from https://github.com/mafintosh/end-of-stream with
+// permission from the author, Mathias Buus (@mafintosh).
+'use strict';
+
+var ERR_STREAM_PREMATURE_CLOSE = require('../../../errors').codes.ERR_STREAM_PREMATURE_CLOSE;
+
+function once(callback) {
+  var called = false;
+  return function () {
+    if (called) return;
+    called = true;
+
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    callback.apply(this, args);
+  };
+}
+
+function noop() {}
+
+function isRequest(stream) {
+  return stream.setHeader && typeof stream.abort === 'function';
+}
+
+function eos(stream, opts, callback) {
+  if (typeof opts === 'function') return eos(stream, null, opts);
+  if (!opts) opts = {};
+  callback = once(callback || noop);
+  var readable = opts.readable || opts.readable !== false && stream.readable;
+  var writable = opts.writable || opts.writable !== false && stream.writable;
+
+  var onlegacyfinish = function onlegacyfinish() {
+    if (!stream.writable) onfinish();
+  };
+
+  var writableEnded = stream._writableState && stream._writableState.finished;
+
+  var onfinish = function onfinish() {
+    writable = false;
+    writableEnded = true;
+    if (!readable) callback.call(stream);
+  };
+
+  var readableEnded = stream._readableState && stream._readableState.endEmitted;
+
+  var onend = function onend() {
+    readable = false;
+    readableEnded = true;
+    if (!writable) callback.call(stream);
+  };
+
+  var onerror = function onerror(err) {
+    callback.call(stream, err);
+  };
+
+  var onclose = function onclose() {
+    var err;
+
+    if (readable && !readableEnded) {
+      if (!stream._readableState || !stream._readableState.ended) err = new ERR_STREAM_PREMATURE_CLOSE();
+      return callback.call(stream, err);
+    }
+
+    if (writable && !writableEnded) {
+      if (!stream._writableState || !stream._writableState.ended) err = new ERR_STREAM_PREMATURE_CLOSE();
+      return callback.call(stream, err);
+    }
+  };
+
+  var onrequest = function onrequest() {
+    stream.req.on('finish', onfinish);
+  };
+
+  if (isRequest(stream)) {
+    stream.on('complete', onfinish);
+    stream.on('abort', onclose);
+    if (stream.req) onrequest();else stream.on('request', onrequest);
+  } else if (writable && !stream._writableState) {
+    // legacy streams
+    stream.on('end', onlegacyfinish);
+    stream.on('close', onlegacyfinish);
+  }
+
+  stream.on('end', onend);
+  stream.on('finish', onfinish);
+  if (opts.error !== false) stream.on('error', onerror);
+  stream.on('close', onclose);
+  return function () {
+    stream.removeListener('complete', onfinish);
+    stream.removeListener('abort', onclose);
+    stream.removeListener('request', onrequest);
+    if (stream.req) stream.req.removeListener('finish', onfinish);
+    stream.removeListener('end', onlegacyfinish);
+    stream.removeListener('close', onlegacyfinish);
+    stream.removeListener('finish', onfinish);
+    stream.removeListener('end', onend);
+    stream.removeListener('error', onerror);
+    stream.removeListener('close', onclose);
+  };
+}
+
+module.exports = eos;
+},{"../../../errors":411}],421:[function(require,module,exports){
+module.exports = function () {
+  throw new Error('Readable.from is not available in the browser')
+};
+
+},{}],422:[function(require,module,exports){
+// Ported from https://github.com/mafintosh/pump with
+// permission from the author, Mathias Buus (@mafintosh).
+'use strict';
+
+var eos;
+
+function once(callback) {
+  var called = false;
+  return function () {
+    if (called) return;
+    called = true;
+    callback.apply(void 0, arguments);
+  };
+}
+
+var _require$codes = require('../../../errors').codes,
+    ERR_MISSING_ARGS = _require$codes.ERR_MISSING_ARGS,
+    ERR_STREAM_DESTROYED = _require$codes.ERR_STREAM_DESTROYED;
+
+function noop(err) {
+  // Rethrow the error if it exists to avoid swallowing it
+  if (err) throw err;
+}
+
+function isRequest(stream) {
+  return stream.setHeader && typeof stream.abort === 'function';
+}
+
+function destroyer(stream, reading, writing, callback) {
+  callback = once(callback);
+  var closed = false;
+  stream.on('close', function () {
+    closed = true;
+  });
+  if (eos === undefined) eos = require('./end-of-stream');
+  eos(stream, {
+    readable: reading,
+    writable: writing
+  }, function (err) {
+    if (err) return callback(err);
+    closed = true;
+    callback();
+  });
+  var destroyed = false;
+  return function (err) {
+    if (closed) return;
+    if (destroyed) return;
+    destroyed = true; // request.destroy just do .end - .abort is what we want
+
+    if (isRequest(stream)) return stream.abort();
+    if (typeof stream.destroy === 'function') return stream.destroy();
+    callback(err || new ERR_STREAM_DESTROYED('pipe'));
+  };
+}
+
+function call(fn) {
+  fn();
+}
+
+function pipe(from, to) {
+  return from.pipe(to);
+}
+
+function popCallback(streams) {
+  if (!streams.length) return noop;
+  if (typeof streams[streams.length - 1] !== 'function') return noop;
+  return streams.pop();
+}
+
+function pipeline() {
+  for (var _len = arguments.length, streams = new Array(_len), _key = 0; _key < _len; _key++) {
+    streams[_key] = arguments[_key];
+  }
+
+  var callback = popCallback(streams);
+  if (Array.isArray(streams[0])) streams = streams[0];
+
+  if (streams.length < 2) {
+    throw new ERR_MISSING_ARGS('streams');
+  }
+
+  var error;
+  var destroys = streams.map(function (stream, i) {
+    var reading = i < streams.length - 1;
+    var writing = i > 0;
+    return destroyer(stream, reading, writing, function (err) {
+      if (!error) error = err;
+      if (err) destroys.forEach(call);
+      if (reading) return;
+      destroys.forEach(call);
+      callback(error);
+    });
+  });
+  return streams.reduce(pipe);
+}
+
+module.exports = pipeline;
+},{"../../../errors":411,"./end-of-stream":420}],423:[function(require,module,exports){
+'use strict';
+
+var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
+
+function highWaterMarkFrom(options, isDuplex, duplexKey) {
+  return options.highWaterMark != null ? options.highWaterMark : isDuplex ? options[duplexKey] : null;
+}
+
+function getHighWaterMark(state, options, duplexKey, isDuplex) {
+  var hwm = highWaterMarkFrom(options, isDuplex, duplexKey);
+
+  if (hwm != null) {
+    if (!(isFinite(hwm) && Math.floor(hwm) === hwm) || hwm < 0) {
+      var name = isDuplex ? duplexKey : 'highWaterMark';
+      throw new ERR_INVALID_OPT_VALUE(name, hwm);
+    }
+
+    return Math.floor(hwm);
+  } // Default value
+
+
+  return state.objectMode ? 16 : 16 * 1024;
+}
+
+module.exports = {
+  getHighWaterMark: getHighWaterMark
+};
+},{"../../../errors":411}],424:[function(require,module,exports){
+module.exports = require('events').EventEmitter;
+
+},{"events":388}],425:[function(require,module,exports){
+(function (global){(function (){
+var ClientRequest = require('./lib/request')
+var response = require('./lib/response')
+var extend = require('xtend')
+var statusCodes = require('builtin-status-codes')
+var url = require('url')
+
+var http = exports
+
+http.request = function (opts, cb) {
+	if (typeof opts === 'string')
+		opts = url.parse(opts)
+	else
+		opts = extend(opts)
+
+	// Normally, the page is loaded from http or https, so not specifying a protocol
+	// will result in a (valid) protocol-relative url. However, this won't work if
+	// the protocol is something else, like 'file:'
+	var defaultProtocol = global.location.protocol.search(/^https?:$/) === -1 ? 'http:' : ''
+
+	var protocol = opts.protocol || defaultProtocol
+	var host = opts.hostname || opts.host
+	var port = opts.port
+	var path = opts.path || '/'
+
+	// Necessary for IPv6 addresses
+	if (host && host.indexOf(':') !== -1)
+		host = '[' + host + ']'
+
+	// This may be a relative url. The browser should always be able to interpret it correctly.
+	opts.url = (host ? (protocol + '//' + host) : '') + (port ? ':' + port : '') + path
+	opts.method = (opts.method || 'GET').toUpperCase()
+	opts.headers = opts.headers || {}
+
+	// Also valid opts.auth, opts.mode
+
+	var req = new ClientRequest(opts)
+	if (cb)
+		req.on('response', cb)
+	return req
+}
+
+http.get = function get (opts, cb) {
+	var req = http.request(opts, cb)
+	req.end()
+	return req
+}
+
+http.ClientRequest = ClientRequest
+http.IncomingMessage = response.IncomingMessage
+
+http.Agent = function () {}
+http.Agent.defaultMaxSockets = 4
+
+http.globalAgent = new http.Agent()
+
+http.STATUS_CODES = statusCodes
+
+http.METHODS = [
+	'CHECKOUT',
+	'CONNECT',
+	'COPY',
+	'DELETE',
+	'GET',
+	'HEAD',
+	'LOCK',
+	'M-SEARCH',
+	'MERGE',
+	'MKACTIVITY',
+	'MKCOL',
+	'MOVE',
+	'NOTIFY',
+	'OPTIONS',
+	'PATCH',
+	'POST',
+	'PROPFIND',
+	'PROPPATCH',
+	'PURGE',
+	'PUT',
+	'REPORT',
+	'SEARCH',
+	'SUBSCRIBE',
+	'TRACE',
+	'UNLOCK',
+	'UNSUBSCRIBE'
+]
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./lib/request":427,"./lib/response":428,"builtin-status-codes":384,"url":445,"xtend":452}],426:[function(require,module,exports){
+(function (global){(function (){
+exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
+
+exports.writableStream = isFunction(global.WritableStream)
+
+exports.abortController = isFunction(global.AbortController)
+
+// The xhr request to example.com may violate some restrictive CSP configurations,
+// so if we're running in a browser that supports `fetch`, avoid calling getXHR()
+// and assume support for certain features below.
+var xhr
+function getXHR () {
+	// Cache the xhr value
+	if (xhr !== undefined) return xhr
+
+	if (global.XMLHttpRequest) {
+		xhr = new global.XMLHttpRequest()
+		// If XDomainRequest is available (ie only, where xhr might not work
+		// cross domain), use the page location. Otherwise use example.com
+		// Note: this doesn't actually make an http request.
+		try {
+			xhr.open('GET', global.XDomainRequest ? '/' : 'https://example.com')
+		} catch(e) {
+			xhr = null
+		}
+	} else {
+		// Service workers don't have XHR
+		xhr = null
+	}
+	return xhr
+}
+
+function checkTypeSupport (type) {
+	var xhr = getXHR()
+	if (!xhr) return false
+	try {
+		xhr.responseType = type
+		return xhr.responseType === type
+	} catch (e) {}
+	return false
+}
+
+// If fetch is supported, then arraybuffer will be supported too. Skip calling
+// checkTypeSupport(), since that calls getXHR().
+exports.arraybuffer = exports.fetch || checkTypeSupport('arraybuffer')
+
+// These next two tests unavoidably show warnings in Chrome. Since fetch will always
+// be used if it's available, just return false for these to avoid the warnings.
+exports.msstream = !exports.fetch && checkTypeSupport('ms-stream')
+exports.mozchunkedarraybuffer = !exports.fetch && checkTypeSupport('moz-chunked-arraybuffer')
+
+// If fetch is supported, then overrideMimeType will be supported too. Skip calling
+// getXHR().
+exports.overrideMimeType = exports.fetch || (getXHR() ? isFunction(getXHR().overrideMimeType) : false)
+
+function isFunction (value) {
+	return typeof value === 'function'
+}
+
+xhr = null // Help gc
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],427:[function(require,module,exports){
+(function (process,global,Buffer){(function (){
+var capability = require('./capability')
+var inherits = require('inherits')
+var response = require('./response')
+var stream = require('readable-stream')
+
+var IncomingMessage = response.IncomingMessage
+var rStates = response.readyStates
+
+function decideMode (preferBinary, useFetch) {
+	if (capability.fetch && useFetch) {
+		return 'fetch'
+	} else if (capability.mozchunkedarraybuffer) {
+		return 'moz-chunked-arraybuffer'
+	} else if (capability.msstream) {
+		return 'ms-stream'
+	} else if (capability.arraybuffer && preferBinary) {
+		return 'arraybuffer'
+	} else {
+		return 'text'
+	}
+}
+
+var ClientRequest = module.exports = function (opts) {
+	var self = this
+	stream.Writable.call(self)
+
+	self._opts = opts
+	self._body = []
+	self._headers = {}
+	if (opts.auth)
+		self.setHeader('Authorization', 'Basic ' + Buffer.from(opts.auth).toString('base64'))
+	Object.keys(opts.headers).forEach(function (name) {
+		self.setHeader(name, opts.headers[name])
+	})
+
+	var preferBinary
+	var useFetch = true
+	if (opts.mode === 'disable-fetch' || ('requestTimeout' in opts && !capability.abortController)) {
+		// If the use of XHR should be preferred. Not typically needed.
+		useFetch = false
+		preferBinary = true
+	} else if (opts.mode === 'prefer-streaming') {
+		// If streaming is a high priority but binary compatibility and
+		// the accuracy of the 'content-type' header aren't
+		preferBinary = false
+	} else if (opts.mode === 'allow-wrong-content-type') {
+		// If streaming is more important than preserving the 'content-type' header
+		preferBinary = !capability.overrideMimeType
+	} else if (!opts.mode || opts.mode === 'default' || opts.mode === 'prefer-fast') {
+		// Use binary if text streaming may corrupt data or the content-type header, or for speed
+		preferBinary = true
+	} else {
+		throw new Error('Invalid value for opts.mode')
+	}
+	self._mode = decideMode(preferBinary, useFetch)
+	self._fetchTimer = null
+	self._socketTimeout = null
+	self._socketTimer = null
+
+	self.on('finish', function () {
+		self._onFinish()
+	})
+}
+
+inherits(ClientRequest, stream.Writable)
+
+ClientRequest.prototype.setHeader = function (name, value) {
+	var self = this
+	var lowerName = name.toLowerCase()
+	// This check is not necessary, but it prevents warnings from browsers about setting unsafe
+	// headers. To be honest I'm not entirely sure hiding these warnings is a good thing, but
+	// http-browserify did it, so I will too.
+	if (unsafeHeaders.indexOf(lowerName) !== -1)
+		return
+
+	self._headers[lowerName] = {
+		name: name,
+		value: value
+	}
+}
+
+ClientRequest.prototype.getHeader = function (name) {
+	var header = this._headers[name.toLowerCase()]
+	if (header)
+		return header.value
+	return null
+}
+
+ClientRequest.prototype.removeHeader = function (name) {
+	var self = this
+	delete self._headers[name.toLowerCase()]
+}
+
+ClientRequest.prototype._onFinish = function () {
+	var self = this
+
+	if (self._destroyed)
+		return
+	var opts = self._opts
+
+	if ('timeout' in opts && opts.timeout !== 0) {
+		self.setTimeout(opts.timeout)
+	}
+
+	var headersObj = self._headers
+	var body = null
+	if (opts.method !== 'GET' && opts.method !== 'HEAD') {
+        body = new Blob(self._body, {
+            type: (headersObj['content-type'] || {}).value || ''
+        });
+    }
+
+	// create flattened list of headers
+	var headersList = []
+	Object.keys(headersObj).forEach(function (keyName) {
+		var name = headersObj[keyName].name
+		var value = headersObj[keyName].value
+		if (Array.isArray(value)) {
+			value.forEach(function (v) {
+				headersList.push([name, v])
+			})
+		} else {
+			headersList.push([name, value])
+		}
+	})
+
+	if (self._mode === 'fetch') {
+		var signal = null
+		if (capability.abortController) {
+			var controller = new AbortController()
+			signal = controller.signal
+			self._fetchAbortController = controller
+
+			if ('requestTimeout' in opts && opts.requestTimeout !== 0) {
+				self._fetchTimer = global.setTimeout(function () {
+					self.emit('requestTimeout')
+					if (self._fetchAbortController)
+						self._fetchAbortController.abort()
+				}, opts.requestTimeout)
+			}
+		}
+
+		global.fetch(self._opts.url, {
+			method: self._opts.method,
+			headers: headersList,
+			body: body || undefined,
+			mode: 'cors',
+			credentials: opts.withCredentials ? 'include' : 'same-origin',
+			signal: signal
+		}).then(function (response) {
+			self._fetchResponse = response
+			self._resetTimers(false)
+			self._connect()
+		}, function (reason) {
+			self._resetTimers(true)
+			if (!self._destroyed)
+				self.emit('error', reason)
+		})
+	} else {
+		var xhr = self._xhr = new global.XMLHttpRequest()
+		try {
+			xhr.open(self._opts.method, self._opts.url, true)
+		} catch (err) {
+			process.nextTick(function () {
+				self.emit('error', err)
+			})
+			return
+		}
+
+		// Can't set responseType on really old browsers
+		if ('responseType' in xhr)
+			xhr.responseType = self._mode
+
+		if ('withCredentials' in xhr)
+			xhr.withCredentials = !!opts.withCredentials
+
+		if (self._mode === 'text' && 'overrideMimeType' in xhr)
+			xhr.overrideMimeType('text/plain; charset=x-user-defined')
+
+		if ('requestTimeout' in opts) {
+			xhr.timeout = opts.requestTimeout
+			xhr.ontimeout = function () {
+				self.emit('requestTimeout')
+			}
+		}
+
+		headersList.forEach(function (header) {
+			xhr.setRequestHeader(header[0], header[1])
+		})
+
+		self._response = null
+		xhr.onreadystatechange = function () {
+			switch (xhr.readyState) {
+				case rStates.LOADING:
+				case rStates.DONE:
+					self._onXHRProgress()
+					break
+			}
+		}
+		// Necessary for streaming in Firefox, since xhr.response is ONLY defined
+		// in onprogress, not in onreadystatechange with xhr.readyState = 3
+		if (self._mode === 'moz-chunked-arraybuffer') {
+			xhr.onprogress = function () {
+				self._onXHRProgress()
+			}
+		}
+
+		xhr.onerror = function () {
+			if (self._destroyed)
+				return
+			self._resetTimers(true)
+			self.emit('error', new Error('XHR error'))
+		}
+
+		try {
+			xhr.send(body)
+		} catch (err) {
+			process.nextTick(function () {
+				self.emit('error', err)
+			})
+			return
+		}
+	}
+}
+
+/**
+ * Checks if xhr.status is readable and non-zero, indicating no error.
+ * Even though the spec says it should be available in readyState 3,
+ * accessing it throws an exception in IE8
+ */
+function statusValid (xhr) {
+	try {
+		var status = xhr.status
+		return (status !== null && status !== 0)
+	} catch (e) {
+		return false
+	}
+}
+
+ClientRequest.prototype._onXHRProgress = function () {
+	var self = this
+
+	self._resetTimers(false)
+
+	if (!statusValid(self._xhr) || self._destroyed)
+		return
+
+	if (!self._response)
+		self._connect()
+
+	self._response._onXHRProgress(self._resetTimers.bind(self))
+}
+
+ClientRequest.prototype._connect = function () {
+	var self = this
+
+	if (self._destroyed)
+		return
+
+	self._response = new IncomingMessage(self._xhr, self._fetchResponse, self._mode, self._resetTimers.bind(self))
+	self._response.on('error', function(err) {
+		self.emit('error', err)
+	})
+
+	self.emit('response', self._response)
+}
+
+ClientRequest.prototype._write = function (chunk, encoding, cb) {
+	var self = this
+
+	self._body.push(chunk)
+	cb()
+}
+
+ClientRequest.prototype._resetTimers = function (done) {
+	var self = this
+
+	global.clearTimeout(self._socketTimer)
+	self._socketTimer = null
+
+	if (done) {
+		global.clearTimeout(self._fetchTimer)
+		self._fetchTimer = null
+	} else if (self._socketTimeout) {
+		self._socketTimer = global.setTimeout(function () {
+			self.emit('timeout')
+		}, self._socketTimeout)
+	}
+}
+
+ClientRequest.prototype.abort = ClientRequest.prototype.destroy = function (err) {
+	var self = this
+	self._destroyed = true
+	self._resetTimers(true)
+	if (self._response)
+		self._response._destroyed = true
+	if (self._xhr)
+		self._xhr.abort()
+	else if (self._fetchAbortController)
+		self._fetchAbortController.abort()
+
+	if (err)
+		self.emit('error', err)
+}
+
+ClientRequest.prototype.end = function (data, encoding, cb) {
+	var self = this
+	if (typeof data === 'function') {
+		cb = data
+		data = undefined
+	}
+
+	stream.Writable.prototype.end.call(self, data, encoding, cb)
+}
+
+ClientRequest.prototype.setTimeout = function (timeout, cb) {
+	var self = this
+
+	if (cb)
+		self.once('timeout', cb)
+
+	self._socketTimeout = timeout
+	self._resetTimers(false)
+}
+
+ClientRequest.prototype.flushHeaders = function () {}
+ClientRequest.prototype.setNoDelay = function () {}
+ClientRequest.prototype.setSocketKeepAlive = function () {}
+
+// Taken from http://www.w3.org/TR/XMLHttpRequest/#the-setrequestheader%28%29-method
+var unsafeHeaders = [
+	'accept-charset',
+	'accept-encoding',
+	'access-control-request-headers',
+	'access-control-request-method',
+	'connection',
+	'content-length',
+	'cookie',
+	'cookie2',
+	'date',
+	'dnt',
+	'expect',
+	'host',
+	'keep-alive',
+	'origin',
+	'referer',
+	'te',
+	'trailer',
+	'transfer-encoding',
+	'upgrade',
+	'via'
+]
+
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
+},{"./capability":426,"./response":428,"_process":404,"buffer":383,"inherits":398,"readable-stream":443}],428:[function(require,module,exports){
+(function (process,global,Buffer){(function (){
+var capability = require('./capability')
+var inherits = require('inherits')
+var stream = require('readable-stream')
+
+var rStates = exports.readyStates = {
+	UNSENT: 0,
+	OPENED: 1,
+	HEADERS_RECEIVED: 2,
+	LOADING: 3,
+	DONE: 4
+}
+
+var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode, resetTimers) {
+	var self = this
+	stream.Readable.call(self)
+
+	self._mode = mode
+	self.headers = {}
+	self.rawHeaders = []
+	self.trailers = {}
+	self.rawTrailers = []
+
+	// Fake the 'close' event, but only once 'end' fires
+	self.on('end', function () {
+		// The nextTick is necessary to prevent the 'request' module from causing an infinite loop
+		process.nextTick(function () {
+			self.emit('close')
+		})
+	})
+
+	if (mode === 'fetch') {
+		self._fetchResponse = response
+
+		self.url = response.url
+		self.statusCode = response.status
+		self.statusMessage = response.statusText
+		
+		response.headers.forEach(function (header, key){
+			self.headers[key.toLowerCase()] = header
+			self.rawHeaders.push(key, header)
+		})
+
+		if (capability.writableStream) {
+			var writable = new WritableStream({
+				write: function (chunk) {
+					resetTimers(false)
+					return new Promise(function (resolve, reject) {
+						if (self._destroyed) {
+							reject()
+						} else if(self.push(Buffer.from(chunk))) {
+							resolve()
+						} else {
+							self._resumeFetch = resolve
+						}
+					})
+				},
+				close: function () {
+					resetTimers(true)
+					if (!self._destroyed)
+						self.push(null)
+				},
+				abort: function (err) {
+					resetTimers(true)
+					if (!self._destroyed)
+						self.emit('error', err)
+				}
+			})
+
+			try {
+				response.body.pipeTo(writable).catch(function (err) {
+					resetTimers(true)
+					if (!self._destroyed)
+						self.emit('error', err)
+				})
+				return
+			} catch (e) {} // pipeTo method isn't defined. Can't find a better way to feature test this
+		}
+		// fallback for when writableStream or pipeTo aren't available
+		var reader = response.body.getReader()
+		function read () {
+			reader.read().then(function (result) {
+				if (self._destroyed)
+					return
+				resetTimers(result.done)
+				if (result.done) {
+					self.push(null)
+					return
+				}
+				self.push(Buffer.from(result.value))
+				read()
+			}).catch(function (err) {
+				resetTimers(true)
+				if (!self._destroyed)
+					self.emit('error', err)
+			})
+		}
+		read()
+	} else {
+		self._xhr = xhr
+		self._pos = 0
+
+		self.url = xhr.responseURL
+		self.statusCode = xhr.status
+		self.statusMessage = xhr.statusText
+		var headers = xhr.getAllResponseHeaders().split(/\r?\n/)
+		headers.forEach(function (header) {
+			var matches = header.match(/^([^:]+):\s*(.*)/)
+			if (matches) {
+				var key = matches[1].toLowerCase()
+				if (key === 'set-cookie') {
+					if (self.headers[key] === undefined) {
+						self.headers[key] = []
+					}
+					self.headers[key].push(matches[2])
+				} else if (self.headers[key] !== undefined) {
+					self.headers[key] += ', ' + matches[2]
+				} else {
+					self.headers[key] = matches[2]
+				}
+				self.rawHeaders.push(matches[1], matches[2])
+			}
+		})
+
+		self._charset = 'x-user-defined'
+		if (!capability.overrideMimeType) {
+			var mimeType = self.rawHeaders['mime-type']
+			if (mimeType) {
+				var charsetMatch = mimeType.match(/;\s*charset=([^;])(;|$)/)
+				if (charsetMatch) {
+					self._charset = charsetMatch[1].toLowerCase()
+				}
+			}
+			if (!self._charset)
+				self._charset = 'utf-8' // best guess
+		}
+	}
+}
+
+inherits(IncomingMessage, stream.Readable)
+
+IncomingMessage.prototype._read = function () {
+	var self = this
+
+	var resolve = self._resumeFetch
+	if (resolve) {
+		self._resumeFetch = null
+		resolve()
+	}
+}
+
+IncomingMessage.prototype._onXHRProgress = function (resetTimers) {
+	var self = this
+
+	var xhr = self._xhr
+
+	var response = null
+	switch (self._mode) {
+		case 'text':
+			response = xhr.responseText
+			if (response.length > self._pos) {
+				var newData = response.substr(self._pos)
+				if (self._charset === 'x-user-defined') {
+					var buffer = Buffer.alloc(newData.length)
+					for (var i = 0; i < newData.length; i++)
+						buffer[i] = newData.charCodeAt(i) & 0xff
+
+					self.push(buffer)
+				} else {
+					self.push(newData, self._charset)
+				}
+				self._pos = response.length
+			}
+			break
+		case 'arraybuffer':
+			if (xhr.readyState !== rStates.DONE || !xhr.response)
+				break
+			response = xhr.response
+			self.push(Buffer.from(new Uint8Array(response)))
+			break
+		case 'moz-chunked-arraybuffer': // take whole
+			response = xhr.response
+			if (xhr.readyState !== rStates.LOADING || !response)
+				break
+			self.push(Buffer.from(new Uint8Array(response)))
+			break
+		case 'ms-stream':
+			response = xhr.response
+			if (xhr.readyState !== rStates.LOADING)
+				break
+			var reader = new global.MSStreamReader()
+			reader.onprogress = function () {
+				if (reader.result.byteLength > self._pos) {
+					self.push(Buffer.from(new Uint8Array(reader.result.slice(self._pos))))
+					self._pos = reader.result.byteLength
+				}
+			}
+			reader.onload = function () {
+				resetTimers(true)
+				self.push(null)
+			}
+			// reader.onerror = ??? // TODO: this
+			reader.readAsArrayBuffer(response)
+			break
+	}
+
+	// The ms-stream case handles end separately in reader.onload()
+	if (self._xhr.readyState === rStates.DONE && self._mode !== 'ms-stream') {
+		resetTimers(true)
+		self.push(null)
+	}
+}
+
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
+},{"./capability":426,"_process":404,"buffer":383,"inherits":398,"readable-stream":443}],429:[function(require,module,exports){
+arguments[4][411][0].apply(exports,arguments)
+},{"dup":411}],430:[function(require,module,exports){
+arguments[4][412][0].apply(exports,arguments)
+},{"./_stream_readable":432,"./_stream_writable":434,"_process":404,"dup":412,"inherits":398}],431:[function(require,module,exports){
+arguments[4][413][0].apply(exports,arguments)
+},{"./_stream_transform":433,"dup":413,"inherits":398}],432:[function(require,module,exports){
+arguments[4][414][0].apply(exports,arguments)
+},{"../errors":429,"./_stream_duplex":430,"./internal/streams/async_iterator":435,"./internal/streams/buffer_list":436,"./internal/streams/destroy":437,"./internal/streams/from":439,"./internal/streams/state":441,"./internal/streams/stream":442,"_process":404,"buffer":383,"dup":414,"events":388,"inherits":398,"string_decoder/":444,"util":381}],433:[function(require,module,exports){
+arguments[4][415][0].apply(exports,arguments)
+},{"../errors":429,"./_stream_duplex":430,"dup":415,"inherits":398}],434:[function(require,module,exports){
+arguments[4][416][0].apply(exports,arguments)
+},{"../errors":429,"./_stream_duplex":430,"./internal/streams/destroy":437,"./internal/streams/state":441,"./internal/streams/stream":442,"_process":404,"buffer":383,"dup":416,"inherits":398,"util-deprecate":447}],435:[function(require,module,exports){
+arguments[4][417][0].apply(exports,arguments)
+},{"./end-of-stream":438,"_process":404,"dup":417}],436:[function(require,module,exports){
+arguments[4][418][0].apply(exports,arguments)
+},{"buffer":383,"dup":418,"util":381}],437:[function(require,module,exports){
+arguments[4][419][0].apply(exports,arguments)
+},{"_process":404,"dup":419}],438:[function(require,module,exports){
+arguments[4][420][0].apply(exports,arguments)
+},{"../../../errors":429,"dup":420}],439:[function(require,module,exports){
+arguments[4][421][0].apply(exports,arguments)
+},{"dup":421}],440:[function(require,module,exports){
+arguments[4][422][0].apply(exports,arguments)
+},{"../../../errors":429,"./end-of-stream":438,"dup":422}],441:[function(require,module,exports){
+arguments[4][423][0].apply(exports,arguments)
+},{"../../../errors":429,"dup":423}],442:[function(require,module,exports){
+arguments[4][424][0].apply(exports,arguments)
+},{"dup":424,"events":388}],443:[function(require,module,exports){
+exports = module.exports = require('./lib/_stream_readable.js');
+exports.Stream = exports;
+exports.Readable = exports;
+exports.Writable = require('./lib/_stream_writable.js');
+exports.Duplex = require('./lib/_stream_duplex.js');
+exports.Transform = require('./lib/_stream_transform.js');
+exports.PassThrough = require('./lib/_stream_passthrough.js');
+exports.finished = require('./lib/internal/streams/end-of-stream.js');
+exports.pipeline = require('./lib/internal/streams/pipeline.js');
+
+},{"./lib/_stream_duplex.js":430,"./lib/_stream_passthrough.js":431,"./lib/_stream_readable.js":432,"./lib/_stream_transform.js":433,"./lib/_stream_writable.js":434,"./lib/internal/streams/end-of-stream.js":438,"./lib/internal/streams/pipeline.js":440}],444:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -62615,990 +66845,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":432}],434:[function(require,module,exports){
-module.exports = require('./readable').PassThrough
-
-},{"./readable":435}],435:[function(require,module,exports){
-exports = module.exports = require('./lib/_stream_readable.js');
-exports.Stream = exports;
-exports.Readable = exports;
-exports.Writable = require('./lib/_stream_writable.js');
-exports.Duplex = require('./lib/_stream_duplex.js');
-exports.Transform = require('./lib/_stream_transform.js');
-exports.PassThrough = require('./lib/_stream_passthrough.js');
-
-},{"./lib/_stream_duplex.js":424,"./lib/_stream_passthrough.js":425,"./lib/_stream_readable.js":426,"./lib/_stream_transform.js":427,"./lib/_stream_writable.js":428}],436:[function(require,module,exports){
-module.exports = require('./readable').Transform
-
-},{"./readable":435}],437:[function(require,module,exports){
-module.exports = require('./lib/_stream_writable.js');
-
-},{"./lib/_stream_writable.js":428}],438:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-module.exports = Stream;
-
-var EE = require('events').EventEmitter;
-var inherits = require('inherits');
-
-inherits(Stream, EE);
-Stream.Readable = require('readable-stream/readable.js');
-Stream.Writable = require('readable-stream/writable.js');
-Stream.Duplex = require('readable-stream/duplex.js');
-Stream.Transform = require('readable-stream/transform.js');
-Stream.PassThrough = require('readable-stream/passthrough.js');
-
-// Backwards-compat with node 0.4.x
-Stream.Stream = Stream;
-
-
-
-// old-style streams.  Note that the pipe method (the only relevant
-// part of this class) is overridden in the Readable class.
-
-function Stream() {
-  EE.call(this);
-}
-
-Stream.prototype.pipe = function(dest, options) {
-  var source = this;
-
-  function ondata(chunk) {
-    if (dest.writable) {
-      if (false === dest.write(chunk) && source.pause) {
-        source.pause();
-      }
-    }
-  }
-
-  source.on('data', ondata);
-
-  function ondrain() {
-    if (source.readable && source.resume) {
-      source.resume();
-    }
-  }
-
-  dest.on('drain', ondrain);
-
-  // If the 'end' option is not supplied, dest.end() will be called when
-  // source gets the 'end' or 'close' events.  Only dest.end() once.
-  if (!dest._isStdio && (!options || options.end !== false)) {
-    source.on('end', onend);
-    source.on('close', onclose);
-  }
-
-  var didOnEnd = false;
-  function onend() {
-    if (didOnEnd) return;
-    didOnEnd = true;
-
-    dest.end();
-  }
-
-
-  function onclose() {
-    if (didOnEnd) return;
-    didOnEnd = true;
-
-    if (typeof dest.destroy === 'function') dest.destroy();
-  }
-
-  // don't leave dangling pipes when there are errors.
-  function onerror(er) {
-    cleanup();
-    if (EE.listenerCount(this, 'error') === 0) {
-      throw er; // Unhandled stream error in pipe.
-    }
-  }
-
-  source.on('error', onerror);
-  dest.on('error', onerror);
-
-  // remove all the event listeners that were added.
-  function cleanup() {
-    source.removeListener('data', ondata);
-    dest.removeListener('drain', ondrain);
-
-    source.removeListener('end', onend);
-    source.removeListener('close', onclose);
-
-    source.removeListener('error', onerror);
-    dest.removeListener('error', onerror);
-
-    source.removeListener('end', cleanup);
-    source.removeListener('close', cleanup);
-
-    dest.removeListener('close', cleanup);
-  }
-
-  source.on('end', cleanup);
-  source.on('close', cleanup);
-
-  dest.on('close', cleanup);
-
-  dest.emit('pipe', source);
-
-  // Allow for unix-like usage: A.pipe(B).pipe(C)
-  return dest;
-};
-
-},{"events":410,"inherits":413,"readable-stream/duplex.js":423,"readable-stream/passthrough.js":434,"readable-stream/readable.js":435,"readable-stream/transform.js":436,"readable-stream/writable.js":437}],439:[function(require,module,exports){
-(function (global){
-var ClientRequest = require('./lib/request')
-var response = require('./lib/response')
-var extend = require('xtend')
-var statusCodes = require('builtin-status-codes')
-var url = require('url')
-
-var http = exports
-
-http.request = function (opts, cb) {
-	if (typeof opts === 'string')
-		opts = url.parse(opts)
-	else
-		opts = extend(opts)
-
-	// Normally, the page is loaded from http or https, so not specifying a protocol
-	// will result in a (valid) protocol-relative url. However, this won't work if
-	// the protocol is something else, like 'file:'
-	var defaultProtocol = global.location.protocol.search(/^https?:$/) === -1 ? 'http:' : ''
-
-	var protocol = opts.protocol || defaultProtocol
-	var host = opts.hostname || opts.host
-	var port = opts.port
-	var path = opts.path || '/'
-
-	// Necessary for IPv6 addresses
-	if (host && host.indexOf(':') !== -1)
-		host = '[' + host + ']'
-
-	// This may be a relative url. The browser should always be able to interpret it correctly.
-	opts.url = (host ? (protocol + '//' + host) : '') + (port ? ':' + port : '') + path
-	opts.method = (opts.method || 'GET').toUpperCase()
-	opts.headers = opts.headers || {}
-
-	// Also valid opts.auth, opts.mode
-
-	var req = new ClientRequest(opts)
-	if (cb)
-		req.on('response', cb)
-	return req
-}
-
-http.get = function get (opts, cb) {
-	var req = http.request(opts, cb)
-	req.end()
-	return req
-}
-
-http.ClientRequest = ClientRequest
-http.IncomingMessage = response.IncomingMessage
-
-http.Agent = function () {}
-http.Agent.defaultMaxSockets = 4
-
-http.globalAgent = new http.Agent()
-
-http.STATUS_CODES = statusCodes
-
-http.METHODS = [
-	'CHECKOUT',
-	'CONNECT',
-	'COPY',
-	'DELETE',
-	'GET',
-	'HEAD',
-	'LOCK',
-	'M-SEARCH',
-	'MERGE',
-	'MKACTIVITY',
-	'MKCOL',
-	'MOVE',
-	'NOTIFY',
-	'OPTIONS',
-	'PATCH',
-	'POST',
-	'PROPFIND',
-	'PROPPATCH',
-	'PURGE',
-	'PUT',
-	'REPORT',
-	'SEARCH',
-	'SUBSCRIBE',
-	'TRACE',
-	'UNLOCK',
-	'UNSUBSCRIBE'
-]
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":441,"./lib/response":442,"builtin-status-codes":408,"url":447,"xtend":453}],440:[function(require,module,exports){
-(function (global){
-exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
-
-exports.writableStream = isFunction(global.WritableStream)
-
-exports.abortController = isFunction(global.AbortController)
-
-exports.blobConstructor = false
-try {
-	new Blob([new ArrayBuffer(1)])
-	exports.blobConstructor = true
-} catch (e) {}
-
-// The xhr request to example.com may violate some restrictive CSP configurations,
-// so if we're running in a browser that supports `fetch`, avoid calling getXHR()
-// and assume support for certain features below.
-var xhr
-function getXHR () {
-	// Cache the xhr value
-	if (xhr !== undefined) return xhr
-
-	if (global.XMLHttpRequest) {
-		xhr = new global.XMLHttpRequest()
-		// If XDomainRequest is available (ie only, where xhr might not work
-		// cross domain), use the page location. Otherwise use example.com
-		// Note: this doesn't actually make an http request.
-		try {
-			xhr.open('GET', global.XDomainRequest ? '/' : 'https://example.com')
-		} catch(e) {
-			xhr = null
-		}
-	} else {
-		// Service workers don't have XHR
-		xhr = null
-	}
-	return xhr
-}
-
-function checkTypeSupport (type) {
-	var xhr = getXHR()
-	if (!xhr) return false
-	try {
-		xhr.responseType = type
-		return xhr.responseType === type
-	} catch (e) {}
-	return false
-}
-
-// For some strange reason, Safari 7.0 reports typeof global.ArrayBuffer === 'object'.
-// Safari 7.1 appears to have fixed this bug.
-var haveArrayBuffer = typeof global.ArrayBuffer !== 'undefined'
-var haveSlice = haveArrayBuffer && isFunction(global.ArrayBuffer.prototype.slice)
-
-// If fetch is supported, then arraybuffer will be supported too. Skip calling
-// checkTypeSupport(), since that calls getXHR().
-exports.arraybuffer = exports.fetch || (haveArrayBuffer && checkTypeSupport('arraybuffer'))
-
-// These next two tests unavoidably show warnings in Chrome. Since fetch will always
-// be used if it's available, just return false for these to avoid the warnings.
-exports.msstream = !exports.fetch && haveSlice && checkTypeSupport('ms-stream')
-exports.mozchunkedarraybuffer = !exports.fetch && haveArrayBuffer &&
-	checkTypeSupport('moz-chunked-arraybuffer')
-
-// If fetch is supported, then overrideMimeType will be supported too. Skip calling
-// getXHR().
-exports.overrideMimeType = exports.fetch || (getXHR() ? isFunction(getXHR().overrideMimeType) : false)
-
-exports.vbArray = isFunction(global.VBArray)
-
-function isFunction (value) {
-	return typeof value === 'function'
-}
-
-xhr = null // Help gc
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],441:[function(require,module,exports){
-(function (process,global,Buffer){
-var capability = require('./capability')
-var inherits = require('inherits')
-var response = require('./response')
-var stream = require('readable-stream')
-var toArrayBuffer = require('to-arraybuffer')
-
-var IncomingMessage = response.IncomingMessage
-var rStates = response.readyStates
-
-function decideMode (preferBinary, useFetch) {
-	if (capability.fetch && useFetch) {
-		return 'fetch'
-	} else if (capability.mozchunkedarraybuffer) {
-		return 'moz-chunked-arraybuffer'
-	} else if (capability.msstream) {
-		return 'ms-stream'
-	} else if (capability.arraybuffer && preferBinary) {
-		return 'arraybuffer'
-	} else if (capability.vbArray && preferBinary) {
-		return 'text:vbarray'
-	} else {
-		return 'text'
-	}
-}
-
-var ClientRequest = module.exports = function (opts) {
-	var self = this
-	stream.Writable.call(self)
-
-	self._opts = opts
-	self._body = []
-	self._headers = {}
-	if (opts.auth)
-		self.setHeader('Authorization', 'Basic ' + new Buffer(opts.auth).toString('base64'))
-	Object.keys(opts.headers).forEach(function (name) {
-		self.setHeader(name, opts.headers[name])
-	})
-
-	var preferBinary
-	var useFetch = true
-	if (opts.mode === 'disable-fetch' || ('requestTimeout' in opts && !capability.abortController)) {
-		// If the use of XHR should be preferred. Not typically needed.
-		useFetch = false
-		preferBinary = true
-	} else if (opts.mode === 'prefer-streaming') {
-		// If streaming is a high priority but binary compatibility and
-		// the accuracy of the 'content-type' header aren't
-		preferBinary = false
-	} else if (opts.mode === 'allow-wrong-content-type') {
-		// If streaming is more important than preserving the 'content-type' header
-		preferBinary = !capability.overrideMimeType
-	} else if (!opts.mode || opts.mode === 'default' || opts.mode === 'prefer-fast') {
-		// Use binary if text streaming may corrupt data or the content-type header, or for speed
-		preferBinary = true
-	} else {
-		throw new Error('Invalid value for opts.mode')
-	}
-	self._mode = decideMode(preferBinary, useFetch)
-	self._fetchTimer = null
-
-	self.on('finish', function () {
-		self._onFinish()
-	})
-}
-
-inherits(ClientRequest, stream.Writable)
-
-ClientRequest.prototype.setHeader = function (name, value) {
-	var self = this
-	var lowerName = name.toLowerCase()
-	// This check is not necessary, but it prevents warnings from browsers about setting unsafe
-	// headers. To be honest I'm not entirely sure hiding these warnings is a good thing, but
-	// http-browserify did it, so I will too.
-	if (unsafeHeaders.indexOf(lowerName) !== -1)
-		return
-
-	self._headers[lowerName] = {
-		name: name,
-		value: value
-	}
-}
-
-ClientRequest.prototype.getHeader = function (name) {
-	var header = this._headers[name.toLowerCase()]
-	if (header)
-		return header.value
-	return null
-}
-
-ClientRequest.prototype.removeHeader = function (name) {
-	var self = this
-	delete self._headers[name.toLowerCase()]
-}
-
-ClientRequest.prototype._onFinish = function () {
-	var self = this
-
-	if (self._destroyed)
-		return
-	var opts = self._opts
-
-	var headersObj = self._headers
-	var body = null
-	if (opts.method !== 'GET' && opts.method !== 'HEAD') {
-		if (capability.arraybuffer) {
-			body = toArrayBuffer(Buffer.concat(self._body))
-		} else if (capability.blobConstructor) {
-			body = new global.Blob(self._body.map(function (buffer) {
-				return toArrayBuffer(buffer)
-			}), {
-				type: (headersObj['content-type'] || {}).value || ''
-			})
-		} else {
-			// get utf8 string
-			body = Buffer.concat(self._body).toString()
-		}
-	}
-
-	// create flattened list of headers
-	var headersList = []
-	Object.keys(headersObj).forEach(function (keyName) {
-		var name = headersObj[keyName].name
-		var value = headersObj[keyName].value
-		if (Array.isArray(value)) {
-			value.forEach(function (v) {
-				headersList.push([name, v])
-			})
-		} else {
-			headersList.push([name, value])
-		}
-	})
-
-	if (self._mode === 'fetch') {
-		var signal = null
-		var fetchTimer = null
-		if (capability.abortController) {
-			var controller = new AbortController()
-			signal = controller.signal
-			self._fetchAbortController = controller
-
-			if ('requestTimeout' in opts && opts.requestTimeout !== 0) {
-				self._fetchTimer = global.setTimeout(function () {
-					self.emit('requestTimeout')
-					if (self._fetchAbortController)
-						self._fetchAbortController.abort()
-				}, opts.requestTimeout)
-			}
-		}
-
-		global.fetch(self._opts.url, {
-			method: self._opts.method,
-			headers: headersList,
-			body: body || undefined,
-			mode: 'cors',
-			credentials: opts.withCredentials ? 'include' : 'same-origin',
-			signal: signal
-		}).then(function (response) {
-			self._fetchResponse = response
-			self._connect()
-		}, function (reason) {
-			global.clearTimeout(self._fetchTimer)
-			if (!self._destroyed)
-				self.emit('error', reason)
-		})
-	} else {
-		var xhr = self._xhr = new global.XMLHttpRequest()
-		try {
-			xhr.open(self._opts.method, self._opts.url, true)
-		} catch (err) {
-			process.nextTick(function () {
-				self.emit('error', err)
-			})
-			return
-		}
-
-		// Can't set responseType on really old browsers
-		if ('responseType' in xhr)
-			xhr.responseType = self._mode.split(':')[0]
-
-		if ('withCredentials' in xhr)
-			xhr.withCredentials = !!opts.withCredentials
-
-		if (self._mode === 'text' && 'overrideMimeType' in xhr)
-			xhr.overrideMimeType('text/plain; charset=x-user-defined')
-
-		if ('requestTimeout' in opts) {
-			xhr.timeout = opts.requestTimeout
-			xhr.ontimeout = function () {
-				self.emit('requestTimeout')
-			}
-		}
-
-		headersList.forEach(function (header) {
-			xhr.setRequestHeader(header[0], header[1])
-		})
-
-		self._response = null
-		xhr.onreadystatechange = function () {
-			switch (xhr.readyState) {
-				case rStates.LOADING:
-				case rStates.DONE:
-					self._onXHRProgress()
-					break
-			}
-		}
-		// Necessary for streaming in Firefox, since xhr.response is ONLY defined
-		// in onprogress, not in onreadystatechange with xhr.readyState = 3
-		if (self._mode === 'moz-chunked-arraybuffer') {
-			xhr.onprogress = function () {
-				self._onXHRProgress()
-			}
-		}
-
-		xhr.onerror = function () {
-			if (self._destroyed)
-				return
-			self.emit('error', new Error('XHR error'))
-		}
-
-		try {
-			xhr.send(body)
-		} catch (err) {
-			process.nextTick(function () {
-				self.emit('error', err)
-			})
-			return
-		}
-	}
-}
-
-/**
- * Checks if xhr.status is readable and non-zero, indicating no error.
- * Even though the spec says it should be available in readyState 3,
- * accessing it throws an exception in IE8
- */
-function statusValid (xhr) {
-	try {
-		var status = xhr.status
-		return (status !== null && status !== 0)
-	} catch (e) {
-		return false
-	}
-}
-
-ClientRequest.prototype._onXHRProgress = function () {
-	var self = this
-
-	if (!statusValid(self._xhr) || self._destroyed)
-		return
-
-	if (!self._response)
-		self._connect()
-
-	self._response._onXHRProgress()
-}
-
-ClientRequest.prototype._connect = function () {
-	var self = this
-
-	if (self._destroyed)
-		return
-
-	self._response = new IncomingMessage(self._xhr, self._fetchResponse, self._mode, self._fetchTimer)
-	self._response.on('error', function(err) {
-		self.emit('error', err)
-	})
-
-	self.emit('response', self._response)
-}
-
-ClientRequest.prototype._write = function (chunk, encoding, cb) {
-	var self = this
-
-	self._body.push(chunk)
-	cb()
-}
-
-ClientRequest.prototype.abort = ClientRequest.prototype.destroy = function () {
-	var self = this
-	self._destroyed = true
-	global.clearTimeout(self._fetchTimer)
-	if (self._response)
-		self._response._destroyed = true
-	if (self._xhr)
-		self._xhr.abort()
-	else if (self._fetchAbortController)
-		self._fetchAbortController.abort()
-}
-
-ClientRequest.prototype.end = function (data, encoding, cb) {
-	var self = this
-	if (typeof data === 'function') {
-		cb = data
-		data = undefined
-	}
-
-	stream.Writable.prototype.end.call(self, data, encoding, cb)
-}
-
-ClientRequest.prototype.flushHeaders = function () {}
-ClientRequest.prototype.setTimeout = function () {}
-ClientRequest.prototype.setNoDelay = function () {}
-ClientRequest.prototype.setSocketKeepAlive = function () {}
-
-// Taken from http://www.w3.org/TR/XMLHttpRequest/#the-setrequestheader%28%29-method
-var unsafeHeaders = [
-	'accept-charset',
-	'accept-encoding',
-	'access-control-request-headers',
-	'access-control-request-method',
-	'connection',
-	'content-length',
-	'cookie',
-	'cookie2',
-	'date',
-	'dnt',
-	'expect',
-	'host',
-	'keep-alive',
-	'origin',
-	'referer',
-	'te',
-	'trailer',
-	'transfer-encoding',
-	'upgrade',
-	'via'
-]
-
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":440,"./response":442,"_process":418,"buffer":407,"inherits":413,"readable-stream":435,"to-arraybuffer":446}],442:[function(require,module,exports){
-(function (process,global,Buffer){
-var capability = require('./capability')
-var inherits = require('inherits')
-var stream = require('readable-stream')
-
-var rStates = exports.readyStates = {
-	UNSENT: 0,
-	OPENED: 1,
-	HEADERS_RECEIVED: 2,
-	LOADING: 3,
-	DONE: 4
-}
-
-var IncomingMessage = exports.IncomingMessage = function (xhr, response, mode, fetchTimer) {
-	var self = this
-	stream.Readable.call(self)
-
-	self._mode = mode
-	self.headers = {}
-	self.rawHeaders = []
-	self.trailers = {}
-	self.rawTrailers = []
-
-	// Fake the 'close' event, but only once 'end' fires
-	self.on('end', function () {
-		// The nextTick is necessary to prevent the 'request' module from causing an infinite loop
-		process.nextTick(function () {
-			self.emit('close')
-		})
-	})
-
-	if (mode === 'fetch') {
-		self._fetchResponse = response
-
-		self.url = response.url
-		self.statusCode = response.status
-		self.statusMessage = response.statusText
-		
-		response.headers.forEach(function (header, key){
-			self.headers[key.toLowerCase()] = header
-			self.rawHeaders.push(key, header)
-		})
-
-		if (capability.writableStream) {
-			var writable = new WritableStream({
-				write: function (chunk) {
-					return new Promise(function (resolve, reject) {
-						if (self._destroyed) {
-							reject()
-						} else if(self.push(new Buffer(chunk))) {
-							resolve()
-						} else {
-							self._resumeFetch = resolve
-						}
-					})
-				},
-				close: function () {
-					global.clearTimeout(fetchTimer)
-					if (!self._destroyed)
-						self.push(null)
-				},
-				abort: function (err) {
-					if (!self._destroyed)
-						self.emit('error', err)
-				}
-			})
-
-			try {
-				response.body.pipeTo(writable).catch(function (err) {
-					global.clearTimeout(fetchTimer)
-					if (!self._destroyed)
-						self.emit('error', err)
-				})
-				return
-			} catch (e) {} // pipeTo method isn't defined. Can't find a better way to feature test this
-		}
-		// fallback for when writableStream or pipeTo aren't available
-		var reader = response.body.getReader()
-		function read () {
-			reader.read().then(function (result) {
-				if (self._destroyed)
-					return
-				if (result.done) {
-					global.clearTimeout(fetchTimer)
-					self.push(null)
-					return
-				}
-				self.push(new Buffer(result.value))
-				read()
-			}).catch(function (err) {
-				global.clearTimeout(fetchTimer)
-				if (!self._destroyed)
-					self.emit('error', err)
-			})
-		}
-		read()
-	} else {
-		self._xhr = xhr
-		self._pos = 0
-
-		self.url = xhr.responseURL
-		self.statusCode = xhr.status
-		self.statusMessage = xhr.statusText
-		var headers = xhr.getAllResponseHeaders().split(/\r?\n/)
-		headers.forEach(function (header) {
-			var matches = header.match(/^([^:]+):\s*(.*)/)
-			if (matches) {
-				var key = matches[1].toLowerCase()
-				if (key === 'set-cookie') {
-					if (self.headers[key] === undefined) {
-						self.headers[key] = []
-					}
-					self.headers[key].push(matches[2])
-				} else if (self.headers[key] !== undefined) {
-					self.headers[key] += ', ' + matches[2]
-				} else {
-					self.headers[key] = matches[2]
-				}
-				self.rawHeaders.push(matches[1], matches[2])
-			}
-		})
-
-		self._charset = 'x-user-defined'
-		if (!capability.overrideMimeType) {
-			var mimeType = self.rawHeaders['mime-type']
-			if (mimeType) {
-				var charsetMatch = mimeType.match(/;\s*charset=([^;])(;|$)/)
-				if (charsetMatch) {
-					self._charset = charsetMatch[1].toLowerCase()
-				}
-			}
-			if (!self._charset)
-				self._charset = 'utf-8' // best guess
-		}
-	}
-}
-
-inherits(IncomingMessage, stream.Readable)
-
-IncomingMessage.prototype._read = function () {
-	var self = this
-
-	var resolve = self._resumeFetch
-	if (resolve) {
-		self._resumeFetch = null
-		resolve()
-	}
-}
-
-IncomingMessage.prototype._onXHRProgress = function () {
-	var self = this
-
-	var xhr = self._xhr
-
-	var response = null
-	switch (self._mode) {
-		case 'text:vbarray': // For IE9
-			if (xhr.readyState !== rStates.DONE)
-				break
-			try {
-				// This fails in IE8
-				response = new global.VBArray(xhr.responseBody).toArray()
-			} catch (e) {}
-			if (response !== null) {
-				self.push(new Buffer(response))
-				break
-			}
-			// Falls through in IE8	
-		case 'text':
-			try { // This will fail when readyState = 3 in IE9. Switch mode and wait for readyState = 4
-				response = xhr.responseText
-			} catch (e) {
-				self._mode = 'text:vbarray'
-				break
-			}
-			if (response.length > self._pos) {
-				var newData = response.substr(self._pos)
-				if (self._charset === 'x-user-defined') {
-					var buffer = new Buffer(newData.length)
-					for (var i = 0; i < newData.length; i++)
-						buffer[i] = newData.charCodeAt(i) & 0xff
-
-					self.push(buffer)
-				} else {
-					self.push(newData, self._charset)
-				}
-				self._pos = response.length
-			}
-			break
-		case 'arraybuffer':
-			if (xhr.readyState !== rStates.DONE || !xhr.response)
-				break
-			response = xhr.response
-			self.push(new Buffer(new Uint8Array(response)))
-			break
-		case 'moz-chunked-arraybuffer': // take whole
-			response = xhr.response
-			if (xhr.readyState !== rStates.LOADING || !response)
-				break
-			self.push(new Buffer(new Uint8Array(response)))
-			break
-		case 'ms-stream':
-			response = xhr.response
-			if (xhr.readyState !== rStates.LOADING)
-				break
-			var reader = new global.MSStreamReader()
-			reader.onprogress = function () {
-				if (reader.result.byteLength > self._pos) {
-					self.push(new Buffer(new Uint8Array(reader.result.slice(self._pos))))
-					self._pos = reader.result.byteLength
-				}
-			}
-			reader.onload = function () {
-				self.push(null)
-			}
-			// reader.onerror = ??? // TODO: this
-			reader.readAsArrayBuffer(response)
-			break
-	}
-
-	// The ms-stream case handles end separately in reader.onload()
-	if (self._xhr.readyState === rStates.DONE && self._mode !== 'ms-stream') {
-		self.push(null)
-	}
-}
-
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":440,"_process":418,"buffer":407,"inherits":413,"readable-stream":435}],443:[function(require,module,exports){
-arguments[4][433][0].apply(exports,arguments)
-},{"dup":433,"safe-buffer":444}],444:[function(require,module,exports){
-arguments[4][432][0].apply(exports,arguments)
-},{"buffer":407,"dup":432}],445:[function(require,module,exports){
-(function (setImmediate,clearImmediate){
-var nextTick = require('process/browser.js').nextTick;
-var apply = Function.prototype.apply;
-var slice = Array.prototype.slice;
-var immediateIds = {};
-var nextImmediateId = 0;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) { timeout.close(); };
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
-  }
-};
-
-// That's not how node.js implements it but the exposed api is the same.
-exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-  var id = nextImmediateId++;
-  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-  immediateIds[id] = true;
-
-  nextTick(function onNextTick() {
-    if (immediateIds[id]) {
-      // fn.call() is faster so we optimize for the common use-case
-      // @see http://jsperf.com/call-apply-segu
-      if (args) {
-        fn.apply(null, args);
-      } else {
-        fn.call(null);
-      }
-      // Prevent ids from leaking
-      exports.clearImmediate(id);
-    }
-  });
-
-  return id;
-};
-
-exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-  delete immediateIds[id];
-};
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":418,"timers":445}],446:[function(require,module,exports){
-var Buffer = require('buffer').Buffer
-
-module.exports = function (buf) {
-	// If the buffer is backed by a Uint8Array, a faster version will work
-	if (buf instanceof Uint8Array) {
-		// If the buffer isn't a subarray, return the underlying ArrayBuffer
-		if (buf.byteOffset === 0 && buf.byteLength === buf.buffer.byteLength) {
-			return buf.buffer
-		} else if (typeof buf.buffer.slice === 'function') {
-			// Otherwise we need to get a proper copy
-			return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
-		}
-	}
-
-	if (Buffer.isBuffer(buf)) {
-		// This is the slow version that will work with any Buffer
-		// implementation (even in old browsers)
-		var arrayCopy = new Uint8Array(buf.length)
-		var len = buf.length
-		for (var i = 0; i < len; i++) {
-			arrayCopy[i] = buf[i]
-		}
-		return arrayCopy.buffer
-	} else {
-		throw new Error('Argument must be a Buffer')
-	}
-}
-
-},{"buffer":407}],447:[function(require,module,exports){
+},{"safe-buffer":409}],445:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -64332,7 +67579,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":448,"punycode":419,"querystring":422}],448:[function(require,module,exports){
+},{"./util":446,"punycode":405,"querystring":408}],446:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -64350,8 +67597,8 @@ module.exports = {
   }
 };
 
-},{}],449:[function(require,module,exports){
-(function (global){
+},{}],447:[function(require,module,exports){
+(function (global){(function (){
 
 /**
  * Module exports.
@@ -64420,41 +67667,350 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],450:[function(require,module,exports){
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
-}
-
-},{}],451:[function(require,module,exports){
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],448:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],452:[function(require,module,exports){
-(function (process,global){
+},{}],449:[function(require,module,exports){
+// Currently in sync with Node.js lib/internal/util/types.js
+// https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
+
+'use strict';
+
+var isArgumentsObject = require('is-arguments');
+var isGeneratorFunction = require('is-generator-function');
+var whichTypedArray = require('which-typed-array');
+var isTypedArray = require('is-typed-array');
+
+function uncurryThis(f) {
+  return f.call.bind(f);
+}
+
+var BigIntSupported = typeof BigInt !== 'undefined';
+var SymbolSupported = typeof Symbol !== 'undefined';
+
+var ObjectToString = uncurryThis(Object.prototype.toString);
+
+var numberValue = uncurryThis(Number.prototype.valueOf);
+var stringValue = uncurryThis(String.prototype.valueOf);
+var booleanValue = uncurryThis(Boolean.prototype.valueOf);
+
+if (BigIntSupported) {
+  var bigIntValue = uncurryThis(BigInt.prototype.valueOf);
+}
+
+if (SymbolSupported) {
+  var symbolValue = uncurryThis(Symbol.prototype.valueOf);
+}
+
+function checkBoxedPrimitive(value, prototypeValueOf) {
+  if (typeof value !== 'object') {
+    return false;
+  }
+  try {
+    prototypeValueOf(value);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+exports.isArgumentsObject = isArgumentsObject;
+exports.isGeneratorFunction = isGeneratorFunction;
+exports.isTypedArray = isTypedArray;
+
+// Taken from here and modified for better browser support
+// https://github.com/sindresorhus/p-is-promise/blob/cda35a513bda03f977ad5cde3a079d237e82d7ef/index.js
+function isPromise(input) {
+	return (
+		(
+			typeof Promise !== 'undefined' &&
+			input instanceof Promise
+		) ||
+		(
+			input !== null &&
+			typeof input === 'object' &&
+			typeof input.then === 'function' &&
+			typeof input.catch === 'function'
+		)
+	);
+}
+exports.isPromise = isPromise;
+
+function isArrayBufferView(value) {
+  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
+    return ArrayBuffer.isView(value);
+  }
+
+  return (
+    isTypedArray(value) ||
+    isDataView(value)
+  );
+}
+exports.isArrayBufferView = isArrayBufferView;
+
+
+function isUint8Array(value) {
+  return whichTypedArray(value) === 'Uint8Array';
+}
+exports.isUint8Array = isUint8Array;
+
+function isUint8ClampedArray(value) {
+  return whichTypedArray(value) === 'Uint8ClampedArray';
+}
+exports.isUint8ClampedArray = isUint8ClampedArray;
+
+function isUint16Array(value) {
+  return whichTypedArray(value) === 'Uint16Array';
+}
+exports.isUint16Array = isUint16Array;
+
+function isUint32Array(value) {
+  return whichTypedArray(value) === 'Uint32Array';
+}
+exports.isUint32Array = isUint32Array;
+
+function isInt8Array(value) {
+  return whichTypedArray(value) === 'Int8Array';
+}
+exports.isInt8Array = isInt8Array;
+
+function isInt16Array(value) {
+  return whichTypedArray(value) === 'Int16Array';
+}
+exports.isInt16Array = isInt16Array;
+
+function isInt32Array(value) {
+  return whichTypedArray(value) === 'Int32Array';
+}
+exports.isInt32Array = isInt32Array;
+
+function isFloat32Array(value) {
+  return whichTypedArray(value) === 'Float32Array';
+}
+exports.isFloat32Array = isFloat32Array;
+
+function isFloat64Array(value) {
+  return whichTypedArray(value) === 'Float64Array';
+}
+exports.isFloat64Array = isFloat64Array;
+
+function isBigInt64Array(value) {
+  return whichTypedArray(value) === 'BigInt64Array';
+}
+exports.isBigInt64Array = isBigInt64Array;
+
+function isBigUint64Array(value) {
+  return whichTypedArray(value) === 'BigUint64Array';
+}
+exports.isBigUint64Array = isBigUint64Array;
+
+function isMapToString(value) {
+  return ObjectToString(value) === '[object Map]';
+}
+isMapToString.working = (
+  typeof Map !== 'undefined' &&
+  isMapToString(new Map())
+);
+
+function isMap(value) {
+  if (typeof Map === 'undefined') {
+    return false;
+  }
+
+  return isMapToString.working
+    ? isMapToString(value)
+    : value instanceof Map;
+}
+exports.isMap = isMap;
+
+function isSetToString(value) {
+  return ObjectToString(value) === '[object Set]';
+}
+isSetToString.working = (
+  typeof Set !== 'undefined' &&
+  isSetToString(new Set())
+);
+function isSet(value) {
+  if (typeof Set === 'undefined') {
+    return false;
+  }
+
+  return isSetToString.working
+    ? isSetToString(value)
+    : value instanceof Set;
+}
+exports.isSet = isSet;
+
+function isWeakMapToString(value) {
+  return ObjectToString(value) === '[object WeakMap]';
+}
+isWeakMapToString.working = (
+  typeof WeakMap !== 'undefined' &&
+  isWeakMapToString(new WeakMap())
+);
+function isWeakMap(value) {
+  if (typeof WeakMap === 'undefined') {
+    return false;
+  }
+
+  return isWeakMapToString.working
+    ? isWeakMapToString(value)
+    : value instanceof WeakMap;
+}
+exports.isWeakMap = isWeakMap;
+
+function isWeakSetToString(value) {
+  return ObjectToString(value) === '[object WeakSet]';
+}
+isWeakSetToString.working = (
+  typeof WeakSet !== 'undefined' &&
+  isWeakSetToString(new WeakSet())
+);
+function isWeakSet(value) {
+  return isWeakSetToString(value);
+}
+exports.isWeakSet = isWeakSet;
+
+function isArrayBufferToString(value) {
+  return ObjectToString(value) === '[object ArrayBuffer]';
+}
+isArrayBufferToString.working = (
+  typeof ArrayBuffer !== 'undefined' &&
+  isArrayBufferToString(new ArrayBuffer())
+);
+function isArrayBuffer(value) {
+  if (typeof ArrayBuffer === 'undefined') {
+    return false;
+  }
+
+  return isArrayBufferToString.working
+    ? isArrayBufferToString(value)
+    : value instanceof ArrayBuffer;
+}
+exports.isArrayBuffer = isArrayBuffer;
+
+function isDataViewToString(value) {
+  return ObjectToString(value) === '[object DataView]';
+}
+isDataViewToString.working = (
+  typeof ArrayBuffer !== 'undefined' &&
+  typeof DataView !== 'undefined' &&
+  isDataViewToString(new DataView(new ArrayBuffer(1), 0, 1))
+);
+function isDataView(value) {
+  if (typeof DataView === 'undefined') {
+    return false;
+  }
+
+  return isDataViewToString.working
+    ? isDataViewToString(value)
+    : value instanceof DataView;
+}
+exports.isDataView = isDataView;
+
+function isSharedArrayBufferToString(value) {
+  return ObjectToString(value) === '[object SharedArrayBuffer]';
+}
+isSharedArrayBufferToString.working = (
+  typeof SharedArrayBuffer !== 'undefined' &&
+  isSharedArrayBufferToString(new SharedArrayBuffer())
+);
+function isSharedArrayBuffer(value) {
+  if (typeof SharedArrayBuffer === 'undefined') {
+    return false;
+  }
+
+  return isSharedArrayBufferToString.working
+    ? isSharedArrayBufferToString(value)
+    : value instanceof SharedArrayBuffer;
+}
+exports.isSharedArrayBuffer = isSharedArrayBuffer;
+
+function isAsyncFunction(value) {
+  return ObjectToString(value) === '[object AsyncFunction]';
+}
+exports.isAsyncFunction = isAsyncFunction;
+
+function isMapIterator(value) {
+  return ObjectToString(value) === '[object Map Iterator]';
+}
+exports.isMapIterator = isMapIterator;
+
+function isSetIterator(value) {
+  return ObjectToString(value) === '[object Set Iterator]';
+}
+exports.isSetIterator = isSetIterator;
+
+function isGeneratorObject(value) {
+  return ObjectToString(value) === '[object Generator]';
+}
+exports.isGeneratorObject = isGeneratorObject;
+
+function isWebAssemblyCompiledModule(value) {
+  return ObjectToString(value) === '[object WebAssembly.Module]';
+}
+exports.isWebAssemblyCompiledModule = isWebAssemblyCompiledModule;
+
+function isNumberObject(value) {
+  return checkBoxedPrimitive(value, numberValue);
+}
+exports.isNumberObject = isNumberObject;
+
+function isStringObject(value) {
+  return checkBoxedPrimitive(value, stringValue);
+}
+exports.isStringObject = isStringObject;
+
+function isBooleanObject(value) {
+  return checkBoxedPrimitive(value, booleanValue);
+}
+exports.isBooleanObject = isBooleanObject;
+
+function isBigIntObject(value) {
+  return BigIntSupported && checkBoxedPrimitive(value, bigIntValue);
+}
+exports.isBigIntObject = isBigIntObject;
+
+function isSymbolObject(value) {
+  return SymbolSupported && checkBoxedPrimitive(value, symbolValue);
+}
+exports.isSymbolObject = isSymbolObject;
+
+function isBoxedPrimitive(value) {
+  return (
+    isNumberObject(value) ||
+    isStringObject(value) ||
+    isBooleanObject(value) ||
+    isBigIntObject(value) ||
+    isSymbolObject(value)
+  );
+}
+exports.isBoxedPrimitive = isBoxedPrimitive;
+
+function isAnyArrayBuffer(value) {
+  return typeof Uint8Array !== 'undefined' && (
+    isArrayBuffer(value) ||
+    isSharedArrayBuffer(value)
+  );
+}
+exports.isAnyArrayBuffer = isAnyArrayBuffer;
+
+['isProxy', 'isExternal', 'isModuleNamespaceObject'].forEach(function(method) {
+  Object.defineProperty(exports, method, {
+    enumerable: false,
+    value: function() {
+      throw new Error(method + ' is not supported in userland');
+    }
+  });
+});
+
+},{"is-arguments":399,"is-generator-function":401,"is-typed-array":402,"which-typed-array":451}],450:[function(require,module,exports){
+(function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -64475,6 +68031,16 @@ module.exports = function isBuffer(arg) {
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
+  function getOwnPropertyDescriptors(obj) {
+    var keys = Object.keys(obj);
+    var descriptors = {};
+    for (var i = 0; i < keys.length; i++) {
+      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
+    }
+    return descriptors;
+  };
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
@@ -64520,15 +68086,15 @@ exports.format = function(f) {
 // Returns a modified function which warns once by default.
 // If --no-deprecation is set, then it is a no-op.
 exports.deprecate = function(fn, msg) {
+  if (typeof process !== 'undefined' && process.noDeprecation === true) {
+    return fn;
+  }
+
   // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
+  if (typeof process === 'undefined') {
     return function() {
       return exports.deprecate(fn, msg).apply(this, arguments);
     };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
   }
 
   var warned = false;
@@ -64551,13 +68117,20 @@ exports.deprecate = function(fn, msg) {
 
 
 var debugs = {};
-var debugEnviron;
+var debugEnvRegex = /^$/;
+
+if (process.env.NODE_DEBUG) {
+  var debugEnv = process.env.NODE_DEBUG;
+  debugEnv = debugEnv.replace(/[|\\{}()[\]^$+?.]/g, '\\$&')
+    .replace(/\*/g, '.*')
+    .replace(/,/g, '$|^')
+    .toUpperCase();
+  debugEnvRegex = new RegExp('^' + debugEnv + '$', 'i');
+}
 exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = process.env.NODE_DEBUG || '';
   set = set.toUpperCase();
   if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+    if (debugEnvRegex.test(set)) {
       var pid = process.pid;
       debugs[set] = function() {
         var msg = exports.format.apply(exports, arguments);
@@ -64904,6 +68477,8 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
+exports.types = require('./support/types');
+
 function isArray(ar) {
   return Array.isArray(ar);
 }
@@ -64948,6 +68523,7 @@ function isRegExp(re) {
   return isObject(re) && objectToString(re) === '[object RegExp]';
 }
 exports.isRegExp = isRegExp;
+exports.types.isRegExp = isRegExp;
 
 function isObject(arg) {
   return typeof arg === 'object' && arg !== null;
@@ -64958,12 +68534,14 @@ function isDate(d) {
   return isObject(d) && objectToString(d) === '[object Date]';
 }
 exports.isDate = isDate;
+exports.types.isDate = isDate;
 
 function isError(e) {
   return isObject(e) &&
       (objectToString(e) === '[object Error]' || e instanceof Error);
 }
 exports.isError = isError;
+exports.types.isNativeError = isError;
 
 function isFunction(arg) {
   return typeof arg === 'function';
@@ -65042,8 +68620,175 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":451,"_process":418,"inherits":450}],453:[function(require,module,exports){
+var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
+
+exports.promisify = function promisify(original) {
+  if (typeof original !== 'function')
+    throw new TypeError('The "original" argument must be of type Function');
+
+  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
+    var fn = original[kCustomPromisifiedSymbol];
+    if (typeof fn !== 'function') {
+      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
+    }
+    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+      value: fn, enumerable: false, writable: false, configurable: true
+    });
+    return fn;
+  }
+
+  function fn() {
+    var promiseResolve, promiseReject;
+    var promise = new Promise(function (resolve, reject) {
+      promiseResolve = resolve;
+      promiseReject = reject;
+    });
+
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    args.push(function (err, value) {
+      if (err) {
+        promiseReject(err);
+      } else {
+        promiseResolve(value);
+      }
+    });
+
+    try {
+      original.apply(this, args);
+    } catch (err) {
+      promiseReject(err);
+    }
+
+    return promise;
+  }
+
+  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
+
+  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
+    value: fn, enumerable: false, writable: false, configurable: true
+  });
+  return Object.defineProperties(
+    fn,
+    getOwnPropertyDescriptors(original)
+  );
+}
+
+exports.promisify.custom = kCustomPromisifiedSymbol
+
+function callbackifyOnRejected(reason, cb) {
+  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
+  // Because `null` is a special error value in callbacks which means "no error
+  // occurred", we error-wrap so the callback consumer can distinguish between
+  // "the promise rejected with null" or "the promise fulfilled with undefined".
+  if (!reason) {
+    var newReason = new Error('Promise was rejected with a falsy value');
+    newReason.reason = reason;
+    reason = newReason;
+  }
+  return cb(reason);
+}
+
+function callbackify(original) {
+  if (typeof original !== 'function') {
+    throw new TypeError('The "original" argument must be of type Function');
+  }
+
+  // We DO NOT return the promise as it gives the user a false sense that
+  // the promise is actually somehow related to the callback's execution
+  // and that the callback throwing will reject the promise.
+  function callbackified() {
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+
+    var maybeCb = args.pop();
+    if (typeof maybeCb !== 'function') {
+      throw new TypeError('The last argument must be of type Function');
+    }
+    var self = this;
+    var cb = function() {
+      return maybeCb.apply(self, arguments);
+    };
+    // In true node style we process the callback on `nextTick` with all the
+    // implications (stack, `uncaughtException`, `async_hooks`)
+    original.apply(this, args)
+      .then(function(ret) { process.nextTick(cb.bind(null, null, ret)) },
+            function(rej) { process.nextTick(callbackifyOnRejected.bind(null, rej, cb)) });
+  }
+
+  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
+  Object.defineProperties(callbackified,
+                          getOwnPropertyDescriptors(original));
+  return callbackified;
+}
+exports.callbackify = callbackify;
+
+}).call(this)}).call(this,require('_process'))
+},{"./support/isBuffer":448,"./support/types":449,"_process":404,"inherits":398}],451:[function(require,module,exports){
+(function (global){(function (){
+'use strict';
+
+var forEach = require('foreach');
+var availableTypedArrays = require('available-typed-arrays');
+var callBound = require('call-bind/callBound');
+
+var $toString = callBound('Object.prototype.toString');
+var hasSymbols = require('has-symbols')();
+var hasToStringTag = hasSymbols && typeof Symbol.toStringTag === 'symbol';
+
+var typedArrays = availableTypedArrays();
+
+var $slice = callBound('String.prototype.slice');
+var toStrTags = {};
+var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
+var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
+if (hasToStringTag && gOPD && getPrototypeOf) {
+	forEach(typedArrays, function (typedArray) {
+		if (typeof global[typedArray] === 'function') {
+			var arr = new global[typedArray]();
+			if (!(Symbol.toStringTag in arr)) {
+				throw new EvalError('this engine has support for Symbol.toStringTag, but ' + typedArray + ' does not have the property! Please report this.');
+			}
+			var proto = getPrototypeOf(arr);
+			var descriptor = gOPD(proto, Symbol.toStringTag);
+			if (!descriptor) {
+				var superProto = getPrototypeOf(proto);
+				descriptor = gOPD(superProto, Symbol.toStringTag);
+			}
+			toStrTags[typedArray] = descriptor.get;
+		}
+	});
+}
+
+var tryTypedArrays = function tryAllTypedArrays(value) {
+	var foundName = false;
+	forEach(toStrTags, function (getter, typedArray) {
+		if (!foundName) {
+			try {
+				var name = getter.call(value);
+				if (name === typedArray) {
+					foundName = name;
+				}
+			} catch (e) {}
+		}
+	});
+	return foundName;
+};
+
+var isTypedArray = require('is-typed-array');
+
+module.exports = function whichTypedArray(value) {
+	if (!isTypedArray(value)) { return false; }
+	if (!hasToStringTag) { return $slice($toString(value), 8, -1); }
+	return tryTypedArrays(value);
+};
+
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"available-typed-arrays":379,"call-bind/callBound":385,"es-abstract/helpers/getOwnPropertyDescriptor":387,"foreach":389,"has-symbols":393,"is-typed-array":402}],452:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;

@@ -10,7 +10,8 @@
     "bin": {
         "rochtml": "roc-html.js",
         "metacrate": "meta-crate.js",
-        "rocstatic": "roc-static-html.js",
+        "rocstatic": "roc-site.js",
+        "rocsite": "roc-site.js",
         "rocschema": "roc-schema.js"
     },
     "repository": {
@@ -33,7 +34,7 @@
         "jquery": "^3.5.1",
         "pairtree": "0.0.1",
         "path": "^0.12.7",
-        "ro-crate": "^1.6.2",
+        "ro-crate": "^1.6.7",
         "xmlhttprequest": "^1.8.0"
     },
     "devDependencies": {
