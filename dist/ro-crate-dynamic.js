@@ -213,7 +213,7 @@ class Checker {
        
         if (this.crate.getRootDataset() && this.crate.getRootDataset().contactPoint) {
             const targets = this.crate.utils.asArray(this.crate.getRootDataset().contactPoint);
-            console.log("targets", targets)
+            //console.log("targets", targets)
             for (let t of targets) {
                 if (t["@id"]) {
                     var contact= this.crate.getItem(t["@id"]);
@@ -402,8 +402,7 @@ async function load() {
         preview = await new Preview(meta, config);
         meta.resolveContext().then(function () {updatePage()}); // This is async
     }
-    document.getElementById("check").innerHTML = "<button><a href='#___check____'>Check this crate</a></button>";
-    //console.log("CHECK", document.getElementById("check").innerHTML)
+   // document.getElementById("check").innerHTML = "<button><a href='#___check____'>Check this crate</a></button>";
     updatePage();
 }
 
@@ -56484,7 +56483,6 @@ class ROCrate {
      async resolveContext() {
         this.context = {};
         var cont = {};
-        console.log(this.utils.asArray(this.json_ld["@context"]));
         for (let contextUrl of  this.utils.asArray(this.json_ld["@context"])) {
             if (this.defaults.standardContexts[contextUrl]) {
                 cont = this.defaults.standardContexts[contextUrl]["@context"];
