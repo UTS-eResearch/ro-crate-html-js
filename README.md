@@ -52,7 +52,7 @@ The script will create an HTML page:
 
 ```test_data/sample-ro-crate-preview.html```
 
-The HTML page has a complete copy of the RO-Crate metadata file's JSON-LD content in a `<script>` element in the `<head>`, and references the compiled rendering script that can then dynamically generate web-views of the RO-Crate metadata: `ro-crate-dynamic.js`. This is available via the Content Distribution Network (CDN) UNPKG which uses the NPM repository: <https://unpkg.com/ro-crate-html-js@1.4.3/dist/ro-crate-dynamic.js>.
+The HTML page has a complete copy of the RO-Crate metadata file's JSON-LD content in a `<script>` element in the `<head>`, and references the compiled rendering script that can then dynamically generate web-views of the RO-Crate metadata: `ro-crate-dynamic.js`. This is available via the Content Distribution Network (CDN) UNPKG which uses the NPM repository: <https://unpkg.com/ro-crate-html-js/dist/ro-crate-dynamic.js>.
 
 
 To compile the rendering script for an RO-Crate HTML file (ro-crate-preview.html):

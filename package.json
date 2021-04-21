@@ -34,7 +34,7 @@
         "jquery": "^3.5.1",
         "pairtree": "0.0.1",
         "path": "^0.12.7",
-        "ro-crate": "^1.6.7",
+        "ro-crate": "^2.0.1",
         "xmlhttprequest": "^1.8.0"
     },
     "devDependencies": {
