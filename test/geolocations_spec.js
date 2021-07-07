@@ -32,13 +32,18 @@ describe("Stub geolocation tests", function () {
             fs.readFileSync("test_data/sample-ro-crate-metadata.json")
         );
         const crate = new ROCrate(json);
-        const preview = new Preview(crate, {utils: new StaticPathUtils()});
+        const preview = new Preview(crate, {
+            utils: new StaticPathUtils(),
+            geoURL: "http://localhost"
+        });
+        const placename = 'Somewhere in Iowa';
         const fc = {
             type: "FeatureCollection",
             features: [
                 {
                 type: "Feature",
                 geometry: {
+                    name: placename,
                     type: "Point",
                     coordinates: [ 41.0000, 93.000 ]
                     }
@@ -47,7 +52,9 @@ describe("Stub geolocation tests", function () {
         };
         preview["places"] = fc;
         const maphtml = await preview.displayPlaces();
-        assert(map, "Got a map");
+        assert(maphtml, "Got a map");
+        const placere = RegExp(placename);
+        assert(maphtml.match(placere), "Found our place name in the HTML")
     });
 });
 
