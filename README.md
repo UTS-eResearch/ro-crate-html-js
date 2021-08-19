@@ -46,7 +46,7 @@ To make changes to this code:
 
 To render HTML for an RO-Crate, use `rochtml`:
 
-```rochtml  test_data/sample-ro-crate-metadata.jsonld```
+```rochtml  test_data/sample-ro-crate-metadata.json```
 
 The script will create an HTML page:
 

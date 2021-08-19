@@ -106,6 +106,15 @@ async function load() {
         preview = await new Preview(meta, config);
         meta.resolveContext().then(function () {updatePage()}); // This is async
     }
+    var css = document.createElement('style');
+    css.type = 'text/css';
+    var styles = 'summary { display: list-item; }';
+    css.appendChild(document.createTextNode(styles));
+
+   document.getElementsByTagName("head")[0].appendChild(css);
+        
+         
+   document.getElementsByTagName("body").append
    document.getElementById("check").innerHTML = "<button><a href='#___check___'>Check this crate</a></button>";
     updatePage();
 }
@@ -558,7 +567,7 @@ class Preview  {
 
  displayValues(v) {
     const vals = this.crate.utils.asArray(v);
-    const page = new Page({values: vals, pageSize: this.crate.defaults.pageSize});
+    const page = new Page({values: vals, pageSize: this.defaults.pageSize});
     return this.displayPage(page);
 } 
 

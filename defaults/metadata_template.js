@@ -13,8 +13,7 @@ function render(di, config, libPath, places) {
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">  
   <script type="application/ld+json"> 
     ${JSON.stringify(di.graph.json_ld, null, 2)}
   </script>
@@ -52,7 +51,7 @@ function render(di, config, libPath, places) {
   summary {
     font-weight: bold;
     font-size: larger;
-  
+
   }
   
   </style>
