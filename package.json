@@ -1,6 +1,6 @@
 {
     "name": "ro-crate-html-js",
-    "version": "1.4.16",
+    "version": "1.4.17",
     "description": "Research Object Crate (RO-Crate) utilities for rendering a html representation",
     "main": "index.js",
     "scripts": {
