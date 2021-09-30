@@ -33357,6 +33357,9 @@ class ROCrate {
                 def["@id"] =  `${urlPart}${parts[2]}`;
             }
          } 
+         if (!def["@id"]) {
+            def = {"@id": val}
+         }
          if (def["@id"] && this.getItem(def["@id"])) {
              var localDef = this.getItem(def["@id"]);
              if (localDef.sameAs && localDef.sameAs["@id"]) {
