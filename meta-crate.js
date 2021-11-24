@@ -66,7 +66,7 @@ async function main(program) {
             root.hasPart.push({"@id": part["@id"]})
         }
     }
-    await fs.writeFileSync(path.join(program.directory,metadataFilename), JSON.stringify(crate.json_ld, null, 2))
+    await fs.writeFileSync(path.join(program.directory,metadataFilename), JSON.stringify(crate.getJson(), null, 2))
     const preview = new Preview(crate);
     const f = new HtmlFile(preview);
     newPath = path.join(

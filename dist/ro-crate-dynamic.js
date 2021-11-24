@@ -277,7 +277,7 @@ class Preview  {
         var html = "";
         html += this.metaTable(this.crate.getItem(entryID));
         this.baseID = entryID;
-        for (let item of this.crate.json_ld["@graph"]) {
+        for (let item of this.crate.getJson()["@graph"]) {
             if (item["@id"] != entryID &&
                !this.displayTypeAsString(item) && 
                !this.crate.defaults.roCrateMetadataIDs.includes(item["@id"]) && !(dontShowRootDataset && item["@id"] === this.crate.getRootID())){
@@ -300,14 +300,14 @@ class Preview  {
         }
         // Now prune out stuff we don't need into a new graph
         var newGraph = []
-        for (let i of this.crate.json_ld["@graph"]) {
+        for (let i of this.crate.getJson()["@graph"]) {
             if (keepIds.includes(i['@id'])) {
                 newGraph.push(i);
             }
         }
         
-        //this.crate.json_ld["@graph"] = newGraph;
-        //this.crate.init(this.crate.json_ld);
+        //this.crate.getJson()["@graph"] = newGraph;
+        //this.crate.init(this.crate.getJson());
         // And generate HTML for what's left
         const dontShowPreviews = (this.root.hasPart && this.root.hasPart.length > defaults.pageSize);
         var allMeta = `<div class='all-meta'>`;
@@ -469,10 +469,13 @@ class Preview  {
         if (this.config.utils) {
             p = this.config.utils.getImagePath(this.baseID, p)
         }
+
+
+        
         var previews = "";
         var types = this.crate.utils.asArray(item["@type"]);
         if (!dontShowPreviews && (types.includes("Dataset") || types.includes("File") ||types.includes("ImageObject") ||types.includes("MediaObject"))) {
-            if (p.match(/(\.txt)|(\.html?)|(\.md)$/i)){
+            if (p.match(/(\.txt$)|(\.html?$)/i)){
                 previews += `<iframe src='${p}' width='100%' height='500'></iframe>`;
             } else if (p.match(/(\.mp3)|(\.ogg?)|(\.wav)$/i)){
               previews += `<audio controls><source src='${p}'/></audio>`;
@@ -624,13 +627,19 @@ displayPage(page) {
             var name = target.name || target.value || target["@id"];
             if (this.config.utils && this.config.utils.hasOwnPage(target, this.config)) {
                 return `<a href="${this.config.utils.getLink(this.baseID, target["@id"])}">${name}</a>`;
-            }
-            
+            }      
             const renderFunction = this.displayTypeAsString(target);
             if (!renderFunction) {
                 return `<a href="#${escape(target["@id"])}">${name}</a>`
             } else {
                 return renderFunction(target);
+            }
+        } else {
+            if (val["@id"].toString().match(/^https?:\/\//i)) {
+                return  `<a href="${val["@id"]}">${val["@id"]}</a>`
+            }
+            else {
+                return val["@id"];
             }
         }
     }
@@ -30039,19 +30048,20 @@ class Checker {
         var checkItem = new CheckItem(
             {
                 name: "Has a license ",
-                message: "The root Dataset has a License of type CreativeWork with a description"
+                message: "The root Dataset has a License"
             }
 
         )
         if (this.crate.getRootDataset() && this.crate.getRootDataset().license) {
             const targets = this.crate.utils.asArray(this.crate.getRootDataset().license);
+            checkItem.status = true;
             for (let t of targets) {
                 if (t["@id"]) {
                     var license = this.crate.getItem(t["@id"]);
                     const types = this.crate.utils.asArray(license["@type"]);
                     // TODO check that license path is a path or URL is a URL and check name and description are legit
                     if (types.includes("CreativeWork") && license.name && license.description){
-                        checkItem.status = true;
+                        checkItem.message += " (the license is a Creative Work with a name and description as it SHOULD be)"
                         break;
                     }
                 }
@@ -30105,6 +30115,7 @@ class Checker {
 
 
     async check() {
+        this.checklist = [];
         var context = await this.hasContext();
         this.checklist.push(context);
         var dataset = this.hasRootDataset();
@@ -30207,12 +30218,15 @@ const DATASET_TEMPLATE = {
       "@type": "Dataset",
       "@id": "./",
      };
+const conformsTo = {"@id": "https://w3id.org/ro/crate/1.1"};
 
 const METADATA_FILE_DESCRIPTOR = {
       "@type": "CreativeWork",
       "@id": roCrateMetadataID,
       "identifier": roCrateMetadataID,
-      "about": {"@id": "./"}
+      "about": {"@id": "./"},
+      "conformsTo": [conformsTo]
+
   };
 
 const back_back_links = new Set(Object.values(back_links));
@@ -30226,7 +30240,7 @@ const standardContexts = {
         ],
         "version": "1.1.1",
         "url": {
-             "@id": "https://w3id.org/ro/crate/1.1"
+             "@id": conformsTo
         },
         "schemaVersion": {
              "@id": "http://schema.org/version/10.0/"
@@ -32886,6 +32900,7 @@ const defaults = {
     ro_crate_name: "ro-crate-metadata",
     roCrateMetadataID: roCrateMetadataID,
     roCrateMetadataIDs: roCrateMetadataIDs,
+    conformsTo: conformsTo,
     context: ["https://w3id.org/ro/crate/1.1/context", {"@vocab": "http://schema.org/"}],
     standardContexts: standardContexts,
     render_script: "https://data.research.uts.edu.au/examples/ro-crate/examples/src/crate.js",
@@ -32934,12 +32949,12 @@ class ROCrate {
         this.defaults = require('./defaults');;
 
         if  (!json) {
-            var root = _.clone(this.defaults.datasetTemplate);
+            var root = _.cloneDeep(this.defaults.datasetTemplate);
             this.json_ld = {
                 "@context": this.defaults.context,
                 "@graph":  [
                     root,
-                    _.clone(this.defaults.metadataFileDescriptorTemplate)
+                    _.cloneDeep(this.defaults.metadataFileDescriptorTemplate)
                 ]
             }
         } else {
@@ -33247,7 +33262,7 @@ class ROCrate {
 
    objectify() {
         this.index();
-        const root = _.clone(this.getRootDataset());
+        const root = _.cloneDeep(this.getRootDataset());
         this.nest(root, {});
         this.objectified = root;    
     }
@@ -33261,7 +33276,7 @@ class ROCrate {
                     if (val["@id"]) {
                         var nested = this.getItem(val["@id"]);
                         if (nested)  {
-                            var newVal = this.nest(nested, _.clone(alreadySeen));
+                            var newVal = this.nest(nested, _.cloneDeep(alreadySeen));
                             if (newVal) {
                                 newValues.push(newVal);
                                 continue;
@@ -33357,9 +33372,6 @@ class ROCrate {
                 def["@id"] =  `${urlPart}${parts[2]}`;
             }
          } 
-         if (!def["@id"]) {
-            def = {"@id": val}
-         }
          if (def["@id"] && this.getItem(def["@id"])) {
              var localDef = this.getItem(def["@id"]);
              if (localDef.sameAs && localDef.sameAs["@id"]) {

@@ -36,13 +36,14 @@ async function main() {
         if (crate.utils.asArray(item["@type"]).includes("rdf:Property")) {
             md += `<div id="#${item["rdfs:label"]}">\n\n`;
                     md += `# Property: ${item["rdfs:label"]}\n\n`;
-                    md += `${item["rdf:comment"]}\n\n`;
+                    md += `${item["rdfs:comment"]}\n\n`;
             md += `</div>\n`;
 
         } else if (crate.utils.asArray(item["@type"]).includes("rdfs:Class")) {
           md += `<div id="#${item["rdfs:label"]}">\n\n`;
                   md += `# Class: ${item["rdfs:label"]}\n\n`;
-                  md += `${item["rdf:comment"]}\n\n`;
+                  md += `${item["rdfs:comment"]}\n\n`;
+                  
           md += `</div>\n`;
           
 

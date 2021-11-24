@@ -132,7 +132,7 @@ async function main(file) {
             // ATM the only thing we're relying on config for is config.types to tell it what types get their own pages
             preview.places = places; // TODO make this work with GeoJSON
             const html = await renderNew(item["@id"], preview);
-            await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.json_ld, null, 2))
+            await fs.writeFile(path.join(itemCrate._dirPath, "ro-crate-metadata.json"), JSON.stringify(itemCrate.getJson(), null, 2))
             await fs.writeFile(itemCrate._htmlpath, html)
 
             // Add item to relevant collection

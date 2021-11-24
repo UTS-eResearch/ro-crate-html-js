@@ -15,7 +15,7 @@ return `
 
 
 <script type="application/ld+json"> 
-  ${JSON.stringify(preview.crate.json_ld, null, 2)}
+  ${JSON.stringify(preview.crate.getJson(), null, 2)}
 </script>
 
 <title>${item.name}</title>

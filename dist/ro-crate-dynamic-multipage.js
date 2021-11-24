@@ -447,7 +447,7 @@ class Preview  {
         var html = "";
         html += this.metaTable(this.crate.getItem(entryID));
         this.baseID = entryID;
-        for (let item of this.crate.json_ld["@graph"]) {
+        for (let item of this.crate.getJson()["@graph"]) {
             if (item["@id"] != entryID &&
                !this.displayTypeAsString(item) && 
                !this.crate.defaults.roCrateMetadataIDs.includes(item["@id"]) && !(dontShowRootDataset && item["@id"] === this.crate.getRootID())){
@@ -471,14 +471,14 @@ class Preview  {
         }
         // Now prune out stuff we don't need into a new graph
         var newGraph = []
-        for (let i of this.crate.json_ld["@graph"]) {
+        for (let i of this.crate.getJson()["@graph"]) {
             if (keepIds.includes(i['@id'])) {
                 newGraph.push(i);
             }
         }
         
-        //this.crate.json_ld["@graph"] = newGraph;
-        //this.crate.init(this.crate.json_ld);
+        //this.crate.getJson()["@graph"] = newGraph;
+        //this.crate.init(this.crate.getJson());
         // And generate HTML for what's left
         const dontShowPreviews = (this.root.hasPart && this.root.hasPart.length > defaults.pageSize);
         var allMeta = `<div class='all-meta'>`;
@@ -45430,14 +45430,14 @@ class Preview {
         }
         // Now prune out stuff we don't need into a new graph
         var newGraph = []
-        for (let i of this.crate.json_ld["@graph"]) {
+        for (let i of this.crate.getJson()["@graph"]) {
             if (keepIds.includes(i['@id'])) {
                 newGraph.push(i);
             }
         }
         
-        //this.crate.json_ld["@graph"] = newGraph;
-        //this.crate.init(this.crate.json_ld);
+        //this.crate.getJson()["@graph"] = newGraph;
+        //this.crate.init(this.crate.getJson());
         // And generate HTML for what's left
 
         var allMeta = $("<div class='all-meta'></div>");
@@ -45762,7 +45762,7 @@ class ROCrate {
 
         if  (!json) {
             var root = _.clone(this.defaults.datasetTemplate);
-            this.json_ld = {
+            this.getJson() = {
                 "@context": this.defaults.context,
                 "@graph":  [
                     root,
@@ -45770,7 +45770,7 @@ class ROCrate {
                 ]
             }
         } else {
-            this.json_ld = json;
+            this.getJson() = json;
         }
         this.utils = new utils();
     }
@@ -45778,7 +45778,7 @@ class ROCrate {
         this._item_by_id = {};
         this._item_by_type = {}; // dict of arrays
         this.items_by_new_id = {};
-        this.graph = this.json_ld["@graph"] ? this.json_ld["@graph"] : [];
+        this.graph = this.getJson()["@graph"] ? this.getJson()["@graph"] : [];
         this._identifiers = {}; // Local IDs
         for (let i = 0; i < this.graph.length; i++) {
             var item = this.graph[i];
@@ -45940,7 +45940,7 @@ class ROCrate {
     }
 
     getGraph() {
-        return this.json_ld["@graph"];
+        return this.getJson()["@graph"];
     }
 
     getRootDataset() {
@@ -45951,7 +45951,7 @@ class ROCrate {
         return this._rootId;
     }
     getJson() {
-        return this.json_ld;
+        return this.getJson();
     }
 
     getNamedIdentifier(name) {
@@ -46111,7 +46111,7 @@ class ROCrate {
      async resolveContext() {
         this.context = {};
         var cont = {};
-        for (let contextUrl of  this.utils.asArray(this.json_ld["@context"])) {
+        for (let contextUrl of  this.utils.asArray(this.getJson()["@context"])) {
             if (this.defaults.standardContexts[contextUrl]) {
                 cont = this.defaults.standardContexts[contextUrl]["@context"];
             } else if (typeof contextUrl === 'string' || contextUrl instanceof String) {
