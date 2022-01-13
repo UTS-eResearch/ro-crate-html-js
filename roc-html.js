@@ -28,6 +28,10 @@ const defaults = require("./lib/defaults.js");
 const fs = require("fs-extra");
 
 async function render(metadataPath, zip, script) {
+    const potentialPath = path.join(metadataPath, defaults.roCrateMetadataID);
+    if (await fs.pathExists(potentialPath)) {
+        metadataPath = potentialPath;
+    }
     json = JSON.parse(fs.readFileSync(metadataPath));
     const crate = new ROCrate(json);
     const preview = new Preview(crate);

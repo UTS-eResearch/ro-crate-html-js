@@ -21,24 +21,34 @@ To install this from npm type:
 
 npm install ro-crate-html-js
 
+
 ## Develop
 
 To make changes to this code:
 
 -  Download this repository:
 
-  ```
-  git clone https://github.com/UTS-eResearch/ro-crate-html-js
-  cd ro-crate-htmljs
-  ```
+```
+git clone https://github.com/UTS-eResearch/ro-crate-html-js
+cd ro-crate-htmljs
+```
 
 -  Install it and link the commandline commands:
 
-  ```
-  npm install .
-  npm link --local
-  ```
+```
+npm install .
+npm link --local
+```
 
+### Use Docker
+
+Make a container: 
+
+`docker build -t rochhtml .`
+
+Run the container:
+
+`docker run -v ~/path/to/crate/:/data rochtml /data`
 
 ## Commandline HTML rendering
 

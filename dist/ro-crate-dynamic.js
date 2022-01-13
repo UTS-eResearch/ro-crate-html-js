@@ -469,9 +469,6 @@ class Preview  {
         if (this.config.utils) {
             p = this.config.utils.getImagePath(this.baseID, p)
         }
-
-
-        
         var previews = "";
         var types = this.crate.utils.asArray(item["@type"]);
         if (!dontShowPreviews && (types.includes("Dataset") || types.includes("File") ||types.includes("ImageObject") ||types.includes("MediaObject"))) {
@@ -33316,17 +33313,28 @@ class ROCrate {
                 cont = contextUrl;
             }
             // Put all the keys into a flat lookup TODO: handele indirection
-            for (let k of Object.keys(cont)) {
-                const v = cont[k];
-                if (v && v["@id"]) {
-                    this.context[k] = v["@id"];
-                } else {
-                    this.context[k] = v;
-                }
-
-            }
+            this.__addToContextLookup(cont);
         }
     } 
+    
+    __addToContextLookup(cont) {
+        for (let k of Object.keys(cont)) {
+            const v = cont[k];
+            if (v && v["@id"]) {
+                this.context[k] = v["@id"];
+            } else {
+                this.context[k] = v;
+            }
+
+        }
+    }
+    addContext(cont) {
+        if (!Array.isArray(this.json_ld["@context"])) {
+            this.json_ld["@context"] = [this.json_ld["@context"]];
+        }
+        this.json_ld["@context"].push(cont);
+        this.__addToContextLookup(cont)
+    }
     resolveTerm(term) {
         const val =  this.context[term];
         if (val && val.match(/^http(s?):\/\//i)) {
