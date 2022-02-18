@@ -44,11 +44,11 @@ npm link --local
 
 Make a container: 
 
-`docker build -t rochhtml .`
+`docker build -t rochtml .`
 
 Run the container:
 
-`docker run -v ~/path/to/crate/:/data rochtml /data`
+`docker run -v ~/path/to/crate/:/data rochtml /data/ro-crate-metadata.json`
 
 ## Commandline HTML rendering
 
