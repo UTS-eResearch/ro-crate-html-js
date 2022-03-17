@@ -45,7 +45,7 @@ async function render(metadataPath, zip, script) {
 
 program
     .version("0.1.0")
-    .description("Generates an HTML preview file for a Research-Object crate")
+    .description("Generates an HTML previewfor a Res earch-Object crate")
     .arguments("<files...>")
     .action(function (files) {
         paths = files;
