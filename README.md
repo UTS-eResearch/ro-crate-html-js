@@ -45,7 +45,7 @@ npm link --local
 
 Make a container:
 
-`docker buildx build -t rochhtml .`
+`docker buildx build -t rochtml .`
 
 Run the container:
 
