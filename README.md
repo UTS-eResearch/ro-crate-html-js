@@ -10,7 +10,7 @@ There are two approaches to this:
 
 - `rochtml` is a script that creates an HTML page that summarizes the RO-Crate root dataset (which is always a Schema.org Dataset object expressed in JSONLD) and then dynamically renders details about other entities, both Data Entities (files, datasets and other local and remote streams of data) and Contextual Entities (addition information about data provenance such how files were created, by whom and where) described in the crate. This script creates a single, small HTML file.
 
-- `rocsite` is a script that creates a multi page RO-Crate Website* using some confguration.
+- `rocsite` is a script that creates a multi page *RO-Crate Website* using some confguration.
 
 In most cases `rochtml` is the most appropriate tool unless the crate you are dealing with is very large (more than 5000 entities) or is largely made up of contextual entities such as historical events, people etc.
 
@@ -19,8 +19,9 @@ In most cases `rochtml` is the most appropriate tool unless the crate you are de
 
 To install this from npm type:
 
+```bash
 npm install ro-crate-html-js
-
+```
 
 ## Develop
 
@@ -42,13 +43,13 @@ npm link --local
 
 ### Use Docker
 
-Make a container: 
+Make a container:
 
-`docker build -t rochhtml .`
+`docker buildx build -t rochhtml .`
 
 Run the container:
 
-`docker run -v ~/path/to/crate/:/data rochtml /data`
+`docker run --rm -v ~/path/to/crate/:/data rochtml /data/ro-crate-metadata.json`
 
 ## Commandline HTML rendering
 
