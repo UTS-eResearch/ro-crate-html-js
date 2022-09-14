@@ -23,8 +23,10 @@ In most cases `rochtml` is the most appropriate tool unless the crate you are de
 To install this from npm type:
 
 ```bash
-npm install ro-crate-html-js
+npm install --global ro-crate-html-js
 ```
+
+If you don't need the `rochtml` command line tool on your path, or just want to use the JavaScript library, you can skip the `--global` option.
 
 ## Develop
 
