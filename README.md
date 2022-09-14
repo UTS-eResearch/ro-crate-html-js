@@ -1,5 +1,8 @@
-# ro-crate : Research Object Crate HTML preview generation
 
+## Important Notice:
+> The active fork of this repo is https://github.com/Arkisto-Platform/ro-crate-html-js and development efforts should be focused over there.
+
+# ro-crate : Research Object Crate HTML preview generation
 This nodejs repository has code for generating HTML previews for Research Object Crates ([RO-Crate](https://researchobject.github.io/ro-crate/))
 
 RO-Crates are data packages consisting of a folder/directory of content with a JSON-LD manifest  known as an *RO-Crate Metadata File*, which has the filename `ro-crate-metadata.json` in the root folder. RO-Crates also should have an *RO-Crate Website* which is a local set of web resources, with an index page `ro-crate-preview.html`.
